@@ -56,17 +56,6 @@
             <div x-ref="canvas"></div>
         </div>
 
-        @if ($selectedUuid)
-            <div class="page-builder__side-panel">
-                <div class="page-builder__panel-label">Edit {{ $this->labels()[collect($blocks)->firstWhere('uuid', $selectedUuid)['type'] ?? ''] ?? 'block' }}</div>
 
-                {{ $this->form }}
-
-                <div class="page-builder__panel-actions">
-                    <button type="button" wire:click="saveBlock" class="page-builder__save">Save block</button>
-                    <button type="button" wire:click="cancelSelection" class="page-builder__cancel">Cancel</button>
-                </div>
-            </div>
-        @endif
     </div>
 </div>

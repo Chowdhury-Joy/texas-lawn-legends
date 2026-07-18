@@ -259,15 +259,6 @@ window.PageBuilder = {
             });
         });
 
-        editor.on('component:selected', (component) => {
-            const attrs = component.getAttributes();
-
-            if (component.get('type') !== 'page-block') return;
-            if (!attrs['data-block-uuid'] || attrs['data-block-uuid'] === 'new') return;
-
-            wire.selectBlock(attrs['data-block-uuid']);
-
-        });
 
         editor.on('component:remove', (component) => {
             const attrs = component.getAttributes();
