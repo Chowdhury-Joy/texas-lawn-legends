@@ -1,10 +1,11 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\HomeController;
+use App\Http\Controllers\PageController;
+use App\Models\Page;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/', [PageController::class, 'home'])->name('home');
 
 /*
 |--------------------------------------------------------------------------
@@ -27,8 +28,11 @@ Route::get('/sitemap.xml', function () {
         ['loc' => url('/'), 'priority' => '1.0', 'changefreq' => 'weekly'],
         ['loc' => url('/estimate'), 'priority' => '0.9', 'changefreq' => 'monthly'],
         ['loc' => url('/portal'), 'priority' => '0.5', 'changefreq' => 'monthly'],
-        ['loc' => url('/privacy'), 'priority' => '0.3', 'changefreq' => 'yearly'],
     ];
+
+    foreach (Page::query()->published()->whereNotNull('slug')->get() as $page) {
+        $urls[] = ['loc' => url($page->slug), 'priority' => '0.5', 'changefreq' => 'monthly'];
+    }
 
     return response()
         ->view('sitemap', ['urls' => $urls])
@@ -47,9 +51,14 @@ Route::view('/estimate', 'estimate')->name('estimate');
 
 Route::view('/portal', 'portal')->name('portal');
 
-Route::view('/privacy', 'placeholder', [
-    'heading' => 'Privacy Compliance Terms',
-    'body' => 'Our privacy and compliance documentation will live here.',
-])->name('privacy');
-
 Route::get('/dashboard/{project:unique_dashboard_hash}', [DashboardController::class, 'show'])->name('dashboard');
+
+/*
+|--------------------------------------------------------------------------
+| CMS page catch-all
+|--------------------------------------------------------------------------
+| Must stay last — registration order decides precedence, and this matches
+| any single path segment that wasn't claimed by a route above.
+*/
+
+Route::get('/{page:slug}', [PageController::class, 'show'])->name('page.show');

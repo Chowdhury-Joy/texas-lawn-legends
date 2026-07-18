@@ -1,26 +1,29 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Support;
 
 use App\Models\Service;
 use App\Models\Testimonial;
 
-class HomeController extends Controller
+/**
+ * Data needed by the live-data blocks (service_matrix, neighborhood_proof) —
+ * shared by the public PageController and the admin PageBuilder editor so
+ * previews always match what the public site renders.
+ */
+class PageBlockData
 {
-    public function index()
+    public static function live(): array
     {
         $createServices = Service::query()->active()->createSuite()->ordered()->get();
         $careServices = Service::query()->active()->careSuite()->ordered()->get();
 
         $testimonials = Testimonial::query()->featured()->latest()->get();
 
-        // Neighborhood tabs are driven by the configured service areas plus any
-        // neighborhoods that already have featured proof attached.
         $neighborhoods = collect(['Kessler Park', 'Bishop Arts', 'Highland Park', 'University Park', 'Oak Lawn'])
             ->merge($testimonials->pluck('neighborhood'))
             ->unique()
             ->values();
 
-        return view('home', compact('createServices', 'careServices', 'testimonials', 'neighborhoods'));
+        return compact('createServices', 'careServices', 'testimonials', 'neighborhoods');
     }
 }

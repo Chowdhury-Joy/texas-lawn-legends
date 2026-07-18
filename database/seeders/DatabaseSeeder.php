@@ -28,6 +28,7 @@ class DatabaseSeeder extends Seeder
             AddonsSeeder::class,
             AccessCodesSeeder::class,
             SampleProjectSeeder::class,
+            PagesSeeder::class,
         ]);
     }
 }
