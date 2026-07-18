@@ -3,7 +3,7 @@
     <section class="border-t-4 border-slate-950 bg-slate-100">
         <div class="mx-auto max-w-3xl px-6 py-16">
             @if ($heading = $data['heading'] ?? null)
-                <h2 class="mb-10 text-center text-3xl font-black uppercase tracking-tight text-slate-900 sm:text-4xl">{{ $heading }}</h2>
+                <h2 data-field="heading" class="mb-10 text-center text-3xl font-black uppercase tracking-tight text-slate-900 sm:text-4xl">{{ $heading }}</h2>
             @endif
             <div class="space-y-4" x-data="{ open: null }">
                 @foreach ($items as $index => $item)

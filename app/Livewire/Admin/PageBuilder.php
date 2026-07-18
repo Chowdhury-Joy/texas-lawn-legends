@@ -178,6 +178,30 @@ class PageBuilder extends Component implements HasForms
             ->title('Page saved')
             ->success()
             ->send();
+
+        // Auto-refresh the browser page after updating
+        $this->js('window.location.reload()');
+    }
+
+    public function savePageWithData(array $uuids, array $blockDataUpdates): void
+    {
+        // 1. Reorder blocks based on client order
+        $this->reorder($uuids);
+
+        // 2. Update block data arrays with client-edited field values
+        foreach ($this->blocks as $index => $block) {
+            $uuid = $block['uuid'];
+            if (isset($blockDataUpdates[$uuid])) {
+                foreach ($blockDataUpdates[$uuid] as $field => $value) {
+                    $this->blocks[$index]['data'][$field] = $value;
+                }
+                // Update rendered HTML to match
+                $this->blocks[$index]['html'] = $this->renderBlock($block['type'], $this->blocks[$index]['data']);
+            }
+        }
+
+        // 3. Save to database
+        $this->save();
     }
 
     private function selectedType(): ?string

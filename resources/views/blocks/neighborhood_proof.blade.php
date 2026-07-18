@@ -1,9 +1,9 @@
 <section id="portfolio" class="border-t-4 border-slate-950 bg-brand-paper">
     <div class="mx-auto max-w-7xl px-6 py-20"
          x-data="{ active: 'All Neighborhoods' }">
-        <h2 class="text-center text-4xl font-black uppercase tracking-tight text-slate-900 sm:text-5xl">{{ $data['heading'] ?? 'Verified Local Proof' }}</h2>
+        <h2 data-field="heading" class="text-center text-4xl font-black uppercase tracking-tight text-slate-900 sm:text-5xl">{{ $data['heading'] ?? 'Verified Local Proof' }}</h2>
         @if ($proofSub = $data['subheading'] ?? null)
-            <p class="mx-auto mt-3 max-w-2xl text-center text-slate-600">{{ $proofSub }}</p>
+            <p data-field="subheading" class="mx-auto mt-3 max-w-2xl text-center text-slate-600">{{ $proofSub }}</p>
         @endif
 
         <div class="mt-10 flex flex-wrap justify-center gap-2">

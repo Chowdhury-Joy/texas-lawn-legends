@@ -15,18 +15,34 @@ function findComponentByUuid(uuid) {
 function configureBlockDescendants(component) {
     if (!component) return;
     component.components().forEach(child => {
-        child.set({
-            layerable: false,
-            selectable: false,
-            hoverable: false,
-            draggable: false,
-            droppable: false,
-            editable: false,
-            copyable: false,
-            removable: false,
-            badgable: false,
-            highlightable: false,
-        });
+        const hasField = child.getAttributes()['data-field'];
+        if (hasField) {
+            child.set({
+                layerable: false,
+                selectable: true,
+                hoverable: true,
+                draggable: false,
+                droppable: false,
+                editable: true,
+                copyable: false,
+                removable: false,
+                badgable: false,
+                highlightable: true,
+            });
+        } else {
+            child.set({
+                layerable: false,
+                selectable: false,
+                hoverable: false,
+                draggable: false,
+                droppable: false,
+                editable: false,
+                copyable: false,
+                removable: false,
+                badgable: false,
+                highlightable: false,
+            });
+        }
         configureBlockDescendants(child);
     });
 }
@@ -51,13 +67,35 @@ async function handleSavePage() {
     if (!activeWire || !activeEditor) return;
 
     const list = activeEditor.getWrapper().find('[data-gjs-type="page-block-list"]')[0] ?? activeEditor.getWrapper();
-    const uuids = list
-        .components()
-        .map((component) => component.getAttributes()['data-block-uuid'])
-        .filter((uuid) => uuid && uuid !== 'new');
+    
+    const blocks = list.components().filter((comp) => {
+        const uuid = comp.getAttributes()['data-block-uuid'];
+        return uuid && uuid !== 'new';
+    });
 
-    await activeWire.reorder(uuids);
-    await activeWire.save();
+    const uuids = blocks.map((comp) => comp.getAttributes()['data-block-uuid']);
+
+    const blockDataUpdates = {};
+    blocks.forEach((blockComp) => {
+        const uuid = blockComp.getAttributes()['data-block-uuid'];
+        const fields = {};
+        
+        blockComp.find('[data-field]').forEach((fieldComp) => {
+            const fieldName = fieldComp.getAttributes()['data-field'];
+            let content = '';
+            const el = fieldComp.getEl();
+            if (el) {
+                content = el.innerText || el.textContent || '';
+            } else {
+                content = fieldComp.get('content') || '';
+            }
+            fields[fieldName] = content.trim();
+        });
+
+        blockDataUpdates[uuid] = fields;
+    });
+
+    await activeWire.savePageWithData(uuids, blockDataUpdates);
 }
 
 document.addEventListener('click', (event) => {

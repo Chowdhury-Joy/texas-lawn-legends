@@ -1,7 +1,7 @@
 @php $processSteps = (array) ($data['steps'] ?? []); @endphp
 <section id="about" class="bg-white">
     <div class="mx-auto max-w-7xl px-6 py-20">
-        <h2 class="mx-auto max-w-3xl text-center text-4xl font-black uppercase leading-tight tracking-tight text-slate-900 sm:text-5xl">
+        <h2 data-field="heading" class="mx-auto max-w-3xl text-center text-4xl font-black uppercase leading-tight tracking-tight text-slate-900 sm:text-5xl">
             {{ $data['heading'] ?? 'Our 3-Step Transformation Process — Deliver The Wow' }}
         </h2>
         <div class="mt-14 grid grid-cols-1 gap-8 lg:grid-cols-3">
