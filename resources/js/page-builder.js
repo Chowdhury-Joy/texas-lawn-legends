@@ -12,6 +12,25 @@ function findComponentByUuid(uuid) {
     return activeEditor.getWrapper().find(`[data-block-uuid="${uuid}"]`)[0] ?? null;
 }
 
+function configureBlockDescendants(component) {
+    if (!component) return;
+    component.components().forEach(child => {
+        child.set({
+            layerable: false,
+            selectable: false,
+            hoverable: false,
+            draggable: false,
+            droppable: false,
+            editable: false,
+            copyable: false,
+            removable: false,
+            badgable: false,
+            highlightable: false,
+        });
+        configureBlockDescendants(child);
+    });
+}
+
 async function handleSavePage() {
     if (!activeWire || !activeEditor) return;
 
@@ -139,7 +158,12 @@ window.PageBuilder = {
 
         editor.setComponents(wrapperHtml);
 
-        // Customize labels and hide nested HTML children inside page-block elements from the Layer Manager
+        // Configure all initial block descendants (hide them from layers and disable selection)
+        editor.getWrapper().find('[data-gjs-type="page-block"]').forEach(block => {
+            configureBlockDescendants(block);
+        });
+
+        // Customize labels for page-block elements when added
         editor.on('component:add', (component) => {
             const type = component.get('type');
             if (type === 'page-block') {
@@ -147,20 +171,6 @@ window.PageBuilder = {
                 const label = labels[blockType] || blockType;
                 component.set('custom-name', label);
                 component.set('name', label);
-            } else if (type !== 'page-block-list') {
-                // If it is inside a page-block, hide it from layers
-                let parent = component.parent();
-                let isInsideBlock = false;
-                while (parent) {
-                    if (parent.get('type') === 'page-block') {
-                        isInsideBlock = true;
-                        break;
-                    }
-                    parent = parent.parent();
-                }
-                if (isInsideBlock) {
-                    component.set('layerable', false);
-                }
             }
         });
 
@@ -188,7 +198,10 @@ window.PageBuilder = {
 
             wire.addBlock(type).then(({ uuid, html }) => {
                 component.remove();
-                parent.append(blockWrapperHtml(uuid, type, html), { at: index });
+                const newBlock = parent.append(blockWrapperHtml(uuid, type, html), { at: index })[0] ?? null;
+                if (newBlock) {
+                    configureBlockDescendants(newBlock);
+                }
             });
         });
 
@@ -230,7 +243,10 @@ window.PageBuilder = {
                 suppressRemoveFor = null;
             }
 
-            parent.append(blockWrapperHtml(uuid, type, html), { at: index });
+            const newBlock = parent.append(blockWrapperHtml(uuid, type, html), { at: index })[0] ?? null;
+            if (newBlock) {
+                configureBlockDescendants(newBlock);
+            }
         });
 
         // Sidebar Resizer logic
