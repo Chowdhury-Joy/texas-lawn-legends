@@ -311,7 +311,7 @@ window.PageBuilder = {
 
         // Sidebar Resizer logic
         const resizer = document.getElementById('sidebar-resize-handle');
-        const sidebar = canvas.closest('.page-builder__body')?.querySelector('.page-builder__sidebar');
+        const sidebar = canvas.closest('.page-builder__body')?.querySelector('.page-builder__sidebar--left');
         const builderRoot = canvas.closest('.page-builder');
 
         if (resizer && sidebar) {
