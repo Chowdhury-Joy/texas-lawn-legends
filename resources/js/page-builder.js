@@ -98,7 +98,7 @@ window.PageBuilder = {
             },
             deviceManager: {
                 devices: [
-                    { name: 'Desktop', width: '' },
+                    { name: 'Desktop', width: '1280px' },
                     { name: 'Tablet', width: '768px' },
                     { name: 'Mobile', width: '375px' },
                 ],
@@ -126,6 +126,7 @@ window.PageBuilder = {
                 if (device === 'mobile') deviceName = 'Mobile';
 
                 editor.setDevice(deviceName);
+                editor.Canvas.setZoom('fit'); // Fit zoom after device switch
                 
                 document.querySelectorAll('.page-builder__device-btn').forEach(b => b.classList.remove('active'));
                 e.currentTarget.classList.add('active');
@@ -186,6 +187,16 @@ window.PageBuilder = {
         // Recursively initialize names and configure block descendants for all initial components
         initializeComponentTree(editor.getWrapper(), labels);
 
+        // Trigger zoom-to-fit once the canvas frame is ready
+        setTimeout(() => {
+            editor.Canvas.setZoom('fit');
+        }, 200);
+
+        // Auto-zoom on window resize
+        window.addEventListener('resize', () => {
+            editor.Canvas.setZoom('fit');
+        });
+
         availableTypes.forEach((type) => {
             editor.BlockManager.add(type, {
                 label: labels[type] ?? type,
@@ -224,6 +235,18 @@ window.PageBuilder = {
             if (!attrs['data-block-uuid'] || attrs['data-block-uuid'] === 'new') return;
 
             wire.selectBlock(attrs['data-block-uuid']);
+
+            // Auto zoom out canvas when edit sidebar panel opens
+            setTimeout(() => {
+                editor.Canvas.setZoom('fit');
+            }, 100);
+        });
+
+        editor.on('component:deselected', () => {
+            // Auto zoom in/adjust canvas when edit sidebar panel closes
+            setTimeout(() => {
+                editor.Canvas.setZoom('fit');
+            }, 100);
         });
 
         editor.on('component:remove', (component) => {
@@ -285,6 +308,7 @@ window.PageBuilder = {
                 // Restrict sidebar width between 200px and 450px
                 if (width >= 200 && width <= 450) {
                     sidebar.style.width = `${width}px`;
+                    editor.Canvas.setZoom('fit'); // Dynamically update zoom while resizing
                 }
             }
 
