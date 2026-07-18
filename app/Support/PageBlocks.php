@@ -41,7 +41,7 @@ class PageBlocks
      */
     public static function forHomepage(): array
     {
-        return ['hero', 'trust_bar', 'three_step', 'service_matrix', 'neighborhood_proof', 'cta_banner'];
+        return static::all();
     }
 
     /**

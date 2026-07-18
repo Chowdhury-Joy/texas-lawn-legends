@@ -273,3 +273,16 @@
 .gjs-frame {
     margin-top: 0 !important;
 }
+
+/* Allow click-through of structural containers to target data-field text elements inside GrapesJS iframe */
+[data-gjs-type="page-block"] {
+    pointer-events: auto !important;
+}
+
+[data-gjs-type="page-block"] * {
+    pointer-events: none !important;
+}
+
+[data-gjs-type="page-block"] [data-field] {
+    pointer-events: auto !important;
+}

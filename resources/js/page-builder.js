@@ -15,34 +15,18 @@ function findComponentByUuid(uuid) {
 function configureBlockDescendants(component) {
     if (!component) return;
     component.components().forEach(child => {
-        const hasField = child.getAttributes()['data-field'];
-        if (hasField) {
-            child.set({
-                layerable: false,
-                selectable: true,
-                hoverable: true,
-                draggable: false,
-                droppable: false,
-                editable: true,
-                copyable: false,
-                removable: false,
-                badgable: false,
-                highlightable: true,
-            });
-        } else {
-            child.set({
-                layerable: false,
-                selectable: false,
-                hoverable: false,
-                draggable: false,
-                droppable: false,
-                editable: false,
-                copyable: false,
-                removable: false,
-                badgable: false,
-                highlightable: false,
-            });
-        }
+        child.set({
+            layerable: false,
+            selectable: true,
+            hoverable: true,
+            draggable: false,
+            droppable: false,
+            editable: true,
+            copyable: false,
+            removable: false,
+            badgable: false,
+            highlightable: true,
+        });
         configureBlockDescendants(child);
     });
 }
