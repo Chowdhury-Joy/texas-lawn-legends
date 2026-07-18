@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="overflow-x-hidden theme-{{ setting('theme', 'clean') }}" lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html class="overflow-x-hidden theme-{{ request('preview_theme', setting('theme', 'clean')) }}" lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">

@@ -5,6 +5,7 @@ namespace App\Filament\Pages;
 use BackedEnum;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
@@ -120,6 +121,13 @@ class ManageBranding extends BaseSettingsPage
                         ->label('Accent (safety yellow)'),
                     ColorPicker::make('color_slate')
                         ->label('Structural slate'),
+                ]),
+            Section::make('Theme Preview')
+                ->description('Preview each theme live without saving. Select a theme above, then Save changes to apply it.')
+                ->schema([
+                    Placeholder::make('theme_preview')
+                        ->label('')
+                        ->content(view('filament.pages.theme-preview')),
                 ]),
         ];
     }

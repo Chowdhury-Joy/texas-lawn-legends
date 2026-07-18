@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\Auth\Login;
 use App\Filament\Widgets\BusinessSnapshot;
 use App\Filament\Widgets\LeadFunnel;
 use App\Filament\Widgets\NeedsAttention;
@@ -30,7 +31,7 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
-            ->login(\App\Filament\Pages\Auth\Login::class)
+            ->login(Login::class)
             ->sidebarCollapsibleOnDesktop()
             ->colors([
                 'primary' => Color::Amber,

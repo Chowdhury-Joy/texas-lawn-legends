@@ -10,12 +10,22 @@ use App\Filament\Resources\Pages\Tables\PagesTable;
 use App\Models\Page as PageModel;
 use BackedEnum;
 use Filament\Resources\Resource;
+use App\Filament\Concerns\RoleRestricted;
+use App\Enums\UserRole;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
 class PageResource extends Resource
 {
+    use RoleRestricted;
+
+    public static function allowedRoles(): array
+    {
+        return [UserRole::Admin, UserRole::Operations];
+    }
+
+    
     protected static ?string $model = PageModel::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentDuplicate;

@@ -10,12 +10,22 @@ use App\Filament\Resources\Addons\Tables\AddonsTable;
 use App\Models\Addon;
 use BackedEnum;
 use Filament\Resources\Resource;
+use App\Filament\Concerns\RoleRestricted;
+use App\Enums\UserRole;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
 class AddonResource extends Resource
 {
+    use RoleRestricted;
+
+    public static function allowedRoles(): array
+    {
+        return [UserRole::Admin, UserRole::Operations];
+    }
+
+    
     protected static ?string $model = Addon::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPuzzlePiece;
