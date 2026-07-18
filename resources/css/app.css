@@ -37,7 +37,7 @@
 @layer components {
     /* Hard-edged neo-brutalist block button with pressed hover state */
     .btn-brutal {
-        @apply inline-flex items-center justify-center gap-2 border-2 border-slate-950 font-black uppercase tracking-wide transition-all;
+        @apply inline-flex items-center justify-center gap-2 border-2 border-slate-950 font-medium uppercase tracking-wide transition-all;
         box-shadow: 4px 4px 0px 0px rgba(15, 23, 42, 1);
     }
     .btn-brutal:hover {

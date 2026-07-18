@@ -49,6 +49,35 @@ class PagesSeeder extends Seeder
                 'heading' => Setting::get('proof_heading'),
                 'subheading' => Setting::get('proof_subheading'),
             ]),
+            $this->block('faq', [
+                'heading' => 'Frequently Asked Questions',
+                'items' => [
+                    [
+                        'question' => 'What neighborhoods in Dallas do you serve?',
+                        'answer' => 'We currently serve Bishop Arts, Kessler Park, Highland Park, University Park, Oak Lawn, and surrounding Dallas neighborhoods.',
+                    ],
+                    [
+                        'question' => 'How does the automated estimator calculate pricing?',
+                        'answer' => 'Our pricing engine uses a base rate modified by your property square footage, neighborhood complexity factor, and specific service selection to give you an accurate cost range.',
+                    ],
+                    [
+                        'question' => 'What is the difference between the Create and Care suites?',
+                        'answer' => 'The Create Suite is for custom landscaping design, sod installation, and structural hardscaping. The Care Suite handles comprehensive ongoing lawn maintenance, weed mitigation, and property preservation.',
+                    ],
+                    [
+                        'question' => 'What happens if my project size exceeds your limits?',
+                        'answer' => 'If your estimated project cost exceeds $25,000, or your property square footage exceeds 10,000 sq ft, we bypass the automated pricing engine and transition you directly to a custom architect-led design consultation.',
+                    ],
+                    [
+                        'question' => 'Can I reschedule my walkthrough appointment?',
+                        'answer' => 'Yes. You will receive an email and SMS confirmation containing a link to manage, reschedule, or cancel your 30-minute property walkthrough at any time.',
+                    ],
+                    [
+                        'question' => 'How do I access my private client dashboard?',
+                        'answer' => 'Once our staff sets up your project, you will be sent a unique dashboard link (e.g. /dashboard/{hash}). No username or password is required—your unique URL serves as your secure access point to see progress photos, milestones, and status updates.',
+                    ],
+                ],
+            ]),
             $this->block('cta_banner', [
                 'heading' => Setting::get('cta_heading'),
                 'subheading' => Setting::get('cta_subheading'),

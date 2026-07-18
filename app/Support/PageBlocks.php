@@ -83,7 +83,12 @@ class PageBlocks
             FileUpload::make('media_image')
                 ->label('Hero image (optional)')
                 ->image()->directory('homepage')->disk('public')->visibility('public')
-                ->helperText('Falls back to the styled placeholder card when empty.')
+                ->helperText('Falls back to the default desktop image when empty.')
+                ->columnSpanFull(),
+            FileUpload::make('media_image_mobile')
+                ->label('Hero mobile image (optional)')
+                ->image()->directory('homepage')->disk('public')->visibility('public')
+                ->helperText('Used as the landscape mobile image. Falls back to the default mobile image when empty.')
                 ->columnSpanFull(),
             TextInput::make('media_badge')->label('Media badge'),
             TextInput::make('media_neighborhood')->label('Media neighborhood label'),

@@ -7,6 +7,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\FileUpload;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Str;
 
@@ -35,9 +36,14 @@ class ServiceForm
                     ->required()
                     ->native(false),
                 TextInput::make('icon')
-                    ->required()
                     ->maxLength(255)
-                    ->helperText('Heroicon name or SVG asset key, e.g. heroicon-o-home.'),
+                    ->helperText('Heroicon name or SVG asset key, e.g. heroicon-o-home (optional if image is uploaded).'),
+                FileUpload::make('image')
+                    ->image()
+                    ->directory('services')
+                    ->disk('public')
+                    ->visibility('public')
+                    ->helperText('Optional image to display instead of the icon on the frontend.'),
                 Textarea::make('short_description')
                     ->required()
                     ->rows(2)

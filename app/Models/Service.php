@@ -19,6 +19,7 @@ class Service extends Model
         'short_description',
         'long_description',
         'icon',
+        'image',
         'base_price_multiplier',
         'is_active',
         'sort_order',

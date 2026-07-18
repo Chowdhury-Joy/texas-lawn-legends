@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html class="overflow-x-hidden" lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -43,7 +43,7 @@
 
     @stack('head')
 </head>
-<body class="min-h-screen bg-white font-sans text-slate-900 antialiased">
+<body class="min-h-screen bg-white font-sans text-slate-900 antialiased overflow-x-hidden">
 
     {{-- ============================= HEADER ============================= --}}
     <header class="sticky top-0 z-50 w-full border-b-4 border-slate-950 bg-white">
@@ -71,12 +71,9 @@
             </nav>
 
             <div class="flex items-center gap-3">
-                <a href="{{ $telHref }}" class="hidden items-center gap-1.5 text-sm font-bold text-slate-900 hover:text-emerald-800 md:flex">
-                    <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z"/></svg>
+                <a href="{{ $telHref }}" class="border-2 border-slate-950 px-2 py-1.5 text-[10px] sm:px-3 sm:py-2 sm:text-xs font-medium uppercase tracking-wide text-slate-900 transition-colors hover:bg-slate-100 inline-block">
                     {{ $phone }}
                 </a>
-                <a href="{{ url('/#book') }}" class="hidden border-2 border-slate-950 px-3 py-2 text-xs font-black uppercase tracking-wide text-slate-900 transition-colors hover:bg-slate-100 sm:inline-block">Request A Quote</a>
-                <a href="{{ url('/estimate') }}" class="btn-brutal bg-yellow-400 px-3 py-2 text-xs text-slate-950 sm:px-4">Get Instant Estimate</a>
             </div>
         </div>
     </header>

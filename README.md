@@ -133,7 +133,7 @@ npm run build          # or `npm run dev` while iterating on frontend
 php artisan serve
 ```
 
-Seeded admin login: `admin@texaslawnlegends.com` / `password` at `/admin`.
+Seeded admin login: `admin` / `pass` at `/admin`.
 
 Seeded member-portal codes (current month only — regenerate via `AccessCodesSeeder` if testing in a later month): `LEGENDS-<ymd>`, `MEMBER-<MON>`.
 
