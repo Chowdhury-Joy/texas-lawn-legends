@@ -6,10 +6,10 @@
         
         <div class="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             @foreach ($createServices as $service)
-                <div class="border-2 border-emerald-950 bg-emerald-800/40 p-6 shadow-[6px_6px_0px_0px_rgba(15,23,42,1)] mr-[6px] sm:mr-0 flex flex-col justify-between">
+                <div class="border-2 border-emerald-950 bg-emerald-800/40 p-6 shadow-brutal-forest mr-[6px] sm:mr-0 flex flex-col justify-between">
                     <div>
                         @if (filled($service->image))
-                            <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($service->image) }}" alt="{{ $service->title }}" class="h-10 w-10 object-cover border-2 border-slate-950 bg-slate-100 shadow-[2px_2px_0px_0px_rgba(15,23,42,1)] mb-3">
+                            <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($service->image) }}" alt="{{ $service->title }}" class="h-10 w-10 object-cover border-2 border-slate-950 bg-slate-100 shadow-brutal-sm mb-3">
                         @elseif (filled($service->icon))
                             <x-svg-icon :name="$service->icon" class="h-8 w-8 text-yellow-400" />
                         @endif
@@ -31,10 +31,10 @@
         
         <div class="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             @foreach ($careServices as $service)
-                <div class="border-2 border-slate-950 bg-white p-6 shadow-[6px_6px_0px_0px_rgba(15,23,42,1)] mr-[6px] sm:mr-0 flex flex-col justify-between">
+                <div class="border-2 border-slate-950 bg-white p-6 shadow-brutal-forest mr-[6px] sm:mr-0 flex flex-col justify-between">
                     <div>
                         @if (filled($service->image))
-                            <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($service->image) }}" alt="{{ $service->title }}" class="h-10 w-10 object-cover border-2 border-slate-950 bg-slate-100 shadow-[2px_2px_0px_0px_rgba(15,23,42,1)] mb-3">
+                            <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($service->image) }}" alt="{{ $service->title }}" class="h-10 w-10 object-cover border-2 border-slate-950 bg-slate-100 shadow-brutal-sm mb-3">
                         @elseif (filled($service->icon))
                             <x-svg-icon :name="$service->icon" class="h-8 w-8 text-yellow-500" />
                         @endif

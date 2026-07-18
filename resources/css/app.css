@@ -19,7 +19,7 @@
     --color-brand-paper: #f8fafc;
 }
 
-/* Hard block-shadow helpers referenced inline across sections */
+/* Hard block-shadow helpers — only applied under the Bold theme */
 @utility shadow-brutal {
     box-shadow: 8px 8px 0px 0px rgba(15, 23, 42, 1);
 }
@@ -35,19 +35,65 @@
 }
 
 @layer components {
+    /* Clean theme (default): flat — no shadows, no heavy borders.
+       Bold theme opts into the original neo-brutalist look. */
+
     /* Hard-edged neo-brutalist block button with pressed hover state */
     .btn-brutal {
-        @apply inline-flex items-center justify-center gap-2 border-2 border-slate-950 font-medium uppercase tracking-wide transition-all;
+        @apply inline-flex items-center justify-center gap-2 font-medium uppercase tracking-wide transition-all;
+    }
+    .theme-bold .btn-brutal {
+        @apply border-2 border-slate-950;
         box-shadow: 4px 4px 0px 0px rgba(15, 23, 42, 1);
     }
-    .btn-brutal:hover {
+    .theme-bold .btn-brutal:hover {
         transform: translate(2px, 2px);
         box-shadow: 2px 2px 0px 0px rgba(15, 23, 42, 1);
     }
 
     /* Structural container: thick border + hard unblurred drop shadow */
     .box-brutal {
-        @apply border-4 border-slate-950 bg-white;
+        @apply bg-white;
+    }
+    .theme-bold .box-brutal {
+        @apply border-4 border-slate-950;
         box-shadow: 8px 8px 0px 0px rgba(15, 23, 42, 1);
     }
+
+    /* Bold-only shadows referenced inline via @apply utilities */
+    .theme-bold .shadow-brutal { box-shadow: 8px 8px 0px 0px rgba(15, 23, 42, 1); }
+    .theme-bold .shadow-brutal-sm { box-shadow: 4px 4px 0px 0px rgba(15, 23, 42, 1); }
+    .theme-bold .shadow-brutal-forest { box-shadow: 6px 6px 0px 0px rgba(27, 67, 50, 1); }
+}
+
+/* Clean theme (default): flatten the heavy structural borders & dividers
+   and neutralize hard box-shadows that the Bold/brutalist look relies on.
+   Done globally so individual views don't need theme guards. */
+.theme-clean [class*="border-slate-950"] {
+    border-color: rgb(226 232 240); /* slate-200 */
+    border-width: 1px;
+}
+.theme-clean [class*="border-4"] {
+    border-width: 1px;
+}
+.theme-clean [class*="border-2"] {
+    border-width: 1px;
+}
+.theme-clean [style*="box-shadow"] {
+    box-shadow: none !important;
+}
+.theme-clean .shadow-brutal,
+.theme-clean .shadow-brutal-sm,
+.theme-clean .shadow-brutal-forest {
+    box-shadow: none;
+}
+/* Keep section dividers as subtle hairlines rather than 4px slabs */
+.theme-clean header,
+.theme-clean footer,
+.theme-clean section[class*="border-t-4"],
+.theme-clean section[class*="border-b-4"],
+.theme-clean section[class*="border-y-4"] {
+    border-color: rgb(226 232 240); /* slate-200 */
+    border-top-width: 1px;
+    border-bottom-width: 1px;
 }

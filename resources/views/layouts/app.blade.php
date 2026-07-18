@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="overflow-x-hidden" lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html class="overflow-x-hidden @if(setting('theme', 'clean') === 'bold')theme-bold @else theme-clean @endif" lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">

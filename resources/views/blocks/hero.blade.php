@@ -40,7 +40,7 @@
 
         {{-- Right media box --}}
         <div class="lg:col-span-5 mr-[8px] lg:mr-0">
-            <div class="box-brutal relative overflow-hidden" style="box-shadow: 8px 8px 0px 0px rgba(15,23,42,1);">
+            <div class="box-brutal relative overflow-hidden">
                 <picture>
                     <source srcset="{{ $heroImageMobile }}" media="(max-width: 1023px)">
                     <img src="{{ $heroImage }}" alt="{{ $data['media_title'] ?? 'Texas Lawn Legends Residential Landscaping' }}" class="w-full object-cover aspect-[16/9] lg:aspect-[4/5]">

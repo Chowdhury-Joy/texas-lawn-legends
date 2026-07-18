@@ -39,12 +39,26 @@ class ManageBranding extends BaseSettingsPage
             'color_primary_light' => 'string',
             'color_accent' => 'string',
             'color_slate' => 'string',
+            'theme' => 'string',
+
         ];
     }
 
     protected function formComponents(): array
     {
         return [
+            Section::make('Theme')
+                ->schema([
+                    Select::make('theme')
+                        ->label('Site theme')
+                        ->native(false)
+                        ->default('clean')
+                        ->options([
+                            'clean' => 'Clean (flat, no shadows — default)',
+                            'bold' => 'Bold (neo-brutalist hard shadows & borders)',
+                        ])
+                        ->helperText('Clean is the default. Bold reproduces the original hard-edged brutalist look.'),
+                ]),
             Section::make('Logo & Identity')
                 ->columns(2)
                 ->schema([

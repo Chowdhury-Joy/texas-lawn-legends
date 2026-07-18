@@ -1,4 +1,4 @@
-<section class="border-t-4 border-slate-950 bg-yellow-400 px-6 py-16 text-center">
+<section class="cta-banner bg-yellow-400 px-6 py-16 text-center">
     <div class="mx-auto max-w-3xl">
         <h2 data-field="heading" class="text-3xl font-medium leading-tight tracking-tighter text-slate-950 sm:text-4xl">
             {{ $data['heading'] ?? 'Ready To Systematize Your Property Transformation?' }}
