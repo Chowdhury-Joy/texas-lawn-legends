@@ -5,7 +5,7 @@
     --pb-surface-alt: #f8fafc;
     --pb-border: #e2e8f0;
     --pb-text: #0f172a;
-    --pb-text-muted: #64748b;
+    --pb-text-muted: #475569; /* slate-600 for better light-mode contrast */
 
     display: flex;
     flex-direction: column;
@@ -22,7 +22,15 @@
     --pb-surface-alt: #0f172a;
     --pb-border: #334155;
     --pb-text: #f1f5f9;
-    --pb-text-muted: #94a3b8;
+    --pb-text-muted: #cbd5e1; /* slate-300 for better dark-mode contrast */
+}
+
+/* Accessibility Focus Outlines */
+.page-builder button:focus-visible,
+.page-builder__tab:focus-visible {
+    outline: 2px solid #facc15 !important;
+    outline-offset: 2px !important;
+    box-shadow: 0 0 0 4px rgba(250, 204, 21, 0.4) !important;
 }
 
 .page-builder__toolbar {
