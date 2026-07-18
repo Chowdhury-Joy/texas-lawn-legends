@@ -133,6 +133,19 @@ window.PageBuilder = {
 
         editor.setComponents(wrapperHtml);
 
+        // Customize labels and hide internal HTML nodes in the Layer Manager (Sections)
+        editor.on('component:add', (component) => {
+            const type = component.get('type');
+            if (type === 'page-block') {
+                const blockType = component.getAttributes()['data-block-type'];
+                const label = labels[blockType] || blockType;
+                component.set('custom-name', label);
+                component.set('name', label);
+            } else {
+                component.set('layerable', false);
+            }
+        });
+
         availableTypes.forEach((type) => {
             editor.BlockManager.add(type, {
                 label: labels[type] ?? type,

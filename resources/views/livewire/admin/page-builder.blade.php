@@ -4,7 +4,8 @@
 
 <div
     class="page-builder"
-    x-data
+    x-data="{ sidebarOpen: true }"
+    :class="{ 'sidebar-collapsed': !sidebarOpen }"
     x-init="window.PageBuilder.init($wire, {
         canvas: $refs.canvas,
         blocksPanel: $refs.blocksPanel,
@@ -18,7 +19,12 @@
     @vite(['resources/css/page-builder.css', 'resources/js/page-builder.js'])
 
     <div class="page-builder__toolbar">
-        <span class="page-builder__title">{{ $page->title }}</span>
+        <div class="page-builder__title-wrap">
+            <button type="button" @click="sidebarOpen = !sidebarOpen" class="page-builder__toggle-btn" title="Toggle Sidebar">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+            </button>
+            <span class="page-builder__title">{{ $page->title }}</span>
+        </div>
 
         <div class="page-builder__device-selector">
             <button type="button" class="page-builder__device-btn active" data-device="desktop" title="Desktop View">
@@ -48,8 +54,8 @@
             <div x-ref="canvas"></div>
         </div>
 
-        <div class="page-builder__side-panel">
-            @if ($selectedUuid)
+        @if ($selectedUuid)
+            <div class="page-builder__side-panel">
                 <div class="page-builder__panel-label">Edit {{ $this->labels()[collect($blocks)->firstWhere('uuid', $selectedUuid)['type'] ?? ''] ?? 'block' }}</div>
 
                 {{ $this->form }}
@@ -58,9 +64,7 @@
                     <button type="button" wire:click="saveBlock" class="page-builder__save">Save block</button>
                     <button type="button" wire:click="cancelSelection" class="page-builder__cancel">Cancel</button>
                 </div>
-            @else
-                <p class="page-builder__hint">Select a section on the canvas to edit its content.</p>
-            @endif
-        </div>
+            </div>
+        @endif
     </div>
 </div>

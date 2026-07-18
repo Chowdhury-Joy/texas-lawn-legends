@@ -66,7 +66,7 @@
 }
 
 .page-builder__sidebar {
-    width: 220px;
+    width: 200px;
     flex-shrink: 0;
     border-right: 1px solid var(--pb-border);
     overflow-y: auto;
@@ -79,7 +79,7 @@
 }
 
 .page-builder__side-panel {
-    width: 320px;
+    width: 300px;
     flex-shrink: 0;
     border-left: 1px solid var(--pb-border);
     overflow-y: auto;
@@ -164,4 +164,61 @@
 
 :where(.dark) .page-builder__canvas-wrap {
     background: #0f172a;
+}
+
+/* Sidebar toggle button & layout */
+.page-builder__title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.page-builder__toggle-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.25rem;
+    border: none;
+    background: transparent;
+    color: var(--pb-text-muted);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.page-builder__toggle-btn:hover {
+    color: var(--pb-text);
+    background: var(--pb-surface-alt);
+}
+
+.page-builder__toggle-btn svg {
+    width: 1.25rem;
+    height: 1.25rem;
+    display: block;
+}
+
+.page-builder.sidebar-collapsed .page-builder__sidebar {
+    display: none;
+}
+
+/* GrapesJS Layer Manager styling overrides to prevent white-on-white text */
+.gjs-layer,
+.gjs-layer-title,
+.gjs-layer-name,
+.gjs-layer__title,
+.gjs-layer__name,
+.gjs-layer-caret {
+    color: var(--pb-text) !important;
+    fill: var(--pb-text) !important;
+}
+
+.gjs-layer:hover,
+.gjs-layer.gjs-active {
+    background-color: var(--pb-surface-alt) !important;
+    color: var(--pb-text) !important;
+}
+
+.gjs-layers-c {
+    background: transparent !important;
 }
