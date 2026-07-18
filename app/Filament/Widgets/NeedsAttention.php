@@ -10,6 +10,8 @@ use Filament\Widgets\TableWidget;
 
 class NeedsAttention extends TableWidget
 {
+    protected static bool $isLazy = false;
+
     protected static ?int $sort = -2;
 
     protected int|string|array $columnSpan = 'full';

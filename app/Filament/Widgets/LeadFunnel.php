@@ -8,6 +8,8 @@ use Filament\Widgets\ChartWidget;
 
 class LeadFunnel extends ChartWidget
 {
+    protected static bool $isLazy = false;
+
     protected ?string $heading = 'Lead Funnel — Last 30 Days';
 
     protected static ?int $sort = 0;

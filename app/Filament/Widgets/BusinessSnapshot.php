@@ -11,6 +11,8 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class BusinessSnapshot extends StatsOverviewWidget
 {
+    protected static bool $isLazy = false;
+
     protected static ?int $sort = -3;
 
     protected function getStats(): array

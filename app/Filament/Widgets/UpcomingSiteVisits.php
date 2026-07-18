@@ -10,6 +10,8 @@ use Filament\Widgets\TableWidget;
 
 class UpcomingSiteVisits extends TableWidget
 {
+    protected static bool $isLazy = false;
+
     protected static ?int $sort = -1;
 
     protected int|string|array $columnSpan = 'full';
