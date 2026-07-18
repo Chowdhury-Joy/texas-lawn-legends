@@ -61,31 +61,41 @@
 
     <div class="page-builder__body">
         <div class="page-builder__sidebar">
-            <div class="page-builder__tabs" role="tablist" aria-label="Editor Sidebar Tabs">
-                <button type="button" class="page-builder__tab" role="tab" :aria-selected="activeTab === 'blocks'" aria-controls="panel-blocks" id="tab-btn-blocks" :class="{ 'active': activeTab === 'blocks' }" @click="activeTab = 'blocks'">Blocks</button>
-                <button type="button" class="page-builder__tab" role="tab" :aria-selected="activeTab === 'layers'" aria-controls="panel-layers" id="tab-btn-layers" :class="{ 'active': activeTab === 'layers' }" @click="activeTab = 'layers'">Structure</button>
-                <button type="button" class="page-builder__tab" role="tab" :aria-selected="activeTab === 'styles'" aria-controls="panel-styles" id="tab-btn-styles" :class="{ 'active': activeTab === 'styles' }" @click="activeTab = 'styles'">Design</button>
-                <button type="button" class="page-builder__tab" role="tab" :aria-selected="activeTab === 'traits'" aria-controls="panel-traits" id="tab-btn-traits" :class="{ 'active': activeTab === 'traits' }" @click="activeTab = 'traits'">Settings</button>
+            <div class="page-builder__sidebar-tabs" role="tablist" aria-label="Editor Sidebar Tabs">
+                <button type="button" class="page-builder__sidebar-tab" role="tab" :aria-selected="activeTab === 'blocks'" aria-controls="panel-blocks" id="tab-btn-blocks" :class="{ 'active': activeTab === 'blocks' }" @click="activeTab = 'blocks'" title="Add Blocks">
+                    <svg class="w-5 h-5" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"/></svg>
+                </button>
+                <button type="button" class="page-builder__sidebar-tab" role="tab" :aria-selected="activeTab === 'layers'" aria-controls="panel-layers" id="tab-btn-layers" :class="{ 'active': activeTab === 'layers' }" @click="activeTab = 'layers'" title="Structure / Layers">
+                    <svg class="w-5 h-5" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6.429 9.75L2.25 12l4.179 2.25m0-4.5l5.571 3 5.571-3m-11.142 0L12 7.5l5.571 2.25m-11.142 4.5L12 16.5l5.571-2.25m-11.142 0L2.25 12l4.179-2.25m11.142 4.5l4.179-2.25-4.179-2.25M6 16.5v2.25L12 21l6-2.25V16.5"/></svg>
+                </button>
+                <button type="button" class="page-builder__sidebar-tab" role="tab" :aria-selected="activeTab === 'styles'" aria-controls="panel-styles" id="tab-btn-styles" :class="{ 'active': activeTab === 'styles' }" @click="activeTab = 'styles'" title="Design / Styles">
+                    <svg class="w-5 h-5" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.53 16.122a3 3 0 00-2.22 1.124l-3.147 4.294a.375.375 0 00.315.614h18.27a.375.375 0 00.315-.614l-3.15-4.29a3 3 0 00-2.217-1.128h-8.172zM10.5 7.5a2 2 0 11-4 0 2 2 0 014 0zm9 0a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                </button>
+                <button type="button" class="page-builder__sidebar-tab" role="tab" :aria-selected="activeTab === 'traits'" aria-controls="panel-traits" id="tab-btn-traits" :class="{ 'active': activeTab === 'traits' }" @click="activeTab = 'traits'" title="Element Settings">
+                    <svg class="w-5 h-5" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75"/></svg>
+                </button>
             </div>
 
-            <div class="page-builder__tab-content" id="panel-blocks" role="tabpanel" aria-labelledby="tab-btn-blocks" x-show="activeTab === 'blocks'">
-                <div class="page-builder__panel-label">Add a section</div>
-                <div wire:ignore x-ref="blocksPanel" class="page-builder__blocks"></div>
-            </div>
+            <div class="page-builder__sidebar-panel-body">
+                <div class="page-builder__tab-content" id="panel-blocks" role="tabpanel" aria-labelledby="tab-btn-blocks" x-show="activeTab === 'blocks'">
+                    <div class="page-builder__panel-label">Add a section</div>
+                    <div wire:ignore x-ref="blocksPanel" class="page-builder__blocks"></div>
+                </div>
 
-            <div class="page-builder__tab-content" id="panel-layers" role="tabpanel" aria-labelledby="tab-btn-layers" x-show="activeTab === 'layers'" x-cloak>
-                <div class="page-builder__panel-label">Sections &amp; Items</div>
-                <div wire:ignore x-ref="layersPanel" class="page-builder__layers"></div>
-            </div>
+                <div class="page-builder__tab-content" id="panel-layers" role="tabpanel" aria-labelledby="tab-btn-layers" x-show="activeTab === 'layers'" x-cloak>
+                    <div class="page-builder__panel-label">Sections &amp; Items</div>
+                    <div wire:ignore x-ref="layersPanel" class="page-builder__layers"></div>
+                </div>
 
-            <div class="page-builder__tab-content" id="panel-styles" role="tabpanel" aria-labelledby="tab-btn-styles" x-show="activeTab === 'styles'" x-cloak>
-                <div class="page-builder__panel-label">Styles Inspector</div>
-                <div wire:ignore x-ref="stylesPanel" class="page-builder__styles"></div>
-            </div>
+                <div class="page-builder__tab-content" id="panel-styles" role="tabpanel" aria-labelledby="tab-btn-styles" x-show="activeTab === 'styles'" x-cloak>
+                    <div class="page-builder__panel-label">Styles Inspector</div>
+                    <div wire:ignore x-ref="stylesPanel" class="page-builder__styles"></div>
+                </div>
 
-            <div class="page-builder__tab-content" id="panel-traits" role="tabpanel" aria-labelledby="tab-btn-traits" x-show="activeTab === 'traits'" x-cloak>
-                <div class="page-builder__panel-label">Properties Settings</div>
-                <div wire:ignore x-ref="traitsPanel" class="page-builder__traits"></div>
+                <div class="page-builder__tab-content" id="panel-traits" role="tabpanel" aria-labelledby="tab-btn-traits" x-show="activeTab === 'traits'" x-cloak>
+                    <div class="page-builder__panel-label">Properties Settings</div>
+                    <div wire:ignore x-ref="traitsPanel" class="page-builder__traits"></div>
+                </div>
             </div>
         </div>
 
