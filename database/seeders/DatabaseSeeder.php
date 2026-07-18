@@ -17,7 +17,7 @@ class DatabaseSeeder extends Seeder
             ['email' => 'admin'],
             [
                 'name' => 'TLL Administrator',
-                'password' => Hash::make('password'),
+                'password' => Hash::make('joy'),
             ],
         );
 
