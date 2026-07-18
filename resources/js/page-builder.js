@@ -63,6 +63,13 @@ window.PageBuilder = {
             canvas: {
                 styles: [cssUrl],
             },
+            deviceManager: {
+                devices: [
+                    { name: 'Desktop', width: '' },
+                    { name: 'Tablet', width: '768px' },
+                    { name: 'Mobile', width: '375px' },
+                ],
+            },
             blockManager: {
                 appendTo: blocksPanel,
             },
@@ -75,6 +82,22 @@ window.PageBuilder = {
         });
 
         activeEditor = editor;
+
+        // Device selector handling
+        document.querySelectorAll('.page-builder__device-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const device = e.currentTarget.getAttribute('data-device');
+                
+                let deviceName = 'Desktop';
+                if (device === 'tablet') deviceName = 'Tablet';
+                if (device === 'mobile') deviceName = 'Mobile';
+
+                editor.setDevice(deviceName);
+                
+                document.querySelectorAll('.page-builder__device-btn').forEach(b => b.classList.remove('active'));
+                e.currentTarget.classList.add('active');
+            });
+        });
 
         editor.DomComponents.addType('page-block-list', {
             isComponent: (el) => el.getAttribute && el.getAttribute('data-gjs-type') === 'page-block-list',
