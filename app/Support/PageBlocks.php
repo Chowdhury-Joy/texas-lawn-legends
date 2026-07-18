@@ -90,7 +90,7 @@ class PageBlocks
             FileUpload::make('media_image_mobile')
                 ->label('Hero mobile image (optional)')
                 ->image()->directory('homepage')->disk('public')->visibility('public')
-                ->helperText('Used as the landscape mobile image. Falls back to the default mobile image when empty.')
+                ->helperText('Used below 632px. Falls back to the default mobile image when empty.')
                 ->columnSpanFull(),
             TextInput::make('media_badge')->label('Media badge'),
             TextInput::make('media_neighborhood')->label('Media neighborhood label'),

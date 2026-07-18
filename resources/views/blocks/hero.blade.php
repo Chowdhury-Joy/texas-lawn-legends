@@ -6,17 +6,17 @@
     $heroImage = filled($data['media_image'] ?? null) 
         ? \Illuminate\Support\Facades\Storage::disk('public')->url($data['media_image']) 
         : asset('images/hero_desktop.jpg');
-        
+
     $heroImageMobile = filled($data['media_image_mobile'] ?? null) 
         ? \Illuminate\Support\Facades\Storage::disk('public')->url($data['media_image_mobile']) 
         : (filled($data['media_image'] ?? null) 
             ? \Illuminate\Support\Facades\Storage::disk('public')->url($data['media_image']) 
             : asset('images/hero_mobile.jpg'));
-@endphp
+ @endphp
 
 <section class="border-b-4 border-slate-950 bg-brand-paper">
-    <div class="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-6 py-16 lg:grid-cols-12 lg:items-center">
-        <div class="lg:col-span-7">
+    <div class="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-6 py-16 tab:grid-cols-12 tab:items-center lg:grid-cols-12 lg:items-center">
+        <div class="lg:col-span-7 tab:col-span-7">
             <h1 data-field="heading" class="text-4xl font-medium leading-[1.05] tracking-tighter text-slate-900 sm:text-5xl lg:text-6xl">
                 {{ filled($data['heading'] ?? null) ? $data['heading'] : 'Transform Your Dallas Yard Into An Outdoor Retreat.' }}
             </h1>
@@ -27,10 +27,10 @@
                 @endif
             </p>
             <div class="mt-8 flex flex-col gap-4 sm:flex-row sm:flex-wrap lg:flex-nowrap">
-                <a href="{{ url('/estimate') }}" data-field="cta_primary_label" class="btn-brutal bg-yellow-400 px-5 sm:px-7 py-3 sm:py-4 text-sm sm:text-base text-slate-950 flex items-center justify-center">
+                <a href="{{ url('/estimate') }}" data-field="cta_primary_label" class="btn-brutal bg-yellow-400 px-7 py-4 sm:px-9 sm:py-5 text-base sm:text-lg text-slate-950 flex items-center justify-center">
                     {{ filled($data['cta_primary_label'] ?? null) ? $data['cta_primary_label'] : 'Start Your Free Estimate' }}
                 </a>
-                <a href="{{ $telHref }}" class="inline-flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 border-4 border-slate-950 bg-transparent px-5 sm:px-7 py-3 sm:py-4 text-sm sm:text-base font-medium uppercase tracking-wide text-slate-900 transition-colors hover:bg-white">
+                <a href="{{ $telHref }}" class="inline-flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 border-4 border-slate-950 bg-transparent px-7 py-4 sm:px-9 sm:py-5 text-base sm:text-lg font-medium uppercase tracking-wide text-slate-900 transition-colors hover:bg-white">
                     <span data-field="cta_secondary_label">{{ filled($data['cta_secondary_label'] ?? null) ? $data['cta_secondary_label'] : 'Call or Text' }}</span>
                     <span class="hidden sm:inline">:</span>
                     <span>{{ $phone }}</span>
@@ -39,11 +39,11 @@
         </div>
 
         {{-- Right media box --}}
-        <div class="lg:col-span-5 mr-[8px] lg:mr-0">
+        <div class="lg:col-span-5 tab:col-span-5 mr-[8px] lg:mr-0">
             <div class="box-brutal relative overflow-hidden">
                 <picture>
-                    <source srcset="{{ $heroImageMobile }}" media="(max-width: 1023px)">
-                    <img src="{{ $heroImage }}" alt="{{ $data['media_title'] ?? 'Texas Lawn Legends Residential Landscaping' }}" class="w-full object-cover aspect-[16/9] lg:aspect-[4/5]">
+                    <source srcset="{{ $heroImageMobile }}" media="(max-width: 631px)">
+                    <img src="{{ $heroImage }}" alt="{{ $data['media_title'] ?? 'Texas Lawn Legends Residential Landscaping' }}" loading="lazy" decoding="async" class="aspect-square w-full object-cover">
                 </picture>
 
                 <!-- Gradient overlay for text readability -->

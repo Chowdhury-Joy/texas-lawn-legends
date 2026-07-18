@@ -17,7 +17,7 @@
             @endforeach
         </div>
  
-        <div class="mt-10 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+        <div x-cloak class="mt-10 grid grid-cols-1 gap-8 md:grid-cols-2 tab:grid-cols-2 lg:grid-cols-3">
             @forelse ($testimonials as $review)
                 <div class="box-brutal flex flex-col mr-[8px] md:mr-0"
                      x-show="active === 'All Neighborhoods' || active === @js($review->neighborhood)"
@@ -35,8 +35,9 @@
                         <blockquote class="mt-3 flex-1 text-sm leading-relaxed text-slate-700">“{{ $review->review_text }}”</blockquote>
                         <div class="mt-4 border-t-2 border-slate-200 pt-4">
                             <p class="text-sm font-medium tracking-tighter text-slate-900">{{ $review->author }}</p>
-                            <p class="mt-1 inline-block bg-emerald-900 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-yellow-400">
-                                Completed in {{ $review->neighborhood }} — Verified Review
+                            <p class="mt-1 inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest text-emerald-800">
+                                <svg class="h-3 w-3 shrink-0" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg>
+                                Verified Review
                             </p>
                         </div>
                     </div>

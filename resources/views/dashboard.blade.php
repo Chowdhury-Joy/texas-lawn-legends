@@ -100,7 +100,7 @@
                         <div class="flex flex-wrap items-center justify-between gap-3">
                             <div class="flex items-center gap-3">
                                 <span @class(['h-3 w-3 border border-slate-950', $meta['dot']])></span>
-                                <h3 class="text-lg font-black uppercase tracking-tight text-slate-900">{{ $milestone->title }}</h3>
+                                <h3 class="text-xl font-medium tracking-tighter text-slate-900">{{ $milestone->title }}</h3>
                             </div>
                             <span @class(['border-2 border-slate-950 px-2.5 py-1 text-[10px] font-black uppercase tracking-widest', $meta['badge']])>{{ $meta['label'] }}</span>
                         </div>

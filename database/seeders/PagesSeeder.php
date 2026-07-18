@@ -12,6 +12,8 @@ class PagesSeeder extends Seeder
     public function run(): void
     {
         $this->seedHomepage();
+        $this->seedServicesPage();
+        $this->seedPortfolioPage();
         $this->seedAboutPage();
         $this->seedPrivacyPage();
     }
@@ -42,6 +44,14 @@ class PagesSeeder extends Seeder
                 'heading' => Setting::get('process_heading'),
                 'steps' => Setting::get('process_steps', []),
             ]),
+            $this->block('service_matrix', [
+                'create_suite_heading' => Setting::get('create_suite_heading'),
+                'care_suite_heading' => Setting::get('care_suite_heading'),
+            ]),
+            $this->block('neighborhood_proof', [
+                'heading' => Setting::get('proof_heading'),
+                'subheading' => Setting::get('proof_subheading'),
+            ]),
             $this->block('about', [
                 'eyebrow' => 'About Us',
                 'image' => null,
@@ -54,14 +64,6 @@ class PagesSeeder extends Seeder
                     ['value' => '500+', 'label' => 'Yards Transformed'],
                     ['value' => '100%', 'label' => 'Systematized'],
                 ],
-            ]),
-            $this->block('service_matrix', [
-                'create_suite_heading' => Setting::get('create_suite_heading'),
-                'care_suite_heading' => Setting::get('care_suite_heading'),
-            ]),
-            $this->block('neighborhood_proof', [
-                'heading' => Setting::get('proof_heading'),
-                'subheading' => Setting::get('proof_subheading'),
             ]),
             $this->block('faq', [
                 'heading' => 'Frequently Asked Questions',
@@ -103,6 +105,74 @@ class PagesSeeder extends Seeder
         Page::query()->updateOrCreate(
             ['is_home' => true],
             ['title' => 'Home', 'blocks' => $blocks, 'is_published' => true],
+        );
+    }
+
+    private function seedServicesPage(): void
+    {
+        $blocks = array_merge(
+            $this->block('rich_text', [
+                'heading' => 'Landscaping & Lawn Care, Systematized.',
+                'body' => '<p>From custom landscape design to hands-off property preservation, every Texas Lawn Legends engagement runs on the same transparent, systematized pipeline. Pick the suite that fits your property, get an instant estimate, and watch the work unfold in your private client dashboard.</p>',
+            ]),
+            $this->block('service_matrix', [
+                'create_suite_heading' => 'The Create Suite — Design & Structural',
+                'care_suite_heading' => 'The Care Suite — Maintenance & Preservation',
+            ]),
+            $this->block('image_text_split', [
+                'image' => null,
+                'heading' => 'One Process, Every Property',
+                'body' => 'Whether you are commissioning a full backyard transformation or enrolling in recurring care, you get the same honest pricing, on-time crews, and photo-documented progress. No surprises — just a better yard, on a schedule.',
+                'reverse' => false,
+            ]),
+            $this->block('cta_banner', [
+                'heading' => 'Get an Instant, Transparent Estimate',
+                'subheading' => 'See your price range in under two minutes — no sales call required.',
+                'button_label' => 'Launch Instant Evaluation',
+                'button_url' => null,
+            ]),
+        );
+
+        Page::query()->updateOrCreate(
+            ['slug' => 'services'],
+            [
+                'title' => 'Our Services',
+                'is_published' => true,
+                'seo_title' => 'Dallas Landscaping & Lawn Care Services — Texas Lawn Legends',
+                'seo_description' => 'Explore the Create Suite (design, sod, hardscaping) and Care Suite (maintenance, preservation) from Texas Lawn Legends across Dallas neighborhoods.',
+                'blocks' => $blocks,
+            ],
+        );
+    }
+
+    private function seedPortfolioPage(): void
+    {
+        $blocks = array_merge(
+            $this->block('rich_text', [
+                'heading' => 'Verified Local Proof',
+                'body' => '<p>Real Dallas yards, real before-and-after results. Every project below is tied to a verified neighborhood review — filter by the part of town you call home.</p>',
+            ]),
+            $this->block('neighborhood_proof', [
+                'heading' => 'Transformations Across Dallas',
+                'subheading' => 'Filter by neighborhood to see work near you.',
+            ]),
+            $this->block('cta_banner', [
+                'heading' => 'Your Yard Could Be Next',
+                'subheading' => 'Book a 30-minute walkthrough and we will map your transformation.',
+                'button_label' => 'Launch Instant Evaluation',
+                'button_url' => null,
+            ]),
+        );
+
+        Page::query()->updateOrCreate(
+            ['slug' => 'portfolio'],
+            [
+                'title' => 'Portfolio',
+                'is_published' => true,
+                'seo_title' => 'Dallas Landscaping Portfolio & Reviews — Texas Lawn Legends',
+                'seo_description' => 'Browse verified before-and-after landscaping transformations and neighborhood reviews from Texas Lawn Legends across Dallas.',
+                'blocks' => $blocks,
+            ],
         );
     }
 

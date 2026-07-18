@@ -17,6 +17,59 @@
     --color-brand-yellow: #facc15;
     --color-brand-orange: #ea580c;
     --color-brand-paper: #f8fafc;
+
+    /* Section rhythm token — apply via `py-section` for consistent vertical spacing */
+    --spacing-section: 5rem; /* 80px */
+
+    /* Custom tablet breakpoint (632px) — sits between sm (640) and md (768),
+       used for tablet-specific frontend layout adjustments. */
+    --breakpoint-tab: 632px;
+}
+
+@utility py-section {
+    padding-top: var(--spacing-section);
+    padding-bottom: var(--spacing-section);
+}
+
+/* Card hover/focus lift for the soft themes (no-op under Bold/brutalist,
+   which already has its own pressed-shadow interaction). */
+html:not(.theme-bold) .box-brutal {
+    transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+    margin-right: 0;
+}
+html:not(.theme-bold) .box-brutal:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(15, 23, 42, 0.12);
+}
+/* The mr-[8px]/mr-[6px] offsets only make sense under Bold (hard shadow room). */
+html:not(.theme-bold) [class*="mr-[8px]"],
+html:not(.theme-bold) [class*="mr-[6px]"] {
+    margin-right: 0;
+}
+
+/* Subtle scroll-reveal animation (toggled by IntersectionObserver in app.js). */
+@keyframes reveal-up {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+[data-reveal] {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity .5s ease, transform .5s ease;
+    will-change: opacity, transform;
+}
+[data-reveal].is-visible {
+    opacity: 1;
+    transform: translateY(0);
+    animation: reveal-up .5s ease both;
+}
+@media (prefers-reduced-motion: reduce) {
+    [data-reveal] {
+        opacity: 1;
+        transform: none;
+        transition: none;
+        animation: none;
+    }
 }
 
 /* Hard block-shadow helpers — only applied under the Bold theme */
@@ -32,6 +85,25 @@
 
 [x-cloak] {
     display: none !important;
+}
+
+/* Auto-scrolling trust-bar marquee (duplicated badges loop seamlessly). */
+@keyframes marquee-scroll {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+}
+.marquee-track {
+    animation: marquee-scroll 28s linear infinite;
+}
+.marquee-track:hover {
+    animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+    .marquee-track {
+        animation: none;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
 }
 
 @layer components {

@@ -4,3 +4,31 @@
 //
 // Register any custom Alpine plugins/directives on the livewire:init hook:
 // document.addEventListener('livewire:init', () => { /* Alpine.plugin(...) */ });
+
+// Subtle scroll-reveal: add `.is-visible` to any [data-reveal] element as it
+// enters the viewport. Re-scans after Livewire navigations/updates.
+document.addEventListener('DOMContentLoaded', () => {
+    const reveals = document.querySelectorAll('[data-reveal]');
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (reduce || ! ('IntersectionObserver' in window)) {
+        reveals.forEach((el) => el.classList.add('is-visible'));
+        return;
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('is-visible');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+    reveals.forEach((el) => observer.observe(el));
+
+    // Re-scan after Livewire swaps content (estimator/portal steps, etc.).
+    document.addEventListener('livewire:navigated', () => {
+        document.querySelectorAll('[data-reveal]:not(.is-visible)').forEach((el) => observer.observe(el));
+    });
+});

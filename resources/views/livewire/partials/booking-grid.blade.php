@@ -1,5 +1,5 @@
 {{-- Localized site-visit booking matrix --}}
-<h3 class="text-center text-lg font-black uppercase tracking-tight text-slate-900">Pick your site-visit time</h3>
+<h3 class="text-center text-xl font-black uppercase tracking-tight text-slate-900">Pick your site-visit time</h3>
 <p class="mx-auto mt-1 max-w-md text-center text-sm text-slate-500">Free 30-minute walkthrough. No obligation, no friction.</p>
 
 <div class="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">

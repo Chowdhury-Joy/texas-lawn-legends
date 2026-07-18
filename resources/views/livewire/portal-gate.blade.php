@@ -51,7 +51,7 @@
             @forelse ($this->addons as $addon)
                 @php $alreadyOrdered = in_array($addon->title, $ordered, true); @endphp
                 <div class="box-brutal flex flex-col p-6">
-                    <h3 class="text-base font-black uppercase tracking-tight text-slate-900">{{ $addon->title }}</h3>
+                    <h3 class="text-lg font-medium tracking-tighter text-slate-900">{{ $addon->title }}</h3>
                     <p class="mt-2 flex-1 text-sm leading-relaxed text-slate-600">{{ $addon->description }}</p>
                     <div class="mt-4 flex items-baseline gap-1">
                         <span class="text-2xl font-black text-slate-900">${{ number_format($addon->base_price, 2) }}</span>

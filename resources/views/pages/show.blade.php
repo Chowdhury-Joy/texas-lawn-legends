@@ -8,6 +8,8 @@
 
 @section('content')
     @foreach ((array) $page->blocks as $block)
-        @include('blocks.'.$block['type'], ['data' => $block['data'] ?? []])
+        <div data-reveal>
+            @include('blocks.'.$block['type'], ['data' => $block['data'] ?? []])
+        </div>
     @endforeach
 @endsection
