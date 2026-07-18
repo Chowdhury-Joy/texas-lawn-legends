@@ -14,7 +14,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         User::query()->updateOrCreate(
-            ['email' => 'admin@texaslawnlegends.com'],
+            ['email' => 'admin'],
             [
                 'name' => 'TLL Administrator',
                 'password' => Hash::make('password'),
