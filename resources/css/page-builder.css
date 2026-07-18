@@ -232,15 +232,31 @@
     color: var(--pb-text) !important;
     fill: var(--pb-text) !important;
     stroke: var(--pb-text) !important;
+    opacity: 1 !important; /* Prevent faint light-gray text */
 }
 
 /* Style individual layer rows */
 .gjs-layer {
     background-color: transparent !important;
     border-bottom: 1px solid var(--pb-border) !important;
+    border-left: 4px solid transparent !important;
+    transition: all 0.15s;
 }
 
-.gjs-layer:hover,
-.gjs-layer.gjs-active {
+.gjs-layer:hover {
     background-color: var(--pb-surface-alt) !important;
+}
+
+/* Selected active element highlight */
+.gjs-layer.gjs-active {
+    background-color: #e2e8f0 !important; /* Solid gray highlight in light mode */
+    border-left: 4px solid #facc15 !important; /* Brand yellow left border indicator */
+}
+
+.gjs-layer.gjs-active * {
+    font-weight: 600 !important; /* Make active text bold */
+}
+
+:where(.dark) .gjs-layer.gjs-active {
+    background-color: #334155 !important; /* Dark slate highlight in dark mode */
 }

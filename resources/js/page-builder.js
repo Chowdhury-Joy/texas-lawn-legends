@@ -31,6 +31,20 @@ function configureBlockDescendants(component) {
     });
 }
 
+function initializeComponentTree(component, labels) {
+    if (!component) return;
+    const type = component.get('type');
+    if (type === 'page-block') {
+        const blockType = component.getAttributes()['data-block-type'];
+        const label = labels[blockType] || blockType;
+        component.set('custom-name', label);
+        component.set('name', label);
+        configureBlockDescendants(component);
+    } else {
+        component.components().forEach(child => initializeComponentTree(child, labels));
+    }
+}
+
 async function handleSavePage() {
     if (!activeWire || !activeEditor) return;
 
@@ -156,13 +170,6 @@ window.PageBuilder = {
             .map((block) => blockWrapperHtml(block.uuid, block.type, block.html))
             .join('')}</div>`;
 
-        editor.setComponents(wrapperHtml);
-
-        // Configure all initial block descendants (hide them from layers and disable selection)
-        editor.getWrapper().find('[data-gjs-type="page-block"]').forEach(block => {
-            configureBlockDescendants(block);
-        });
-
         // Customize labels for page-block elements when added
         editor.on('component:add', (component) => {
             const type = component.get('type');
@@ -173,6 +180,11 @@ window.PageBuilder = {
                 component.set('name', label);
             }
         });
+
+        editor.setComponents(wrapperHtml);
+
+        // Recursively initialize names and configure block descendants for all initial components
+        initializeComponentTree(editor.getWrapper(), labels);
 
         availableTypes.forEach((type) => {
             editor.BlockManager.add(type, {
