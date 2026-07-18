@@ -1,0 +1,76 @@
+<?php
+
+namespace App\Models;
+
+use App\Enums\ProjectStatus;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Str;
+
+class Project extends Model
+{
+    /** @use HasFactory<\Database\Factories\ProjectFactory> */
+    use HasFactory;
+
+    protected $fillable = [
+        'lead_id',
+        'unique_dashboard_hash',
+        'client_name',
+        'project_title',
+        'neighborhood',
+        'contract_value',
+        'status',
+        'started_at',
+        'completed_at',
+    ];
+
+    protected function casts(): array
+    {
+        return [
+            'contract_value' => 'decimal:2',
+            'status' => ProjectStatus::class,
+            'started_at' => 'date',
+            'completed_at' => 'date',
+        ];
+    }
+
+    protected static function booted(): void
+    {
+        static::creating(function (Project $project) {
+            if (empty($project->unique_dashboard_hash)) {
+                $project->unique_dashboard_hash = static::generateUniqueHash();
+            }
+        });
+    }
+
+    public static function generateUniqueHash(): string
+    {
+        do {
+            $hash = Str::lower(Str::random(32));
+        } while (static::query()->where('unique_dashboard_hash', $hash)->exists());
+
+        return $hash;
+    }
+
+    public function getRouteKeyName(): string
+    {
+        return 'unique_dashboard_hash';
+    }
+
+    public function lead(): BelongsTo
+    {
+        return $this->belongsTo(Lead::class);
+    }
+
+    public function milestones(): HasMany
+    {
+        return $this->hasMany(Milestone::class);
+    }
+
+    public function progressPhotos(): HasMany
+    {
+        return $this->hasMany(ProgressPhoto::class);
+    }
+}

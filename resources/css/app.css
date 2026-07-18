@@ -1,0 +1,53 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../views';
+
+@theme {
+    --font-sans: 'Montserrat', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-display: 'Montserrat', ui-sans-serif, system-ui, sans-serif;
+
+    /* Brand tokens — mapped from the Rugged Professional palette */
+    --color-brand-forest: #1b4332;
+    --color-brand-forest-light: #2d6a4f;
+    --color-brand-slate: #334155;
+    --color-brand-slate-dark: #1e293b;
+    --color-brand-yellow: #facc15;
+    --color-brand-orange: #ea580c;
+    --color-brand-paper: #f8fafc;
+}
+
+/* Hard block-shadow helpers referenced inline across sections */
+@utility shadow-brutal {
+    box-shadow: 8px 8px 0px 0px rgba(15, 23, 42, 1);
+}
+@utility shadow-brutal-sm {
+    box-shadow: 4px 4px 0px 0px rgba(15, 23, 42, 1);
+}
+@utility shadow-brutal-forest {
+    box-shadow: 6px 6px 0px 0px rgba(27, 67, 50, 1);
+}
+
+[x-cloak] {
+    display: none !important;
+}
+
+@layer components {
+    /* Hard-edged neo-brutalist block button with pressed hover state */
+    .btn-brutal {
+        @apply inline-flex items-center justify-center gap-2 border-2 border-slate-950 font-black uppercase tracking-wide transition-all;
+        box-shadow: 4px 4px 0px 0px rgba(15, 23, 42, 1);
+    }
+    .btn-brutal:hover {
+        transform: translate(2px, 2px);
+        box-shadow: 2px 2px 0px 0px rgba(15, 23, 42, 1);
+    }
+
+    /* Structural container: thick border + hard unblurred drop shadow */
+    .box-brutal {
+        @apply border-4 border-slate-950 bg-white;
+        box-shadow: 8px 8px 0px 0px rgba(15, 23, 42, 1);
+    }
+}
