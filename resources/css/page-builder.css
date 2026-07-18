@@ -260,3 +260,16 @@
 :where(.dark) .gjs-layer.gjs-active {
     background-color: #334155 !important; /* Dark slate highlight in dark mode */
 }
+
+/* Align canvas frames to the top to remove empty top space, and make full width */
+.gjs-cv-canvas__frames {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: flex-start !important; /* Snap to top instead of centering vertically */
+    padding-top: 0 !important;
+    height: 100% !important;
+}
+
+.gjs-frame {
+    margin-top: 0 !important;
+}

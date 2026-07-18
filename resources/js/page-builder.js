@@ -62,13 +62,7 @@ function fitCanvasWidthOnly() {
         return;
     }
 
-    const padding = 16;
-    let ratio = (containerWidth - padding) / deviceWidth;
-
-    if (ratio > 1) {
-        ratio = 1;
-    }
-
+    const ratio = containerWidth / deviceWidth;
     activeEditor.Canvas.setZoom(ratio * 100);
 }
 
