@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\AccessCodes;
 
+use App\Enums\UserRole;
+use App\Filament\Concerns\RoleRestricted;
 use App\Filament\Resources\AccessCodes\Pages\CreateAccessCode;
 use App\Filament\Resources\AccessCodes\Pages\EditAccessCode;
 use App\Filament\Resources\AccessCodes\Pages\ListAccessCodes;
@@ -10,8 +12,6 @@ use App\Filament\Resources\AccessCodes\Tables\AccessCodesTable;
 use App\Models\AccessCode;
 use BackedEnum;
 use Filament\Resources\Resource;
-use App\Filament\Concerns\RoleRestricted;
-use App\Enums\UserRole;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
@@ -25,14 +25,13 @@ class AccessCodeResource extends Resource
         return [UserRole::Admin, UserRole::Operations];
     }
 
-    
     protected static ?string $model = AccessCode::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedKey;
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Configuration';
+    protected static string|\UnitEnum|null $navigationGroup = 'Operations';
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 5;
 
     protected static ?string $recordTitleAttribute = 'code';
 

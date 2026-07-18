@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use Database\Factories\AddonFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Addon extends Model
 {
-    /** @use HasFactory<\Database\Factories\AddonFactory> */
+    /** @use HasFactory<AddonFactory> */
     use HasFactory;
 
     protected $fillable = [

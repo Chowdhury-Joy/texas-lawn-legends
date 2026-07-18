@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\ProgressPhotos;
 
+use App\Enums\UserRole;
+use App\Filament\Concerns\RoleRestricted;
 use App\Filament\Resources\ProgressPhotos\Pages\CreateProgressPhoto;
 use App\Filament\Resources\ProgressPhotos\Pages\EditProgressPhoto;
 use App\Filament\Resources\ProgressPhotos\Pages\ListProgressPhotos;
@@ -10,8 +12,6 @@ use App\Filament\Resources\ProgressPhotos\Tables\ProgressPhotosTable;
 use App\Models\ProgressPhoto;
 use BackedEnum;
 use Filament\Resources\Resource;
-use App\Filament\Concerns\RoleRestricted;
-use App\Enums\UserRole;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
@@ -25,12 +25,11 @@ class ProgressPhotoResource extends Resource
         return [UserRole::Admin, UserRole::Operations];
     }
 
-    
     protected static ?string $model = ProgressPhoto::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPhoto;
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Sales & Delivery';
+    protected static string|\UnitEnum|null $navigationGroup = 'Operations';
 
     protected static ?int $navigationSort = 4;
 

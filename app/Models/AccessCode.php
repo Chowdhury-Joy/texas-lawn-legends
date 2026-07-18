@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use Database\Factories\AccessCodeFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class AccessCode extends Model
 {
-    /** @use HasFactory<\Database\Factories\AccessCodeFactory> */
+    /** @use HasFactory<AccessCodeFactory> */
     use HasFactory;
 
     protected $fillable = [

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Testimonials\Tables;
 
+use App\Models\Testimonial;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -51,7 +52,7 @@ class TestimonialsTable
                         1 => '1 star',
                     ]),
                 SelectFilter::make('neighborhood')
-                    ->options(fn () => \App\Models\Testimonial::query()
+                    ->options(fn () => Testimonial::query()
                         ->distinct()
                         ->pluck('neighborhood', 'neighborhood')
                         ->toArray()),

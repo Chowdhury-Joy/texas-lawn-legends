@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\Addons;
 
+use App\Enums\UserRole;
+use App\Filament\Concerns\RoleRestricted;
 use App\Filament\Resources\Addons\Pages\CreateAddon;
 use App\Filament\Resources\Addons\Pages\EditAddon;
 use App\Filament\Resources\Addons\Pages\ListAddons;
@@ -10,8 +12,6 @@ use App\Filament\Resources\Addons\Tables\AddonsTable;
 use App\Models\Addon;
 use BackedEnum;
 use Filament\Resources\Resource;
-use App\Filament\Concerns\RoleRestricted;
-use App\Enums\UserRole;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
@@ -25,14 +25,13 @@ class AddonResource extends Resource
         return [UserRole::Admin, UserRole::Operations];
     }
 
-    
     protected static ?string $model = Addon::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPuzzlePiece;
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Catalog';
+    protected static string|\UnitEnum|null $navigationGroup = 'Site Content';
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 3;
 
     protected static ?string $recordTitleAttribute = 'title';
 

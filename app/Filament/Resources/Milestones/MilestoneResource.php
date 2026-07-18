@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\Milestones;
 
+use App\Enums\UserRole;
+use App\Filament\Concerns\RoleRestricted;
 use App\Filament\Resources\Milestones\Pages\CreateMilestone;
 use App\Filament\Resources\Milestones\Pages\EditMilestone;
 use App\Filament\Resources\Milestones\Pages\ListMilestones;
@@ -10,8 +12,6 @@ use App\Filament\Resources\Milestones\Tables\MilestonesTable;
 use App\Models\Milestone;
 use BackedEnum;
 use Filament\Resources\Resource;
-use App\Filament\Concerns\RoleRestricted;
-use App\Enums\UserRole;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
@@ -25,12 +25,11 @@ class MilestoneResource extends Resource
         return [UserRole::Admin, UserRole::Operations];
     }
 
-    
     protected static ?string $model = Milestone::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedFlag;
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Sales & Delivery';
+    protected static string|\UnitEnum|null $navigationGroup = 'Operations';
 
     protected static ?int $navigationSort = 3;
 

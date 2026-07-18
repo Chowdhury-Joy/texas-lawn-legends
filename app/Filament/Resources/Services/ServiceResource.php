@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\Services;
 
+use App\Enums\UserRole;
+use App\Filament\Concerns\RoleRestricted;
 use App\Filament\Resources\Services\Pages\CreateService;
 use App\Filament\Resources\Services\Pages\EditService;
 use App\Filament\Resources\Services\Pages\ListServices;
@@ -10,8 +12,6 @@ use App\Filament\Resources\Services\Tables\ServicesTable;
 use App\Models\Service;
 use BackedEnum;
 use Filament\Resources\Resource;
-use App\Filament\Concerns\RoleRestricted;
-use App\Enums\UserRole;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
@@ -25,14 +25,13 @@ class ServiceResource extends Resource
         return [UserRole::Admin, UserRole::Operations];
     }
 
-    
     protected static ?string $model = Service::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Catalog';
+    protected static string|\UnitEnum|null $navigationGroup = 'Site Content';
 
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 2;
 
     protected static ?string $recordTitleAttribute = 'title';
 

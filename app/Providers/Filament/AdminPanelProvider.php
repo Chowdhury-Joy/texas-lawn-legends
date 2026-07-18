@@ -6,7 +6,9 @@ use App\Filament\Pages\Auth\Login;
 use App\Filament\Widgets\BusinessSnapshot;
 use App\Filament\Widgets\LeadFunnel;
 use App\Filament\Widgets\NeedsAttention;
+use App\Filament\Widgets\RecentActivity;
 use App\Filament\Widgets\UpcomingSiteVisits;
+use App\Filament\Widgets\WeeklyLeadTrend;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -32,11 +34,18 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login(Login::class)
+            ->databaseNotifications()
             ->sidebarCollapsibleOnDesktop()
             ->colors([
                 'primary' => Color::Amber,
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
+            ->navigationGroups([
+                'Operations',
+                'Site Content',
+                'Configuration',
+                'Site Settings',
+            ])
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->pages([
                 Dashboard::class,
@@ -48,6 +57,8 @@ class AdminPanelProvider extends PanelProvider
                 NeedsAttention::class,
                 UpcomingSiteVisits::class,
                 LeadFunnel::class,
+                WeeklyLeadTrend::class,
+                RecentActivity::class,
             ])
             ->middleware([
                 EncryptCookies::class,

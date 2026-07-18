@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\AccessCodes\Tables;
 
+use App\Models\AccessCode;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -42,7 +43,7 @@ class AccessCodesTable
             ->filters([
                 TernaryFilter::make('is_active'),
                 SelectFilter::make('target_month')
-                    ->options(fn () => \App\Models\AccessCode::query()
+                    ->options(fn () => AccessCode::query()
                         ->distinct()
                         ->orderByDesc('target_month')
                         ->pluck('target_month', 'target_month')

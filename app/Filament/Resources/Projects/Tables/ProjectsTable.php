@@ -3,11 +3,17 @@
 namespace App\Filament\Resources\Projects\Tables;
 
 use App\Enums\ProjectStatus;
+use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ForceDeleteAction;
+use Filament\Actions\ForceDeleteBulkAction;
+use Filament\Actions\RestoreAction;
+use Filament\Actions\RestoreBulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 
 class ProjectsTable
@@ -48,13 +54,24 @@ class ProjectsTable
             ->filters([
                 SelectFilter::make('status')
                     ->options(ProjectStatus::class),
+                TrashedFilter::make(),
             ])
             ->recordActions([
+                Action::make('viewDashboard')
+                    ->label('View')
+                    ->icon('heroicon-m-arrow-top-right-on-square')
+                    ->color('gray')
+                    ->url(fn ($record) => route('dashboard', $record))
+                    ->openUrlInNewTab(),
                 EditAction::make(),
+                RestoreAction::make(),
+                ForceDeleteAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
+                    RestoreBulkAction::make(),
+                    ForceDeleteBulkAction::make(),
                 ]),
             ]);
     }

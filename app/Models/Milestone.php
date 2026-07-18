@@ -3,13 +3,14 @@
 namespace App\Models;
 
 use App\Enums\MilestoneStatus;
+use Database\Factories\MilestoneFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Milestone extends Model
 {
-    /** @use HasFactory<\Database\Factories\MilestoneFactory> */
+    /** @use HasFactory<MilestoneFactory> */
     use HasFactory;
 
     protected $fillable = [

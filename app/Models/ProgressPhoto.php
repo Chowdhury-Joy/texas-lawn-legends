@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use Database\Factories\ProgressPhotoFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ProgressPhoto extends Model
 {
-    /** @use HasFactory<\Database\Factories\ProgressPhotoFactory> */
+    /** @use HasFactory<ProgressPhotoFactory> */
     use HasFactory;
 
     public $timestamps = false;
