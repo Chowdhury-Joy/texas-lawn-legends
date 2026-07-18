@@ -28,4 +28,9 @@ class EditPage extends EditRecord
                 ->key('page-builder-'.$this->getRecord()->getKey()),
         ]);
     }
+
+    public function getMaxContentWidth(): string
+    {
+        return 'full';
+    }
 }

@@ -27,6 +27,11 @@ class ManageHomepage extends Page
         return PageModel::home();
     }
 
+    public function getMaxContentWidth(): string
+    {
+        return 'full';
+    }
+
     /**
      * @return array<int, Action>
      */
