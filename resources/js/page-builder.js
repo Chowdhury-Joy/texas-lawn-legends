@@ -45,26 +45,7 @@ function initializeComponentTree(component, labels) {
     }
 }
 
-function fitCanvasWidthOnly() {
-    if (!activeEditor) return;
-    const canvasEl = activeEditor.Canvas.getElement();
-    if (!canvasEl) return;
 
-    const containerWidth = canvasEl.clientWidth;
-    const deviceName = activeEditor.getDevice();
-    const device = activeEditor.Devices.get(deviceName);
-    if (!device) return;
-
-    const deviceWidth = parseInt(device.get('width'), 10);
-
-    if (!deviceWidth || isNaN(deviceWidth)) {
-        activeEditor.Canvas.setZoom(100);
-        return;
-    }
-
-    const ratio = containerWidth / deviceWidth;
-    activeEditor.Canvas.setZoom(ratio * 100);
-}
 
 async function handleSavePage() {
     if (!activeWire || !activeEditor) return;
@@ -119,7 +100,7 @@ window.PageBuilder = {
             },
             deviceManager: {
                 devices: [
-                    { name: 'Desktop', width: '1280px' },
+                    { name: 'Desktop', width: '' },
                     { name: 'Tablet', width: '768px' },
                     { name: 'Mobile', width: '375px' },
                 ],
@@ -147,7 +128,6 @@ window.PageBuilder = {
                 if (device === 'mobile') deviceName = 'Mobile';
 
                 editor.setDevice(deviceName);
-                fitCanvasWidthOnly(); // Fit zoom after device switch
                 
                 document.querySelectorAll('.page-builder__device-btn').forEach(b => b.classList.remove('active'));
                 e.currentTarget.classList.add('active');
@@ -208,15 +188,7 @@ window.PageBuilder = {
         // Recursively initialize names and configure block descendants for all initial components
         initializeComponentTree(editor.getWrapper(), labels);
 
-        // Trigger zoom-to-fit once the canvas frame is ready
-        setTimeout(() => {
-            fitCanvasWidthOnly();
-        }, 200);
 
-        // Auto-zoom on window resize
-        window.addEventListener('resize', () => {
-            fitCanvasWidthOnly();
-        });
 
         availableTypes.forEach((type) => {
             editor.BlockManager.add(type, {
@@ -257,17 +229,6 @@ window.PageBuilder = {
 
             wire.selectBlock(attrs['data-block-uuid']);
 
-            // Auto zoom out canvas when edit sidebar panel opens
-            setTimeout(() => {
-                fitCanvasWidthOnly();
-            }, 100);
-        });
-
-        editor.on('component:deselected', () => {
-            // Auto zoom in/adjust canvas when edit sidebar panel closes
-            setTimeout(() => {
-                fitCanvasWidthOnly();
-            }, 100);
         });
 
         editor.on('component:remove', (component) => {
@@ -329,7 +290,6 @@ window.PageBuilder = {
                 // Restrict sidebar width between 200px and 450px
                 if (width >= 200 && width <= 450) {
                     sidebar.style.width = `${width}px`;
-                    fitCanvasWidthOnly(); // Dynamically update zoom while resizing
                 }
             }
 
