@@ -99,14 +99,6 @@ window.PageBuilder = {
             });
         });
 
-        editor.DomComponents.addType('default', {
-            model: {
-                defaults: {
-                    layerable: false,
-                },
-            },
-        });
-
         editor.DomComponents.addType('page-block-list', {
             isComponent: (el) => el.getAttribute && el.getAttribute('data-gjs-type') === 'page-block-list',
             model: {
@@ -116,8 +108,12 @@ window.PageBuilder = {
                     removable: false,
                     copyable: false,
                     selectable: false,
-                    layerable: false,
+                    layerable: true,
                 },
+                init() {
+                    this.set('custom-name', 'Page Content');
+                    this.set('name', 'Page Content');
+                }
             },
         });
 
@@ -134,12 +130,6 @@ window.PageBuilder = {
                     highlightable: true,
                     layerable: true,
                 },
-                init() {
-                    const blockType = this.getAttributes()['data-block-type'];
-                    const label = labels[blockType] || blockType;
-                    this.set('custom-name', label);
-                    this.set('name', label);
-                }
             },
         });
 
@@ -148,6 +138,31 @@ window.PageBuilder = {
             .join('')}</div>`;
 
         editor.setComponents(wrapperHtml);
+
+        // Customize labels and hide nested HTML children inside page-block elements from the Layer Manager
+        editor.on('component:add', (component) => {
+            const type = component.get('type');
+            if (type === 'page-block') {
+                const blockType = component.getAttributes()['data-block-type'];
+                const label = labels[blockType] || blockType;
+                component.set('custom-name', label);
+                component.set('name', label);
+            } else if (type !== 'page-block-list') {
+                // If it is inside a page-block, hide it from layers
+                let parent = component.parent();
+                let isInsideBlock = false;
+                while (parent) {
+                    if (parent.get('type') === 'page-block') {
+                        isInsideBlock = true;
+                        break;
+                    }
+                    parent = parent.parent();
+                }
+                if (isInsideBlock) {
+                    component.set('layerable', false);
+                }
+            }
+        });
 
         availableTypes.forEach((type) => {
             editor.BlockManager.add(type, {
