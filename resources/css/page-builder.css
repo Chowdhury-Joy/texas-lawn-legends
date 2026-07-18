@@ -385,13 +385,40 @@
     gap: 0.5rem;
 }
 
+/* GrapesJS Block Label overrides to remove the ugly background badge */
+.gjs-block-label {
+    background: none !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    color: inherit !important;
+    font-size: 0.8125rem !important;
+    font-weight: inherit !important;
+    text-align: center !important;
+    width: 100% !important;
+    box-shadow: none !important;
+}
+
 /* Style Manager & Trait Manager bespoke overrides (Webflow UI style) */
+.gjs-sm-sector,
+.gjs-sm-sector *,
+.gjs-sm-properties,
+.gjs-sm-properties *,
+.gjs-trt-traits,
+.gjs-trt-traits *,
+.gjs-clm-tags,
+.gjs-clm-tags * {
+    color: var(--pb-text) !important;
+}
+
 .gjs-sm-sector {
     border-bottom: 1px solid var(--pb-border) !important;
     background-color: transparent !important;
 }
 
-.gjs-sm-title {
+.gjs-sm-title,
+.gjs-trt-title,
+.gjs-clm-title {
     font-size: 0.75rem !important;
     font-weight: 700 !important;
     text-transform: uppercase !important;
@@ -410,14 +437,18 @@
     margin-bottom: 0.5rem !important;
 }
 
-.gjs-sm-label {
+.gjs-sm-label,
+.gjs-trt-label,
+.gjs-clm-label {
     font-size: 0.75rem !important;
     color: var(--pb-text) !important;
     font-weight: 600 !important;
     margin-bottom: 0.25rem !important;
 }
 
-.gjs-sm-field {
+.gjs-sm-field,
+.gjs-field,
+.gjs-clm-field {
     background-color: var(--pb-surface-alt) !important;
     border: 1px solid var(--pb-border) !important;
     border-radius: 0.25rem !important;
@@ -427,51 +458,26 @@
 
 .gjs-sm-field input,
 .gjs-sm-field select,
-.gjs-sm-field textarea {
+.gjs-sm-field textarea,
+.gjs-field input,
+.gjs-field select,
+.gjs-field textarea,
+.gjs-clm-field input {
     color: var(--pb-text) !important;
     background-color: transparent !important;
     border: none !important;
     font-size: 0.8125rem !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
 }
 
 .gjs-sm-btn-change {
     color: #facc15 !important;
 }
 
-/* Trait Manager */
-.gjs-trt-traits {
-    padding: 0.5rem !important;
-}
-
-.gjs-trt-trait {
-    margin-bottom: 0.75rem !important;
-}
-
-.gjs-trt-label {
-    font-size: 0.75rem !important;
-    font-weight: 600 !important;
-    color: var(--pb-text) !important;
-    margin-bottom: 0.25rem !important;
-}
-
-.gjs-field {
-    background-color: var(--pb-surface-alt) !important;
-    border: 1px solid var(--pb-border) !important;
-    border-radius: 0.25rem !important;
-    color: var(--pb-text) !important;
-    padding: 0.375rem 0.5rem !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-}
-
-.gjs-field input,
-.gjs-field select,
-.gjs-field textarea {
-    color: var(--pb-text) !important;
-    background-color: transparent !important;
-    border: none !important;
-    width: 100% !important;
-    font-size: 0.8125rem !important;
+/* Fix active selected color indicator text in inputs & units */
+.gjs-sm-unit {
+    color: var(--pb-text-muted) !important;
 }
 
 /* Fix GrapesJS UI global styling to inherit variables */
