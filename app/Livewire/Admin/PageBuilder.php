@@ -5,26 +5,17 @@ namespace App\Livewire\Admin;
 use App\Models\Page;
 use App\Support\PageBlockData;
 use App\Support\PageBlocks;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
-use Filament\Schemas\Schema;
 use Illuminate\Support\Str;
 use Livewire\Component;
 
 /**
- * GrapesJS-driven visual editor for a Page's blocks. GrapesJS only ever
- * reports ordering/add/remove of opaque, server-rendered blocks — it never
- * serializes block content itself. Content is always edited through the
- * Filament form in the side panel, keeping the canvas from drifting out of
- * sync with the real data.
- *
- * @property-read Schema $form
+ * GrapesJS-driven visual editor for a Page's blocks. GrapesJS reports
+ * ordering, additions, and removals of server-rendered blocks.
+ * Content is edited directly on the canvas using inline editing.
  */
-class PageBuilder extends Component implements HasForms
+class PageBuilder extends Component
 {
-    use InteractsWithForms;
-
     public Page $page;
 
     /**
@@ -33,13 +24,6 @@ class PageBuilder extends Component implements HasForms
      * @var array<int, array<string, mixed>>
      */
     public array $blocks = [];
-
-    public ?string $selectedUuid = null;
-
-    /**
-     * @var array<string, mixed>
-     */
-    public ?array $data = [];
 
     public function mount(Page $page): void
     {
@@ -56,15 +40,6 @@ class PageBuilder extends Component implements HasForms
             ->all();
     }
 
-    public function form(Schema $schema): Schema
-    {
-        $type = $this->selectedType();
-
-        return $schema
-            ->components($type ? PageBlocks::fields($type) : [])
-            ->statePath('data');
-    }
-
     public function labels(): array
     {
         return PageBlocks::labels();
@@ -76,44 +51,6 @@ class PageBuilder extends Component implements HasForms
     public function availableTypes(): array
     {
         return $this->page->is_home ? PageBlocks::forHomepage() : PageBlocks::all();
-    }
-
-    public function selectBlock(string $uuid): void
-    {
-        $block = collect($this->blocks)->firstWhere('uuid', $uuid);
-
-        if (! $block) {
-            return;
-        }
-
-        $this->selectedUuid = $uuid;
-        $this->data = $block['data'];
-        $this->form->fill($this->data);
-    }
-
-    public function cancelSelection(): void
-    {
-        $this->selectedUuid = null;
-        $this->data = [];
-    }
-
-    public function saveBlock(): void
-    {
-        $index = collect($this->blocks)->search(fn (array $b): bool => $b['uuid'] === $this->selectedUuid);
-
-        if ($index === false) {
-            return;
-        }
-
-        $data = $this->form->getState();
-
-        $this->blocks[$index]['data'] = $data;
-        $this->blocks[$index]['html'] = $this->renderBlock($this->blocks[$index]['type'], $data);
-
-        $this->dispatch('block-updated', uuid: $this->selectedUuid, html: $this->blocks[$index]['html']);
-
-        $this->selectedUuid = null;
-        $this->data = [];
     }
 
     /**
@@ -136,10 +73,6 @@ class PageBuilder extends Component implements HasForms
             ->reject(fn (array $b): bool => $b['uuid'] === $uuid)
             ->values()
             ->all();
-
-        if ($this->selectedUuid === $uuid) {
-            $this->cancelSelection();
-        }
     }
 
     /**
@@ -207,11 +140,6 @@ class PageBuilder extends Component implements HasForms
 
         // 3. Save to database
         $this->save();
-    }
-
-    private function selectedType(): ?string
-    {
-        return collect($this->blocks)->firstWhere('uuid', $this->selectedUuid)['type'] ?? null;
     }
 
     public function render()
