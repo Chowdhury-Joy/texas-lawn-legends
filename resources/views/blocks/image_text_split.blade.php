@@ -10,12 +10,12 @@
             @endif
         </div>
         <div class="flex flex-col justify-center {{ $reverse ? 'lg:order-1' : '' }}">
-            @if ($heading = $data['heading'] ?? null)
-                <h2 class="text-3xl font-black uppercase tracking-tight text-slate-900 sm:text-4xl">{{ $heading }}</h2>
-            @endif
-            @if ($body = $data['body'] ?? null)
-                <p class="mt-5 text-base leading-relaxed text-slate-600">{{ $body }}</p>
-            @endif
+            <h2 data-field="heading" data-gjs-type="text" class="text-3xl font-black uppercase tracking-tight text-slate-900 sm:text-4xl">
+                {{ filled($data['heading'] ?? null) ? $data['heading'] : '[Split Heading]' }}
+            </h2>
+            <p data-field="body" data-gjs-type="text" class="mt-5 text-base leading-relaxed text-slate-600">
+                {{ filled($data['body'] ?? null) ? $data['body'] : '[Split description text goes here]' }}
+            </p>
         </div>
     </div>
 </section>

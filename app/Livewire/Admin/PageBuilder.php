@@ -193,7 +193,12 @@ class PageBuilder extends Component implements HasForms
             $uuid = $block['uuid'];
             if (isset($blockDataUpdates[$uuid])) {
                 foreach ($blockDataUpdates[$uuid] as $field => $value) {
-                    $this->blocks[$index]['data'][$field] = $value;
+                    // Clear out placeholder values (e.g. '[Eyebrow]' -> '')
+                    if (str_starts_with($value, '[') && str_ends_with($value, ']')) {
+                        $value = '';
+                    }
+                    
+                    data_set($this->blocks[$index]['data'], $field, $value);
                 }
                 // Update rendered HTML to match
                 $this->blocks[$index]['html'] = $this->renderBlock($block['type'], $this->blocks[$index]['data']);
