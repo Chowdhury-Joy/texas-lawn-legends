@@ -215,7 +215,6 @@ window.PageBuilder = {
         availableTypes.forEach((type) => {
             editor.BlockManager.add(type, {
                 label: labels[type] ?? type,
-                category: 'Sections',
                 content: {
                     type: 'page-block',
                     attributes: { 'data-block-uuid': 'new', 'data-block-type': type },
