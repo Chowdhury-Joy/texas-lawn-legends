@@ -70,7 +70,7 @@ class SettingsSeeder extends Seeder
             ['color_primary_light', '#2d6a4f', 'string', 'branding'],
             ['color_accent', '#facc15', 'string', 'branding'],
             ['color_slate', '#334155', 'string', 'branding'],
-            ['theme', 'clean', 'string', 'branding'],
+            ['theme', 'clean', 'string', 'branding'], // clean | minimal | editorial | rounded | retro | bold
 
 
             // ---------------- SEO ----------------

@@ -80,6 +80,9 @@ class ManageHomepage extends Page
                         Builder\Block::make('faq')
                             ->label('FAQ')
                             ->schema(PageBlocks::fields('faq')),
+                        Builder\Block::make('about')
+                            ->label('About Us')
+                            ->schema(PageBlocks::fields('about')),
                     ])
                     ->columnSpanFull(),
             ])

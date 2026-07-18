@@ -1,5 +1,5 @@
 @php $processSteps = (array) ($data['steps'] ?? []); @endphp
-<section id="about" class="bg-white">
+<section class="bg-white">
     <div class="mx-auto max-w-7xl px-6 py-20">
         <h2 data-field="heading" data-gjs-type="text" class="mx-auto max-w-3xl text-center text-4xl font-medium leading-tight tracking-tighter text-slate-900 sm:text-5xl">
             {{ filled($data['heading'] ?? null) ? $data['heading'] : '[Our 3-Step Process — Deliver The Wow]' }}

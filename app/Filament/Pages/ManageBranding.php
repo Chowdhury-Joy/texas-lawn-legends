@@ -55,9 +55,13 @@ class ManageBranding extends BaseSettingsPage
                         ->default('clean')
                         ->options([
                             'clean' => 'Clean (flat, no shadows — default)',
+                            'minimal' => 'Minimal (flat with soft modern shadows)',
+                            'editorial' => 'Editorial (serif display, airy whitespace)',
+                            'rounded' => 'Rounded (pill buttons, large radii)',
+                            'retro' => 'Retro (70s earthy throwback)',
                             'bold' => 'Bold (neo-brutalist hard shadows & borders)',
                         ])
-                        ->helperText('Clean is the default. Bold reproduces the original hard-edged brutalist look.'),
+                        ->helperText('Clean is the default. Bold reproduces the original hard-edged brutalist look; the others are softer stylistic variants.'),
                 ]),
             Section::make('Logo & Identity')
                 ->columns(2)

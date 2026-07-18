@@ -12,6 +12,7 @@ class PagesSeeder extends Seeder
     public function run(): void
     {
         $this->seedHomepage();
+        $this->seedAboutPage();
         $this->seedPrivacyPage();
     }
 
@@ -40,6 +41,19 @@ class PagesSeeder extends Seeder
             $this->block('three_step', [
                 'heading' => Setting::get('process_heading'),
                 'steps' => Setting::get('process_steps', []),
+            ]),
+            $this->block('about', [
+                'eyebrow' => 'About Us',
+                'image' => null,
+                'heading' => 'Dallas Landscaping, Systematized.',
+                'body' => 'Texas Lawn Legends was built on a simple belief: premium outdoor spaces should be designed with the same rigor as the homes they surround. Since 2019 we have paired horticultural craft with a repeatable, systematized process — so every yard we touch, from Bishop Arts bungalows to Highland Park estates, gets the same obsessively consistent result.',
+                'reverse' => false,
+                'stats' => [
+                    ['value' => '2019', 'label' => 'Established'],
+                    ['value' => '6+', 'label' => 'Dallas Hoods'],
+                    ['value' => '500+', 'label' => 'Yards Transformed'],
+                    ['value' => '100%', 'label' => 'Systematized'],
+                ],
             ]),
             $this->block('service_matrix', [
                 'create_suite_heading' => Setting::get('create_suite_heading'),
@@ -89,6 +103,57 @@ class PagesSeeder extends Seeder
         Page::query()->updateOrCreate(
             ['is_home' => true],
             ['title' => 'Home', 'blocks' => $blocks, 'is_published' => true],
+        );
+    }
+
+    private function seedAboutPage(): void
+    {
+        $blocks = array_merge(
+            $this->block('about', [
+                'eyebrow' => 'Our Story',
+                'image' => null,
+                'heading' => 'We Systematize Growth.',
+                'body' => 'Texas Lawn Legends started in 2019 with a single conviction: the best outdoor spaces are not accidents. They are the product of disciplined process, honest pricing, and craftspeople who treat your property like their own. We combined old-school Dallas landscaping know-how with a modern, automated estimation and project-tracking engine — so the experience is as polished as the result.',
+                'reverse' => false,
+                'stats' => [
+                    ['value' => '2019', 'label' => 'Established in Dallas'],
+                    ['value' => '500+', 'label' => 'Yards Transformed'],
+                    ['value' => '6+', 'label' => 'Neighborhoods Served'],
+                    ['value' => '4.9★', 'label' => 'Avg. Client Rating'],
+                ],
+            ]),
+            $this->block('rich_text', [
+                'heading' => 'How We Work',
+                'body' => '<p>Every project flows through the same transparent pipeline. You start with an instant, automated estimate that prices your property by square footage, neighborhood complexity, and the services you choose — no pushy sales call required.</p>
+                <p>Once you book a 30-minute walkthrough, our team maps your space and locks a plan. From design and installation through ongoing care, you follow progress in a private client dashboard with milestones and photos — never wondering what happens next.</p>
+                <ul>
+                    <li><strong>Create Suite</strong> — landscape design, sod, and structural hardscaping.</li>
+                    <li><strong>Care Suite</strong> — maintenance, weed mitigation, and property preservation.</li>
+                </ul>',
+            ]),
+            $this->block('image_text_split', [
+                'image' => null,
+                'heading' => 'Rooted in Dallas Neighborhoods',
+                'body' => 'We are a local crew serving Bishop Arts, Kessler Park, Highland Park, University Park, Oak Lawn, and the surrounding Dallas area. We know the soil, the HOA rules, and the look that fits each block — and we show up on time, every time.',
+                'reverse' => true,
+            ]),
+            $this->block('cta_banner', [
+                'heading' => 'Ready To Transform Your Yard?',
+                'subheading' => 'Get an instant, transparent estimate in under two minutes.',
+                'button_label' => 'Launch Instant Evaluation',
+                'button_url' => null,
+            ]),
+        );
+
+        Page::query()->updateOrCreate(
+            ['slug' => 'about'],
+            [
+                'title' => 'About Us',
+                'is_published' => true,
+                'seo_title' => 'About Texas Lawn Legends — Dallas Landscaping, Systematized',
+                'seo_description' => 'Meet the Dallas landscaping team behind Texas Lawn Legends: systematized growth, honest pricing, and craftsmanship across Bishop Arts, Highland Park, and beyond.',
+                'blocks' => $blocks,
+            ],
         );
     }
 

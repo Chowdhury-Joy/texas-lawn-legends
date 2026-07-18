@@ -66,34 +66,136 @@
     .theme-bold .shadow-brutal-forest { box-shadow: 6px 6px 0px 0px rgba(27, 67, 50, 1); }
 }
 
-/* Clean theme (default): flatten the heavy structural borders & dividers
-   and neutralize hard box-shadows that the Bold/brutalist look relies on.
+/* Soft themes (everything except Bold): flatten the heavy structural borders
+   and neutralize hard box-shadows that the neo-brutalist look relies on.
    Done globally so individual views don't need theme guards. */
-.theme-clean [class*="border-slate-950"] {
+html:not(.theme-bold) [class*="border-slate-950"] {
     border-color: rgb(226 232 240); /* slate-200 */
     border-width: 1px;
 }
-.theme-clean [class*="border-4"] {
+html:not(.theme-bold) [class*="border-4"] {
     border-width: 1px;
 }
-.theme-clean [class*="border-2"] {
+html:not(.theme-bold) [class*="border-2"] {
     border-width: 1px;
 }
-.theme-clean [style*="box-shadow"] {
+html:not(.theme-bold) [style*="box-shadow"] {
     box-shadow: none !important;
 }
-.theme-clean .shadow-brutal,
-.theme-clean .shadow-brutal-sm,
-.theme-clean .shadow-brutal-forest {
+html:not(.theme-bold) .shadow-brutal,
+html:not(.theme-bold) .shadow-brutal-sm,
+html:not(.theme-bold) .shadow-brutal-forest {
     box-shadow: none;
 }
 /* Keep section dividers as subtle hairlines rather than 4px slabs */
-.theme-clean header,
-.theme-clean footer,
-.theme-clean section[class*="border-t-4"],
-.theme-clean section[class*="border-b-4"],
-.theme-clean section[class*="border-y-4"] {
+html:not(.theme-bold) header,
+html:not(.theme-bold) footer,
+html:not(.theme-bold) section[class*="border-t-4"],
+html:not(.theme-bold) section[class*="border-b-4"],
+html:not(.theme-bold) section[class*="border-y-4"] {
     border-color: rgb(226 232 240); /* slate-200 */
     border-top-width: 1px;
     border-bottom-width: 1px;
+}
+
+/* ============================ THEME VARIANTS ============================ */
+
+/* Minimal: flat, but with soft modern elevation on cards/buttons. */
+.theme-minimal .box-brutal {
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.1), 0 1px 2px rgba(15, 23, 42, 0.06);
+}
+.theme-minimal .btn-brutal {
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.12);
+}
+
+/* Rounded: pill buttons + generous radii on containers and images. */
+.theme-rounded .btn-brutal {
+    border-radius: 9999px;
+}
+.theme-rounded .box-brutal {
+    border-radius: 1.5rem;
+}
+.theme-rounded .shadow-brutal-forest {
+    box-shadow: none;
+}
+.theme-rounded img.box-brutal,
+.theme-rounded figure.box-brutal {
+    border-radius: 1.5rem;
+}
+.theme-rounded header a.border-2,
+.theme-rounded .cta-banner a {
+    border-radius: 9999px;
+}
+
+/* Editorial: serif display type, airy spacing, restrained color. */
+.theme-editorial {
+    --font-sans: 'Georgia', 'Times New Roman', ui-serif, serif;
+    --font-display: 'Georgia', 'Times New Roman', ui-serif, serif;
+}
+.theme-editorial body {
+    letter-spacing: 0.01em;
+}
+.theme-editorial h1,
+.theme-editorial h2,
+.theme-editorial h3,
+.theme-editorial .font-black,
+.theme-editorial .font-medium {
+    font-family: 'Georgia', 'Times New Roman', ui-serif, serif;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+}
+.theme-editorial header,
+.theme-editorial footer {
+    border-color: rgb(226 232 240);
+}
+
+/* Retro: 70s earthy throwback — warm paper, burnt orange + mustard,
+   chunky rounded borders, subtle double-shadow.
+   Remaps the actual utility color vars (the layout sets these inline from
+   CMS settings, so we need higher specificity here via html.theme-retro). */
+html.theme-retro {
+    --color-emerald-900: #2f5d3a;
+    --color-emerald-800: #3f7a4d;
+    --color-yellow-400: #e8a33d;
+    --color-slate-800: #5b4636;
+    --color-slate-950: #3a2c1e;
+    --color-brand-forest: #2f5d3a;
+    --color-brand-yellow: #e8a33d;
+    --color-brand-orange: #c2562b;
+    --color-brand-paper: #f4ead5;
+    --color-brand-slate: #5b4636;
+}
+.theme-retro body {
+    background-color: #f4ead5;
+    color: #3a2c1e;
+}
+.theme-retro .box-brutal {
+    background-color: #fbf3e2;
+    border: 3px solid #3a2c1e;
+    border-radius: 0.75rem;
+    box-shadow: 5px 5px 0px 0px #c2562b;
+}
+.theme-retro .btn-brutal {
+    border: 3px solid #3a2c1e;
+    border-radius: 0.75rem;
+    background-color: #e8a33d;
+    color: #3a2c1e;
+    box-shadow: 3px 3px 0px 0px #3a2c1e;
+}
+.theme-retro .btn-brutal:hover {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0px 0px #3a2c1e;
+}
+.theme-retro .cta-banner {
+    background-color: #e8a33d;
+    color: #3a2c1e;
+}
+.theme-retro header {
+    background-color: #fbf3e2;
+    border-color: #3a2c1e;
+}
+.theme-retro footer {
+    background-color: #2f5d3a;
+    color: #f4ead5;
+    border-color: #3a2c1e;
 }

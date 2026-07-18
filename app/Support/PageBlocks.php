@@ -33,6 +33,7 @@ class PageBlocks
             'image_text_split' => 'Image + Text Split',
             'gallery' => 'Gallery',
             'faq' => 'FAQ',
+            'about' => 'About Us',
         ];
     }
 
@@ -68,6 +69,7 @@ class PageBlocks
             'image_text_split' => static::imageTextSplit(),
             'gallery' => static::gallery(),
             'faq' => static::faq(),
+            'about' => static::about(),
             default => throw new InvalidArgumentException("Unknown block type [$type]."),
         };
     }
@@ -198,6 +200,31 @@ class PageBlocks
                 ->reorderable()
                 ->collapsible()
                 ->itemLabel(fn (array $state): ?string => $state['question'] ?? null),
+        ];
+    }
+
+    private static function about(): array
+    {
+        return [
+            TextInput::make('eyebrow')->label('Eyebrow tag')->columnSpanFull(),
+            FileUpload::make('image')
+                ->label('Photo')
+                ->image()->directory('pages')->disk('public')->visibility('public')
+                ->helperText('Team, crew, or showcase yard photo.')
+                ->columnSpanFull(),
+            TextInput::make('heading')->label('Heading')->required()->columnSpanFull(),
+            Textarea::make('body')->label('Body')->rows(4)->columnSpanFull(),
+            Toggle::make('reverse')->label('Reverse layout (photo on right)'),
+            Repeater::make('stats')
+                ->label('Stat callouts')
+                ->schema([
+                    TextInput::make('value')->label('Value (e.g. 250+)')->required(),
+                    TextInput::make('label')->label('Label')->required(),
+                ])
+                ->columns(2)
+                ->reorderable()
+                ->collapsible()
+                ->itemLabel(fn (array $state): ?string => ($state['value'] ?? '').' — '.($state['label'] ?? '')),
         ];
     }
 }
