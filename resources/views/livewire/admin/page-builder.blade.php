@@ -50,6 +50,8 @@
             <div wire:ignore x-ref="layersPanel" class="page-builder__layers"></div>
         </div>
 
+        <div class="page-builder__resize-handle" id="sidebar-resize-handle"></div>
+
         <div wire:ignore class="page-builder__canvas-wrap">
             <div x-ref="canvas"></div>
         </div>

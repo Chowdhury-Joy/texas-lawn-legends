@@ -99,6 +99,14 @@ window.PageBuilder = {
             });
         });
 
+        editor.DomComponents.addType('default', {
+            model: {
+                defaults: {
+                    layerable: false,
+                },
+            },
+        });
+
         editor.DomComponents.addType('page-block-list', {
             isComponent: (el) => el.getAttribute && el.getAttribute('data-gjs-type') === 'page-block-list',
             model: {
@@ -108,6 +116,7 @@ window.PageBuilder = {
                     removable: false,
                     copyable: false,
                     selectable: false,
+                    layerable: false,
                 },
             },
         });
@@ -123,7 +132,14 @@ window.PageBuilder = {
                     copyable: false,
                     selectable: true,
                     highlightable: true,
+                    layerable: true,
                 },
+                init() {
+                    const blockType = this.getAttributes()['data-block-type'];
+                    const label = labels[blockType] || blockType;
+                    this.set('custom-name', label);
+                    this.set('name', label);
+                }
             },
         });
 
@@ -132,19 +148,6 @@ window.PageBuilder = {
             .join('')}</div>`;
 
         editor.setComponents(wrapperHtml);
-
-        // Customize labels and hide internal HTML nodes in the Layer Manager (Sections)
-        editor.on('component:add', (component) => {
-            const type = component.get('type');
-            if (type === 'page-block') {
-                const blockType = component.getAttributes()['data-block-type'];
-                const label = labels[blockType] || blockType;
-                component.set('custom-name', label);
-                component.set('name', label);
-            } else {
-                component.set('layerable', false);
-            }
-        });
 
         availableTypes.forEach((type) => {
             editor.BlockManager.add(type, {
@@ -214,5 +217,42 @@ window.PageBuilder = {
 
             parent.append(blockWrapperHtml(uuid, type, html), { at: index });
         });
+
+        // Sidebar Resizer logic
+        const resizer = document.getElementById('sidebar-resize-handle');
+        const sidebar = canvas.closest('.page-builder__body')?.querySelector('.page-builder__sidebar');
+        const builderRoot = canvas.closest('.page-builder');
+
+        if (resizer && sidebar) {
+            let startX, startWidth;
+
+            resizer.addEventListener('mousedown', (e) => {
+                startX = e.clientX;
+                startWidth = parseInt(document.defaultView.getComputedStyle(sidebar).width, 10);
+                resizer.classList.add('active');
+                if (builderRoot) {
+                    builderRoot.classList.add('page-builder--dragging');
+                }
+                document.documentElement.addEventListener('mousemove', doDrag, false);
+                document.documentElement.addEventListener('mouseup', stopDrag, false);
+            });
+
+            function doDrag(e) {
+                const width = startWidth + (e.clientX - startX);
+                // Restrict sidebar width between 200px and 450px
+                if (width >= 200 && width <= 450) {
+                    sidebar.style.width = `${width}px`;
+                }
+            }
+
+            function stopDrag() {
+                resizer.classList.remove('active');
+                if (builderRoot) {
+                    builderRoot.classList.remove('page-builder--dragging');
+                }
+                document.documentElement.removeEventListener('mousemove', doDrag, false);
+                document.documentElement.removeEventListener('mouseup', stopDrag, false);
+            }
+        }
     },
 };

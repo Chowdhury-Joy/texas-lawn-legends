@@ -66,7 +66,7 @@
 }
 
 .page-builder__sidebar {
-    width: 200px;
+    width: 260px;
     flex-shrink: 0;
     border-right: 1px solid var(--pb-border);
     overflow-y: auto;
@@ -202,23 +202,45 @@
     display: none;
 }
 
-/* GrapesJS Layer Manager styling overrides to prevent white-on-white text */
-.gjs-layer,
-.gjs-layer-title,
-.gjs-layer-name,
-.gjs-layer__title,
-.gjs-layer__name,
-.gjs-layer-caret {
+/* Resize splitter bar */
+.page-builder__resize-handle {
+    width: 6px;
+    cursor: col-resize;
+    background: var(--pb-border);
+    position: relative;
+    flex-shrink: 0;
+    transition: background 0.2s;
+    z-index: 10;
+}
+
+.page-builder__resize-handle:hover,
+.page-builder__resize-handle.active {
+    background: #facc15;
+}
+
+/* Prevent iframe from stealing focus and pointer events while dragging sidebar */
+.page-builder--dragging iframe {
+    pointer-events: none !important;
+}
+
+/* Direct high-specificity overrides for GrapesJS Layer Manager to fix white-on-white text and black-on-black text */
+.page-builder__layers,
+.page-builder__layers *,
+.gjs-layers-c,
+.gjs-layers-c * {
+    background-color: transparent !important;
     color: var(--pb-text) !important;
     fill: var(--pb-text) !important;
+    stroke: var(--pb-text) !important;
+}
+
+/* Style individual layer rows */
+.gjs-layer {
+    background-color: transparent !important;
+    border-bottom: 1px solid var(--pb-border) !important;
 }
 
 .gjs-layer:hover,
 .gjs-layer.gjs-active {
     background-color: var(--pb-surface-alt) !important;
-    color: var(--pb-text) !important;
-}
-
-.gjs-layers-c {
-    background: transparent !important;
 }
