@@ -1,11 +1,11 @@
 import grapesjs from 'grapesjs';
 
-function blockWrapperHtml(uuid, type, html) {
-    return `<div data-gjs-type="page-block" data-block-uuid="${uuid}" data-block-type="${type}">${html}</div>`;
-}
-
 let activeWire = null;
 let activeEditor = null;
+
+function blockWrapperHtml(uuid, type, content) {
+    return `<div data-gjs-type="page-block" data-block-uuid="${uuid}" data-block-type="${type}">${content}</div>`;
+}
 
 function findComponentByUuid(uuid) {
     if (!activeEditor) return null;
@@ -44,8 +44,6 @@ function initializeComponentTree(component, labels) {
         component.components().forEach(child => initializeComponentTree(child, labels));
     }
 }
-
-
 
 async function handleSavePage() {
     if (!activeWire || !activeEditor) return;
@@ -92,7 +90,7 @@ document.addEventListener('click', (event) => {
 });
 
 window.PageBuilder = {
-    init(wire, { canvas, blocksPanel, layersPanel, cssUrl, blocks, labels, availableTypes }) {
+    init(wire, { canvas, blocksPanel, layersPanel, stylesPanel, traitsPanel, cssUrl, blocks, labels, availableTypes }) {
         activeWire = wire;
 
         if (activeEditor) {
@@ -133,12 +131,48 @@ window.PageBuilder = {
             layerManager: {
                 appendTo: layersPanel,
             },
+            styleManager: {
+                appendTo: stylesPanel,
+            },
+            traitManager: {
+                appendTo: traitsPanel,
+            },
             panels: {
                 defaults: [],
             },
         });
 
         activeEditor = editor;
+
+        // History & Preview controls
+        const undoBtn = document.getElementById('pb-undo');
+        const redoBtn = document.getElementById('pb-redo');
+        const previewBtn = document.getElementById('pb-preview');
+
+        if (undoBtn) {
+            undoBtn.addEventListener('click', () => {
+                editor.runCommand('core:undo');
+            });
+        }
+
+        if (redoBtn) {
+            redoBtn.addEventListener('click', () => {
+                editor.runCommand('core:redo');
+            });
+        }
+
+        if (previewBtn) {
+            previewBtn.addEventListener('click', () => {
+                const isPreview = editor.Commands.isActive('preview');
+                if (isPreview) {
+                    editor.stopCommand('preview');
+                    previewBtn.classList.remove('active');
+                } else {
+                    editor.runCommand('preview');
+                    previewBtn.classList.add('active');
+                }
+            });
+        }
 
         // Device selector handling
         document.querySelectorAll('.page-builder__device-btn').forEach(btn => {
@@ -210,8 +244,6 @@ window.PageBuilder = {
         // Recursively initialize names and configure block descendants for all initial components
         initializeComponentTree(editor.getWrapper(), labels);
 
-
-
         availableTypes.forEach((type) => {
             editor.BlockManager.add(type, {
                 label: labels[type] ?? type,
@@ -241,7 +273,6 @@ window.PageBuilder = {
                 }
             });
         });
-
 
         editor.on('component:remove', (component) => {
             const attrs = component.getAttributes();

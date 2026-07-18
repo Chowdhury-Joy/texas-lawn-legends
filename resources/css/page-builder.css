@@ -49,7 +49,6 @@
     cursor: pointer;
 }
 
-
 .page-builder__body {
     display: flex;
     flex: 1;
@@ -85,14 +84,6 @@
 .page-builder__hint {
     color: var(--pb-text-muted);
     font-size: 0.875rem;
-}
-
-.page-builder__blocks .gjs-block {
-    width: 100%;
-    min-height: auto;
-    text-align: left;
-    padding: 0.5rem 0.75rem;
-    margin-bottom: 0.375rem;
 }
 
 .page-builder__device-selector {
@@ -200,7 +191,7 @@
     pointer-events: none !important;
 }
 
-/* Direct high-specificity overrides for GrapesJS Layer Manager to fix white-on-white text and black-on-black text */
+/* Direct high-specificity overrides for GrapesJS Layer Manager */
 .page-builder__layers,
 .page-builder__layers *,
 .gjs-layers-c,
@@ -209,7 +200,7 @@
     color: var(--pb-text) !important;
     fill: var(--pb-text) !important;
     stroke: var(--pb-text) !important;
-    opacity: 1 !important; /* Prevent faint light-gray text */
+    opacity: 1 !important;
 }
 
 /* Style individual layer rows */
@@ -226,23 +217,23 @@
 
 /* Selected active element highlight */
 .gjs-layer.gjs-active {
-    background-color: #e2e8f0 !important; /* Solid gray highlight in light mode */
-    border-left: 4px solid #facc15 !important; /* Brand yellow left border indicator */
+    background-color: #e2e8f0 !important;
+    border-left: 4px solid #facc15 !important;
 }
 
 .gjs-layer.gjs-active * {
-    font-weight: 600 !important; /* Make active text bold */
+    font-weight: 600 !important;
 }
 
 :where(.dark) .gjs-layer.gjs-active {
-    background-color: #334155 !important; /* Dark slate highlight in dark mode */
+    background-color: #334155 !important;
 }
 
 /* Align canvas frames to the top to remove empty top space, and make full width */
 .gjs-cv-canvas__frames {
     display: flex !important;
     justify-content: center !important;
-    align-items: flex-start !important; /* Snap to top instead of centering vertically */
+    align-items: flex-start !important;
     padding-top: 0 !important;
     height: 100% !important;
 }
@@ -292,4 +283,203 @@
     background-color: #facc15 !important;
     color: #0f172a !important;
     border-color: #0f172a !important;
+}
+
+/* Sidebar Tabs styling */
+.page-builder__tabs {
+    display: flex;
+    border-bottom: 1px solid var(--pb-border);
+    margin-bottom: 0.75rem;
+    gap: 2px;
+}
+
+.page-builder__tab {
+    flex: 1;
+    text-align: center;
+    padding: 0.5rem 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+    color: var(--pb-text-muted);
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    background: transparent;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    transition: all 0.2s;
+}
+
+.page-builder__tab:hover {
+    color: var(--pb-text);
+    background: var(--pb-surface-alt);
+}
+
+.page-builder__tab.active {
+    color: #facc15;
+    border-bottom-color: #facc15;
+}
+
+.page-builder__tab-content {
+    display: flex;
+    flex-direction: column;
+    height: calc(100% - 50px);
+    overflow-y: auto;
+}
+
+.page-builder__tab-content[x-cloak] {
+    display: none !important;
+}
+
+/* History, Toolbar Buttons, Layout */
+.page-builder__center-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.page-builder__history-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.page-builder__toolbar-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.375rem;
+    border: 1px solid var(--pb-border);
+    background: var(--pb-surface);
+    color: var(--pb-text-muted);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.page-builder__toolbar-btn:hover {
+    color: var(--pb-text);
+    background: var(--pb-surface-alt);
+    border-color: var(--pb-text-muted);
+}
+
+.page-builder__toolbar-btn.active {
+    background: #facc15;
+    color: #0f172a;
+    border-color: #facc15;
+}
+
+.page-builder__actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Style Manager & Trait Manager bespoke overrides (Webflow UI style) */
+.gjs-sm-sector {
+    border-bottom: 1px solid var(--pb-border) !important;
+    background-color: transparent !important;
+}
+
+.gjs-sm-title {
+    font-size: 0.75rem !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    color: var(--pb-text-muted) !important;
+    padding: 0.75rem 0.5rem !important;
+    background-color: transparent !important;
+}
+
+.gjs-sm-properties {
+    padding: 0.5rem !important;
+    background-color: transparent !important;
+}
+
+.gjs-sm-property {
+    margin-bottom: 0.5rem !important;
+}
+
+.gjs-sm-label {
+    font-size: 0.75rem !important;
+    color: var(--pb-text) !important;
+    font-weight: 600 !important;
+    margin-bottom: 0.25rem !important;
+}
+
+.gjs-sm-field {
+    background-color: var(--pb-surface-alt) !important;
+    border: 1px solid var(--pb-border) !important;
+    border-radius: 0.25rem !important;
+    color: var(--pb-text) !important;
+    padding: 0.25rem 0.5rem !important;
+}
+
+.gjs-sm-field input,
+.gjs-sm-field select,
+.gjs-sm-field textarea {
+    color: var(--pb-text) !important;
+    background-color: transparent !important;
+    border: none !important;
+    font-size: 0.8125rem !important;
+}
+
+.gjs-sm-btn-change {
+    color: #facc15 !important;
+}
+
+/* Trait Manager */
+.gjs-trt-traits {
+    padding: 0.5rem !important;
+}
+
+.gjs-trt-trait {
+    margin-bottom: 0.75rem !important;
+}
+
+.gjs-trt-label {
+    font-size: 0.75rem !important;
+    font-weight: 600 !important;
+    color: var(--pb-text) !important;
+    margin-bottom: 0.25rem !important;
+}
+
+.gjs-field {
+    background-color: var(--pb-surface-alt) !important;
+    border: 1px solid var(--pb-border) !important;
+    border-radius: 0.25rem !important;
+    color: var(--pb-text) !important;
+    padding: 0.375rem 0.5rem !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+.gjs-field input,
+.gjs-field select,
+.gjs-field textarea {
+    color: var(--pb-text) !important;
+    background-color: transparent !important;
+    border: none !important;
+    width: 100% !important;
+    font-size: 0.8125rem !important;
+}
+
+/* Fix GrapesJS UI global styling to inherit variables */
+.gjs-two-color {
+    color: var(--pb-text) !important;
+}
+
+.gjs-one-bg {
+    background-color: var(--pb-surface) !important;
+}
+
+.gjs-three-bg {
+    background-color: var(--pb-surface-alt) !important;
+}
+
+.gjs-four-color,
+.gjs-four-color-h:hover {
+    color: #facc15 !important;
 }
