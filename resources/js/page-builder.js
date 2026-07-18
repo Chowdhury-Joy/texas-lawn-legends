@@ -45,6 +45,33 @@ function initializeComponentTree(component, labels) {
     }
 }
 
+function fitCanvasWidthOnly() {
+    if (!activeEditor) return;
+    const canvasEl = activeEditor.Canvas.getElement();
+    if (!canvasEl) return;
+
+    const containerWidth = canvasEl.clientWidth;
+    const deviceName = activeEditor.getDevice();
+    const device = activeEditor.Devices.get(deviceName);
+    if (!device) return;
+
+    const deviceWidth = parseInt(device.get('width'), 10);
+
+    if (!deviceWidth || isNaN(deviceWidth)) {
+        activeEditor.Canvas.setZoom(100);
+        return;
+    }
+
+    const padding = 16;
+    let ratio = (containerWidth - padding) / deviceWidth;
+
+    if (ratio > 1) {
+        ratio = 1;
+    }
+
+    activeEditor.Canvas.setZoom(ratio * 100);
+}
+
 async function handleSavePage() {
     if (!activeWire || !activeEditor) return;
 
@@ -126,7 +153,7 @@ window.PageBuilder = {
                 if (device === 'mobile') deviceName = 'Mobile';
 
                 editor.setDevice(deviceName);
-                editor.Canvas.setZoom('fit'); // Fit zoom after device switch
+                fitCanvasWidthOnly(); // Fit zoom after device switch
                 
                 document.querySelectorAll('.page-builder__device-btn').forEach(b => b.classList.remove('active'));
                 e.currentTarget.classList.add('active');
@@ -189,12 +216,12 @@ window.PageBuilder = {
 
         // Trigger zoom-to-fit once the canvas frame is ready
         setTimeout(() => {
-            editor.Canvas.setZoom('fit');
+            fitCanvasWidthOnly();
         }, 200);
 
         // Auto-zoom on window resize
         window.addEventListener('resize', () => {
-            editor.Canvas.setZoom('fit');
+            fitCanvasWidthOnly();
         });
 
         availableTypes.forEach((type) => {
@@ -238,14 +265,14 @@ window.PageBuilder = {
 
             // Auto zoom out canvas when edit sidebar panel opens
             setTimeout(() => {
-                editor.Canvas.setZoom('fit');
+                fitCanvasWidthOnly();
             }, 100);
         });
 
         editor.on('component:deselected', () => {
             // Auto zoom in/adjust canvas when edit sidebar panel closes
             setTimeout(() => {
-                editor.Canvas.setZoom('fit');
+                fitCanvasWidthOnly();
             }, 100);
         });
 
@@ -308,7 +335,7 @@ window.PageBuilder = {
                 // Restrict sidebar width between 200px and 450px
                 if (width >= 200 && width <= 450) {
                     sidebar.style.width = `${width}px`;
-                    editor.Canvas.setZoom('fit'); // Dynamically update zoom while resizing
+                    fitCanvasWidthOnly(); // Dynamically update zoom while resizing
                 }
             }
 
