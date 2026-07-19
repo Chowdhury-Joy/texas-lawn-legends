@@ -1,27 +1,16 @@
+@php
+    $layout = \App\Support\PageBlocks::layoutClasses($data['layout'] ?? []);
+@endphp
 <section id="portfolio" class="border-t-4 border-slate-950 bg-brand-paper">
-    <div class="mx-auto max-w-7xl px-6 py-20"
-         x-data="{ active: 'All Neighborhoods' }">
+    <div class="mx-auto max-w-7xl px-6 py-20">
         <h2 data-field="heading" class="text-center text-4xl font-medium tracking-tighter text-slate-900 sm:text-5xl">{{ $data['heading'] ?? 'Verified Local Proof' }}</h2>
         @if ($proofSub = $data['subheading'] ?? null)
             <p data-field="subheading" class="mx-auto mt-3 max-w-2xl text-center text-slate-600">{{ $proofSub }}</p>
         @endif
- 
-        <div class="mt-10 flex flex-wrap justify-center gap-2">
-            @foreach (collect(['All Neighborhoods'])->merge($neighborhoods) as $tab)
-                <button type="button"
-                        @click="active = @js($tab)"
-                        :class="active === @js($tab) ? 'bg-slate-950 text-yellow-400' : 'bg-white text-slate-900 hover:bg-yellow-400'"
-                        class="border-2 border-slate-950 px-4 py-2 text-xs font-medium uppercase tracking-wide transition-colors">
-                    {{ $tab }}
-                </button>
-            @endforeach
-        </div>
- 
-        <div x-cloak class="mt-10 grid grid-cols-1 gap-8 md:grid-cols-2 tab:grid-cols-2 lg:grid-cols-3">
+
+        <div class="mt-10 {{ $layout ?: 'grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3' }}">
             @forelse ($testimonials as $review)
-                <div class="box-brutal flex flex-col mr-[8px] md:mr-0"
-                     x-show="active === 'All Neighborhoods' || active === @js($review->neighborhood)"
-                     x-transition>
+                <div class="box-brutal flex flex-col p-4 sm:p-6">
                     <div class="grid grid-cols-2 border-b-2 border-slate-950">
                         <div class="flex aspect-square items-center justify-center border-r-2 border-slate-950 bg-slate-200">
                             <span class="text-xs font-black uppercase tracking-widest text-slate-500">Before</span>

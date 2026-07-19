@@ -77,6 +77,24 @@ class PageForm
                                 Builder\Block::make('about')
                                     ->label('About Us')
                                     ->schema(PageBlocks::fields('about')),
+                                Builder\Block::make('stat_band')
+                                    ->label('Stat Band')
+                                    ->schema(PageBlocks::fields('stat_band')),
+                                Builder\Block::make('testimonial_quote')
+                                    ->label('Testimonial Quote')
+                                    ->schema(PageBlocks::fields('testimonial_quote')),
+                                Builder\Block::make('icon_feature')
+                                    ->label('Icon Feature Grid')
+                                    ->schema(PageBlocks::fields('icon_feature')),
+                                Builder\Block::make('logo_cloud')
+                                    ->label('Logo Cloud')
+                                    ->schema(PageBlocks::fields('logo_cloud')),
+                                Builder\Block::make('testimonial_grid')
+                                    ->label('Testimonial Grid')
+                                    ->schema(PageBlocks::fields('testimonial_grid')),
+                                Builder\Block::make('review_spotlight')
+                                    ->label('Review Spotlight')
+                                    ->schema(PageBlocks::fields('review_spotlight')),
                             ])
                             ->columnSpanFull(),
                     ]),

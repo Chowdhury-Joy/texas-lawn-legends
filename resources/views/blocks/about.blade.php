@@ -1,9 +1,11 @@
 @php
-    $image = filled($data['image'] ?? null) ? \Illuminate\Support\Facades\Storage::disk('public')->url($data['image']) : null;
+    $image = filled($data['image'] ?? null) ? public_url($data['image']) : null;
     $stats = (array) ($data['stats'] ?? []);
+    $layout = \App\Support\PageBlocks::layoutClasses($data['layout'] ?? []);
+    
 @endphp
 <section id="about" class="border-t-4 border-slate-950 bg-brand-paper">
-    <div class="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-6 py-16 tab:grid-cols-2 tab:items-center lg:grid-cols-2 lg:items-center lg:py-20">
+    <div class="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-6 py-16 lg:grid-cols-2 lg:items-center">
         <div class="{{ $data['reverse'] ?? false ? 'lg:order-2' : '' }}">
             @if ($image)
                 <img src="{{ $image }}" alt="{{ $data['heading'] ?? 'About Texas Lawn Legends' }}" loading="lazy" decoding="async" class="box-brutal aspect-[4/3] w-full object-cover">
@@ -26,9 +28,9 @@
             </p>
 
             @if (! empty($stats))
-                <div class="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3">
+                <div class="mt-8 {{ $layout ?: 'grid grid-cols-2 gap-4 sm:grid-cols-3' }}">
                     @foreach ($stats as $index => $stat)
-                        <div data-field="stats.{{ $index }}" class="box-brutal p-4">
+                        <div data-field="stats.{{ $index }}" class="box-brutal p-3 sm:p-4">
                             <h3 data-field="stats.{{ $index }}.value" data-gjs-type="text" class="block text-4xl font-medium leading-none tracking-tighter text-emerald-900">
                                 {{ filled($stat['value'] ?? null) ? $stat['value'] : '[00]' }}
                             </h3>

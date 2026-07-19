@@ -3,20 +3,20 @@
     $telHref = 'tel:+1' . preg_replace('/\D/', '', (string) $phone);
     $areas = (array) setting('service_areas', []);
     
-    $heroImage = filled($data['media_image'] ?? null) 
-        ? \Illuminate\Support\Facades\Storage::disk('public')->url($data['media_image']) 
+    $heroImage = filled($data['media_image'] ?? null)
+        ? public_url($data['media_image'])
         : asset('images/hero_desktop.jpg');
 
-    $heroImageMobile = filled($data['media_image_mobile'] ?? null) 
-        ? \Illuminate\Support\Facades\Storage::disk('public')->url($data['media_image_mobile']) 
-        : (filled($data['media_image'] ?? null) 
-            ? \Illuminate\Support\Facades\Storage::disk('public')->url($data['media_image']) 
+    $heroImageMobile = filled($data['media_image_mobile'] ?? null)
+        ? public_url($data['media_image_mobile'])
+        : (filled($data['media_image'] ?? null)
+            ? public_url($data['media_image'])
             : asset('images/hero_mobile.jpg'));
  @endphp
 
 <section class="border-b-4 border-slate-950 bg-brand-paper">
-    <div class="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-6 py-16 tab:grid-cols-12 tab:items-center lg:grid-cols-12 lg:items-center">
-        <div class="lg:col-span-7 tab:col-span-7">
+    <div class="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-6 py-16 lg:grid-cols-12 lg:items-center">
+        <div class="lg:col-span-7">
             <h1 data-field="heading" class="text-4xl font-medium leading-[1.05] tracking-tighter text-slate-900 sm:text-5xl lg:text-6xl">
                 {{ filled($data['heading'] ?? null) ? $data['heading'] : 'Transform Your Dallas Yard Into An Outdoor Retreat.' }}
             </h1>
@@ -39,7 +39,7 @@
         </div>
 
         {{-- Right media box --}}
-        <div class="lg:col-span-5 tab:col-span-5 mr-[8px] lg:mr-0">
+        <div class="lg:col-span-5 mr-[8px] lg:mr-0">
             <div class="box-brutal relative overflow-hidden">
                 <picture>
                     <source srcset="{{ $heroImageMobile }}" media="(max-width: 631px)">

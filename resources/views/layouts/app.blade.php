@@ -188,7 +188,7 @@
 
     {{-- Sticky Get-Estimate call to action --}}
     <a href="{{ url('/estimate') }}"
-       class="btn-brutal fixed bottom-4 right-4 z-40 border-2 border-slate-950 bg-yellow-400 px-4 py-3 text-xs font-bold uppercase tracking-wide text-slate-950 shadow-lg sm:bottom-6 sm:right-6 sm:px-5 sm:py-3 sm:text-sm">
+       class="btn-brutal fixed bottom-4 right-4 z-30 border-2 border-slate-950 bg-yellow-400 px-4 py-3 text-xs font-bold uppercase tracking-wide text-slate-950 shadow-lg sm:bottom-6 sm:right-6 sm:px-5 sm:py-3 sm:text-sm">
         Get Estimate
     </a>
 
