@@ -72,7 +72,6 @@ class SettingsSeeder extends Seeder
             ['color_slate', '#334155', 'string', 'branding'],
             ['theme', 'clean', 'string', 'branding'], // clean | minimal | editorial | rounded | retro | bold
 
-
             // ---------------- SEO ----------------
             ['meta_title', 'Texas Lawn Legends — Premium Dallas Landscaping & Lawn Care', 'string', 'seo'],
             ['meta_description', 'Professional landscape design, precision hardscaping, and premier maintenance serving Bishop Arts, Kessler Park, Highland Park, University Park, and Oak Lawn.', 'text', 'seo'],

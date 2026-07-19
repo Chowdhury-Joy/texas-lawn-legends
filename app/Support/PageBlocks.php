@@ -453,6 +453,7 @@ class PageBlocks
 
         $map = [
             'mobile' => '',
+            'tablet' => 'tab:',
             'desktop' => 'lg:',
         ];
 

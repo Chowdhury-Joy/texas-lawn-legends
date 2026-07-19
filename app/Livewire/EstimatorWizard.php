@@ -20,9 +20,13 @@ class EstimatorWizard extends Component
 
     // Step 1 — contact + neighborhood
     public string $name = '';
+
     public string $email = '';
+
     public string $phone = '';
+
     public string $address = '';
+
     public string $neighborhood = '';
 
     // Step 2 — service scope
@@ -30,16 +34,21 @@ class EstimatorWizard extends Component
 
     // Step 3 — dimensions + complexity
     public int $sqft = 500;
+
     public string $complexity = 'standard';
 
     // Results
     public ?float $estimateLow = null;
+
     public ?float $estimateHigh = null;
+
     public bool $isCustom = false;
 
     // Booking
     public ?string $selectedDate = null;
+
     public ?string $selectedTime = null;
+
     public bool $booked = false;
 
     public ?string $leadUuid = null;

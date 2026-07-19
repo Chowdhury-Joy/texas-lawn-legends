@@ -16,6 +16,5 @@ class AddonOrdered
     public function __construct(
         public Addon $addon,
         public array $context = [],
-    ) {
-    }
+    ) {}
 }

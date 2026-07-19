@@ -24,7 +24,7 @@ trait RoleRestricted
         ];
     }
 
-    public static function canView(Model $record): bool
+    public static function canViewAny(): bool
     {
         /** @var User|null $user */
         $user = auth()->user();
@@ -34,5 +34,25 @@ trait RoleRestricted
         }
 
         return in_array($user->role, static::allowedRoles(), true);
+    }
+
+    public static function canView(Model $record): bool
+    {
+        return static::canViewAny();
+    }
+
+    public static function canCreate(): bool
+    {
+        return static::canViewAny();
+    }
+
+    public static function canEdit(Model $record): bool
+    {
+        return static::canViewAny();
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        return static::canViewAny();
     }
 }

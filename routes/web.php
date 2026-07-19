@@ -19,8 +19,8 @@ Route::get('/robots.txt', function () {
     $allowIndex = filter_var(setting('robots_index', true), FILTER_VALIDATE_BOOLEAN);
 
     $lines = $allowIndex
-        ? ["User-agent: *", "Allow: /", "Disallow: /admin", "", 'Sitemap: '.url('/sitemap.xml')]
-        : ["User-agent: *", "Disallow: /"];
+        ? ['User-agent: *', 'Allow: /', 'Disallow: /admin', '', 'Sitemap: '.url('/sitemap.xml')]
+        : ['User-agent: *', 'Disallow: /'];
 
     return response(implode("\n", $lines), 200)->header('Content-Type', 'text/plain');
 })->name('robots');

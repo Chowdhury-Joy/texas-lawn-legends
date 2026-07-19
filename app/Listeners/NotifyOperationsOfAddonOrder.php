@@ -9,8 +9,7 @@ class NotifyOperationsOfAddonOrder
 {
     public function __construct(
         protected OperationsNotifier $notifier,
-    ) {
-    }
+    ) {}
 
     public function handle(AddonOrdered $event): void
     {
