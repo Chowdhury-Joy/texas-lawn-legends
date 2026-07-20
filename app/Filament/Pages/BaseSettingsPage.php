@@ -101,6 +101,11 @@ abstract class BaseSettingsPage extends Page
             ->send();
     }
 
+    public function areFormActionsSticky(): bool
+    {
+        return true;
+    }
+
     /**
      * @return array<int, Action>
      */

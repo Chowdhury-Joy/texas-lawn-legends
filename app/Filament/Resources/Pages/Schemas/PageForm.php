@@ -44,6 +44,10 @@ class PageForm
                         Builder::make('blocks')
                             ->label('Page Sections')
                             ->blocks(PageBlocks::builderBlocks())
+                            ->collapsible()
+                            ->collapsed()
+                            ->cloneable()
+                            ->blockNumbers(false)
                             ->columnSpanFull(),
                     ]),
                 Section::make('SEO')

@@ -41,6 +41,6 @@ class CmsPresetsAndThemeToggleTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertSee('Homepage Content Editor');
-        $response->assertSee('sticky bottom-6 z-30', false);
+        $response->assertSee('sticky bottom-0 z-40', false);
     }
 }

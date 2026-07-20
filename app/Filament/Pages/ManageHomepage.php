@@ -60,9 +60,18 @@ class ManageHomepage extends Page
                 Builder::make('blocks')
                     ->label('Homepage Sections')
                     ->blocks(PageBlocks::builderBlocks())
+                    ->collapsible()
+                    ->collapsed()
+                    ->cloneable()
+                    ->blockNumbers(false)
                     ->columnSpanFull(),
             ])
             ->statePath('data');
+    }
+
+    public function areFormActionsSticky(): bool
+    {
+        return true;
     }
 
     public function save(): void

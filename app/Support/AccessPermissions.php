@@ -108,6 +108,11 @@ final class AccessPermissions
                 'group' => 'Site Settings',
                 'roles' => [UserRole::Admin],
             ],
+            'settings.advanced_layout' => [
+                'label' => 'Advanced Block Layout & Grid Controls',
+                'group' => 'Site Settings',
+                'roles' => [UserRole::Admin],
+            ],
         ];
     }
 

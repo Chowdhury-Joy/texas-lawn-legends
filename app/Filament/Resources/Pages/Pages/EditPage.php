@@ -19,6 +19,11 @@ class EditPage extends EditRecord
         ];
     }
 
+    public function areFormActionsSticky(): bool
+    {
+        return true;
+    }
+
     public function getMaxContentWidth(): string
     {
         return 'full';

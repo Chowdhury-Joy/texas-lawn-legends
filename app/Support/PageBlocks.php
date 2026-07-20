@@ -142,7 +142,20 @@ class PageBlocks
     {
         return array_map(
             fn (string $type, string $label): Block => Block::make($type)
-                ->label($label)
+                ->label(function (?array $state) use ($label): string {
+                    if (empty($state)) {
+                        return $label;
+                    }
+
+                    $title = $state['heading']
+                        ?? $state['title']
+                        ?? $state['eyebrow']
+                        ?? $state['quote']
+                        ?? $state['create_suite_heading']
+                        ?? null;
+
+                    return filled($title) ? "{$label} — {$title}" : $label;
+                })
                 ->schema(static::fields($type)),
             static::all(),
             array_values(static::labels()),
@@ -187,27 +200,27 @@ class PageBlocks
     private static function hero(): array
     {
         return [
-            TextInput::make('eyebrow')->label('Eyebrow tag')->columnSpanFull(),
-            TextInput::make('heading')->label('Headline')->required()->columnSpanFull(),
-            Textarea::make('subheading')->label('Sub-heading')->rows(3)->columnSpanFull(),
-            TextInput::make('cta_primary_label')->label('Primary button label'),
-            TextInput::make('cta_secondary_label')->label('Secondary button label (phone appended)'),
+            TextInput::make('eyebrow')->label('Eyebrow tag')->placeholder('e.g. Dallas, TX · Premier Landscape Design')->helperText('Small badge above headline. Leave empty to hide.')->columnSpanFull(),
+            TextInput::make('heading')->label('Headline')->placeholder('e.g. Transform Your Dallas Yard Into An Outdoor Retreat.')->required()->columnSpanFull(),
+            Textarea::make('subheading')->label('Sub-heading')->placeholder('e.g. Professional design, precision hardscaping, and premier maintenance...')->rows(3)->helperText('Brief introduction text under headline. Leave empty to hide.')->columnSpanFull(),
+            TextInput::make('cta_primary_label')->label('Primary button label')->placeholder('e.g. Get Instant Estimate')->helperText('Primary call to action button. Leave empty to hide.'),
+            TextInput::make('cta_secondary_label')->label('Secondary button label (phone appended)')->placeholder('e.g. Call Or Text')->helperText('Appends phone number from contact settings. Leave empty to hide.'),
             FileUpload::make('media_image')
                 ->label('Hero image (optional)')
                 ->image()->directory('homepage')->disk('public')->visibility('public')
                 ->imageEditor()->imageEditorAspectRatios([16 / 9, 21 / 9])
-                ->helperText('Falls back to the default desktop image when empty.')
+                ->helperText('Recommended 16:9 ratio. Falls back to default desktop image when empty.')
                 ->columnSpanFull(),
             FileUpload::make('media_image_mobile')
                 ->label('Hero mobile image (optional)')
                 ->image()->directory('homepage')->disk('public')->visibility('public')
                 ->imageEditor()->imageEditorAspectRatios([1, 4 / 5])
-                ->helperText('Used below 632px. Falls back to the default mobile image when empty.')
+                ->helperText('Used on small screens. Falls back to default mobile image when empty.')
                 ->columnSpanFull(),
-            TextInput::make('media_badge')->label('Media badge'),
-            TextInput::make('media_neighborhood')->label('Media neighborhood label'),
-            TextInput::make('media_title')->label('Media project title'),
-            TextInput::make('media_subtitle')->label('Media project subtitle'),
+            TextInput::make('media_badge')->label('Media badge')->placeholder('e.g. Featured Project'),
+            TextInput::make('media_neighborhood')->label('Media neighborhood label')->placeholder('e.g. Highland Park, TX'),
+            TextInput::make('media_title')->label('Media project title')->placeholder('e.g. Custom Outdoor Living & Fire Pit'),
+            TextInput::make('media_subtitle')->label('Media project subtitle')->placeholder('e.g. Completed June 2026'),
         ];
     }
 
@@ -237,6 +250,8 @@ class PageBlocks
                 ->columns(1)
                 ->reorderable()
                 ->collapsible()
+                ->collapsed()
+                ->cloneable()
                 ->itemLabel(fn (array $state): ?string => ($state['number'] ?? '').' — '.($state['title'] ?? '')),
             ...static::layout(),
         ];
@@ -302,7 +317,9 @@ class PageBlocks
                 ])
                 ->columns(2)
                 ->reorderable()
-                ->collapsible(),
+                ->collapsible()
+                ->collapsed()
+                ->cloneable(),
             ...static::layout(),
         ];
     }
@@ -321,6 +338,8 @@ class PageBlocks
                 ->columns(1)
                 ->reorderable()
                 ->collapsible()
+                ->collapsed()
+                ->cloneable()
                 ->itemLabel(fn (array $state): ?string => $state['question'] ?? null),
         ];
     }
@@ -348,6 +367,8 @@ class PageBlocks
                 ->columns(2)
                 ->reorderable()
                 ->collapsible()
+                ->collapsed()
+                ->cloneable()
                 ->itemLabel(fn (array $state): ?string => ($state['value'] ?? '').' — '.($state['label'] ?? '')),
             ...static::layout(),
         ];
@@ -368,6 +389,8 @@ class PageBlocks
                 ->columns(2)
                 ->reorderable()
                 ->collapsible()
+                ->collapsed()
+                ->cloneable()
                 ->itemLabel(fn (array $state): ?string => ($state['value'] ?? '').' — '.($state['label'] ?? '')),
             ...static::layout(),
         ];
@@ -410,6 +433,8 @@ class PageBlocks
                 ->columns(1)
                 ->reorderable()
                 ->collapsible()
+                ->collapsed()
+                ->cloneable()
                 ->itemLabel(fn (array $state): ?string => $state['title'] ?? null),
             ...static::layout(),
         ];
@@ -429,7 +454,9 @@ class PageBlocks
                 ])
                 ->columns(2)
                 ->reorderable()
-                ->collapsible(),
+                ->collapsible()
+                ->collapsed()
+                ->cloneable(),
             ...static::layout(),
         ];
     }
@@ -528,8 +555,9 @@ class PageBlocks
 
         return [
             Section::make('Responsive layout')
-                ->description('Control flex vs grid and columns/alignment per breakpoint. Mobile applies to all sizes unless overridden by tablet/desktop.')
+                ->description('Control flex vs grid and columns/alignment per breakpoint. Visible to users with designer/advanced layout permission.')
                 ->collapsed()
+                ->visible(fn (): bool => auth()->user()?->canAccessKey('settings.advanced_layout') ?? false)
                 ->schema([
                     $make('mobile', 'Mobile (base)'),
                     $make('tablet', 'Tablet (632px+)'),

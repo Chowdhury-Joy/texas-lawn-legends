@@ -20,7 +20,7 @@ class FloatingAdminSaveButtonTest extends TestCase
         $response = $this->actingAs($admin)->get('/admin/manage-homepage');
 
         $response->assertStatus(200);
-        $response->assertSee('sticky bottom-6 z-30', false);
+        $response->assertSee('sticky bottom-0 z-40', false);
         $response->assertSee('Save changes');
     }
 
@@ -33,7 +33,7 @@ class FloatingAdminSaveButtonTest extends TestCase
         $response = $this->actingAs($admin)->get('/admin/manage-branding');
 
         $response->assertStatus(200);
-        $response->assertSee('sticky bottom-6 z-30', false);
+        $response->assertSee('sticky bottom-0 z-40', false);
         $response->assertSee('Save changes');
     }
 }
