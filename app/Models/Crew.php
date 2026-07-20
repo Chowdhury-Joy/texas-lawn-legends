@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\ProjectStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -34,7 +35,9 @@ class Crew extends Model
     protected static function booted(): void
     {
         static::deleting(function (Crew $crew) {
-            $crew->projects()->update(['crew_id' => null]);
+            $crew->projects()
+                ->whereIn('status', [ProjectStatus::Scheduled, ProjectStatus::Active])
+                ->update(['crew_id' => null]);
         });
     }
 

@@ -62,7 +62,7 @@
                         <p class="mt-1 text-xs text-slate-300">Share your custom referral link with a neighbor. When they request an estimate, you both receive a $100 project credit.</p>
                     </div>
                     <div class="shrink-0">
-                        @php $refUrl = url('/estimate?ref='.$project->unique_dashboard_hash); @endphp
+                        @php $refUrl = url('/estimate?ref='.$project->referral_code); @endphp
                         <button type="button"
                                 @click="navigator.clipboard.writeText('{{ $refUrl }}'); copied = true; setTimeout(() => copied = false, 3000)"
                                 class="btn-brutal bg-yellow-400 px-5 py-3 text-xs font-black uppercase tracking-wider text-slate-950 hover:bg-yellow-300">

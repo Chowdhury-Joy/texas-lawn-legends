@@ -40,7 +40,7 @@ class FinancialOverview extends StatsOverviewWidget
             ->count();
 
         $avgMargin = (float) Project::query()->avg(
-            DB::raw("((contract_value - material_cost - labor_cost) / NULLIF(contract_value, 0)) * 100")
+            DB::raw(Project::getProfitMarginSql())
         );
 
         return [

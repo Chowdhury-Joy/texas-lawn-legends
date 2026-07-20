@@ -10,6 +10,7 @@ use App\Services\EstimatePricingEngine;
 use Illuminate\Support\Carbon;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\Url;
 use Livewire\Component;
 
 class EstimatorWizard extends Component
@@ -17,6 +18,9 @@ class EstimatorWizard extends Component
     public int $step = 1;
 
     public int $totalSteps = 4;
+
+    #[Url(as: 'ref')]
+    public ?string $referred_by_code = null;
 
     // Step 1 — contact + neighborhood
     public string $name = '';
@@ -155,6 +159,7 @@ class EstimatorWizard extends Component
             'calculated_estimate_high' => $this->estimateHigh,
             'step_reached' => 'step_'.$this->step,
             'status' => $this->estimateLow !== null ? LeadStatus::Qualified : LeadStatus::Partial,
+            'referred_by_code' => $this->referred_by_code,
         ];
 
         if ($this->leadUuid) {

@@ -11,3 +11,4 @@ Artisan::command('inspire', function () {
 // cPanel runs this via a single cron entry (`* * * * * php artisan schedule:run`),
 // no persistent queue worker required.
 Schedule::command('leads:escalate-stalled')->everyMinute()->withoutOverlapping();
+Schedule::command('app:escalate-overdue-invoices')->daily()->withoutOverlapping();

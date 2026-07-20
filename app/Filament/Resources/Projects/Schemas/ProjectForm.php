@@ -44,6 +44,7 @@ class ProjectForm
                         TextInput::make('contract_value')
                             ->required()
                             ->numeric()
+                            ->minValue(0)
                             ->prefix('$')
                             ->step(0.01),
                     ]),
@@ -53,6 +54,7 @@ class ProjectForm
                         TextInput::make('material_cost')
                             ->label('Material Cost ($)')
                             ->numeric()
+                            ->minValue(0)
                             ->prefix('$')
                             ->default(0)
                             ->step(0.01)
@@ -60,6 +62,7 @@ class ProjectForm
                         TextInput::make('labor_cost')
                             ->label('Labor Cost ($)')
                             ->numeric()
+                            ->minValue(0)
                             ->prefix('$')
                             ->default(0)
                             ->step(0.01)

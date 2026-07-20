@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Enums\ProjectStatus;
 use App\Models\Crew;
 use App\Models\Project;
 use App\Models\User;
@@ -34,11 +35,13 @@ class ManageSchedule extends Page
         return $user?->canAccessKey('resource.crews') ?? false;
     }
 
-    public function assignCrew(int $projectId, ?int $crewId = null): void
+    public function assignCrew(int $projectId, $crewId = null): void
     {
+        abort_unless(static::canAccess(), 403);
+
         $project = Project::find($projectId);
 
-        if (! $crewId) {
+        if (empty($crewId)) {
             $project?->update(['crew_id' => null]);
             return;
         }
@@ -57,7 +60,8 @@ class ManageSchedule extends Page
 
     public function getCrewsWithProjectsProperty()
     {
-        $query = Project::query();
+        $query = Project::query()
+            ->whereIn('status', [ProjectStatus::Scheduled, ProjectStatus::Active]);
 
         match ($this->filterRange) {
             'this_week' => $query->whereBetween('started_at', [now()->startOfWeek(), now()->endOfWeek()]),
@@ -85,7 +89,7 @@ class ManageSchedule extends Page
     {
         return Project::query()
             ->whereNull('crew_id')
-            ->whereIn('status', ['scheduled', 'active'])
+            ->whereIn('status', [ProjectStatus::Scheduled, ProjectStatus::Active])
             ->orderBy('started_at')
             ->get();
     }

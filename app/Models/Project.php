@@ -33,6 +33,7 @@ class Project extends Model
         'lead_id',
         'crew_id',
         'unique_dashboard_hash',
+        'referral_code',
         'client_name',
         'project_title',
         'neighborhood',
@@ -42,6 +43,7 @@ class Project extends Model
         'status',
         'started_at',
         'completed_at',
+        'review_requested_at',
     ];
 
     protected function casts(): array
@@ -53,6 +55,7 @@ class Project extends Model
             'status' => ProjectStatus::class,
             'started_at' => 'date',
             'completed_at' => 'date',
+            'review_requested_at' => 'datetime',
         ];
     }
 
@@ -66,7 +69,7 @@ class Project extends Model
         return (float) $this->contract_value - $this->total_cost;
     }
 
-    public function getProfitMarginPercentAttribute(): float
+    public function getProfitMarginPercentAttribute(): ?float
     {
         $contract = (float) $this->contract_value;
 
@@ -74,7 +77,27 @@ class Project extends Model
             return 0;
         }
 
+        if ((float) $this->material_cost === 0.0 && (float) $this->labor_cost === 0.0) {
+            return null;
+        }
+
         return round(($this->profit_margin / $contract) * 100, 1);
+    }
+
+    public static function getProfitMarginSql(): string
+    {
+        return '
+            CASE 
+                WHEN contract_value <= 0 THEN 0 
+                WHEN material_cost = 0 AND labor_cost = 0 THEN NULL 
+                ELSE ((contract_value - material_cost - labor_cost) / contract_value) * 100 
+            END
+        ';
+    }
+
+    public function scopeWithProfitMargin($query)
+    {
+        return $query->selectRaw('*, ('.static::getProfitMarginSql().') as calculated_profit_margin');
     }
 
     protected static function booted(): void
@@ -82,6 +105,9 @@ class Project extends Model
         static::creating(function (Project $project) {
             if (empty($project->unique_dashboard_hash)) {
                 $project->unique_dashboard_hash = static::generateUniqueHash();
+            }
+            if (empty($project->referral_code)) {
+                $project->referral_code = static::generateReferralCode();
             }
         });
     }
@@ -93,6 +119,15 @@ class Project extends Model
         } while (static::query()->where('unique_dashboard_hash', $hash)->exists());
 
         return $hash;
+    }
+
+    public static function generateReferralCode(): string
+    {
+        do {
+            $code = strtoupper(Str::random(12));
+        } while (static::query()->where('referral_code', $code)->exists());
+
+        return $code;
     }
 
     public function getRouteKeyName(): string

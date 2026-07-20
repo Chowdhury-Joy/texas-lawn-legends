@@ -38,14 +38,15 @@ class ProjectsTable
                     ->sortable(),
                 TextColumn::make('profit_margin_percent')
                     ->label('Margin %')
-                    ->formatStateUsing(fn ($state) => $state.'%')
+                    ->formatStateUsing(fn ($state) => $state === null ? 'N/A' : $state.'%')
                     ->badge()
                     ->color(fn ($state) => match (true) {
+                        $state === null => 'gray',
                         $state >= 40 => 'success',
                         $state >= 20 => 'warning',
                         default => 'danger',
                     })
-                    ->sortable(query: fn($query, $direction) => $query->orderByRaw("((contract_value - material_cost - labor_cost) / NULLIF(contract_value, 0)) * 100 $direction")),
+                    ->sortable(query: fn($query, $direction) => $query->orderBy('calculated_profit_margin', $direction)),
                 TextColumn::make('crew.name')
                     ->label('Crew')
                     ->placeholder('Unassigned')
@@ -93,9 +94,19 @@ class ProjectsTable
                     ->modalHeading('Send Google Review Request')
                     ->modalDescription('Generates a review request notification for this client.')
                     ->action(function ($record) {
+                        $placeId = setting('google_place_id', 'ChIJN1t_tDeuEmsRUsoyG83frY4'); // example place id
+                        $link = "https://search.google.com/local/writereview?placeid={$placeId}";
+                        
+                        app(\App\Services\OperationsNotifier::class)->dispatch('Review Request', [
+                            'client_name' => $record->client_name,
+                            'project_title' => $record->project_title,
+                            'review_link' => $link,
+                        ]);
+
+                        $record->update(['review_requested_at' => now()]);
+
                         Notification::make()
-                            ->title("Review request prepared for {$record->client_name}")
-                            ->body('Send link: https://g.page/r/texas-lawn-legends/review?client='.urlencode($record->client_name))
+                            ->title("Review request sent to {$record->client_name}")
                             ->success()
                             ->send();
                     }),

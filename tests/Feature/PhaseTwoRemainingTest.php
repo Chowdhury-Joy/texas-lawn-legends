@@ -104,6 +104,6 @@ class PhaseTwoRemainingTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('Refer a Dallas Neighbor & Get $100 Credit', false);
         $response->assertSee('Copy Referral Link');
-        $response->assertSee(url('/estimate?ref='.$project->unique_dashboard_hash));
+        $response->assertSee(url('/estimate?ref='.$project->referral_code));
     }
 }
