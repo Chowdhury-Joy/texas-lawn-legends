@@ -2,9 +2,7 @@
 
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PageController;
-use App\Livewire\Admin\PagePreview;
 use App\Models\Page;
-use Filament\Http\Middleware\Authenticate;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [PageController::class, 'home'])->name('home');
@@ -52,22 +50,6 @@ Route::get('/sitemap.xml', function () {
 Route::view('/estimate', 'estimate')->name('estimate');
 
 Route::view('/portal', 'portal')->name('portal');
-
-/*
-|--------------------------------------------------------------------------
-| Admin live preview (Option A visual builder scaffolding)
-|--------------------------------------------------------------------------
-| Full-page Livewire preview of page blocks, rendered through the public
-| site layout so the editor's side-by-side preview matches the frontend.
-| Auth-gated so it is only reachable from the Filament admin panel.
-*/
-Route::middleware([
-    'web',
-    Authenticate::class,
-])->group(function () {
-    Route::get('/admin/page-preview', PagePreview::class)
-        ->name('admin.page-preview');
-});
 
 Route::get('/dashboard/{project:unique_dashboard_hash}', [DashboardController::class, 'show'])->name('dashboard');
 
