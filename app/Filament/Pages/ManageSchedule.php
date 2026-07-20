@@ -43,6 +43,7 @@ class ManageSchedule extends Page
 
         if (empty($crewId)) {
             $project?->update(['crew_id' => null]);
+
             return;
         }
 

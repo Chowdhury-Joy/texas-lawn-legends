@@ -147,7 +147,7 @@ class InvoicingSystemTest extends TestCase
     public function test_invoice_number_overflows_gracefully(): void
     {
         $year = date('Y');
-        
+
         Invoice::create([
             'client_name' => 'Overflow Test',
             'issue_date' => now(),

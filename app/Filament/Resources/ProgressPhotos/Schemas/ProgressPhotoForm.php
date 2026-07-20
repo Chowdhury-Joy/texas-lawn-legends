@@ -2,12 +2,12 @@
 
 namespace App\Filament\Resources\ProgressPhotos\Schemas;
 
+use App\Models\Milestone;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Get;
 use Filament\Schemas\Schema;
-use App\Models\Milestone;
 
 class ProgressPhotoForm
 {

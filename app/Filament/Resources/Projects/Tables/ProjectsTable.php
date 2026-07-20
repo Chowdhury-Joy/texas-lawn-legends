@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Projects\Tables;
 
 use App\Enums\ProjectStatus;
+use App\Services\OperationsNotifier;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -46,7 +47,7 @@ class ProjectsTable
                         $state >= 20 => 'warning',
                         default => 'danger',
                     })
-                    ->sortable(query: fn($query, $direction) => $query->orderBy('calculated_profit_margin', $direction)),
+                    ->sortable(query: fn ($query, $direction) => $query->orderBy('calculated_profit_margin', $direction)),
                 TextColumn::make('crew.name')
                     ->label('Crew')
                     ->placeholder('Unassigned')
@@ -86,18 +87,29 @@ class ProjectsTable
             ])
             ->recordActions([
                 Action::make('sendReviewRequest')
-                    ->label('Request Review')
+                    ->label(fn ($record) => $record->review_requested_at ? 'Resend Review Request' : 'Request Review')
                     ->icon('heroicon-o-star')
-                    ->color('warning')
+                    ->color(fn ($record) => $record->review_requested_at ? 'gray' : 'warning')
                     ->visible(fn ($record) => $record->status === ProjectStatus::Completed)
                     ->requiresConfirmation()
                     ->modalHeading('Send Google Review Request')
                     ->modalDescription('Generates a review request notification for this client.')
                     ->action(function ($record) {
-                        $placeId = setting('google_place_id', 'ChIJN1t_tDeuEmsRUsoyG83frY4'); // example place id
+                        $placeId = setting('google_place_id');
+
+                        if (empty($placeId)) {
+                            Notification::make()
+                                ->title('Google Place ID missing')
+                                ->body('Please configure the Google Place ID in Settings.')
+                                ->danger()
+                                ->send();
+
+                            return;
+                        }
+
                         $link = "https://search.google.com/local/writereview?placeid={$placeId}";
-                        
-                        app(\App\Services\OperationsNotifier::class)->dispatch('Review Request', [
+
+                        app(OperationsNotifier::class)->dispatch('Review Request', [
                             'client_name' => $record->client_name,
                             'project_title' => $record->project_title,
                             'review_link' => $link,

@@ -6,9 +6,9 @@ use App\Enums\InvoiceStatus;
 use App\Filament\Concerns\RestrictedWidget;
 use App\Models\Invoice;
 use App\Models\Project;
-use Illuminate\Support\Facades\DB;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
+use Illuminate\Support\Facades\DB;
 
 class FinancialOverview extends StatsOverviewWidget
 {

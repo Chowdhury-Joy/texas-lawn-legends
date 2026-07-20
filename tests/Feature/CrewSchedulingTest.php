@@ -101,7 +101,7 @@ class CrewSchedulingTest extends TestCase
         $contentEditor = User::factory()->create(['role' => UserRole::Content]);
 
         $response = $this->actingAs($contentEditor)->get('/admin/manage-schedule');
-        
+
         $response->assertStatus(403);
     }
 

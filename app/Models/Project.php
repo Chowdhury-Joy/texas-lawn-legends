@@ -90,7 +90,7 @@ class Project extends Model
             CASE 
                 WHEN contract_value <= 0 THEN 0 
                 WHEN material_cost = 0 AND labor_cost = 0 THEN NULL 
-                ELSE ((contract_value - material_cost - labor_cost) / contract_value) * 100 
+                ELSE (((contract_value - material_cost - labor_cost) * 1.0) / contract_value) * 100 
             END
         ';
     }

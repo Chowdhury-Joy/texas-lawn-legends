@@ -80,10 +80,10 @@ class PhaseTwoRemainingTest extends TestCase
         $operationsUser = User::factory()->create(['role' => UserRole::Operations]);
         // By default operations might have different permissions, let's just use it assuming our gate checks resource.invoices
         // Or create a user and assert it can see the dashboard widget.
-        
+
         $response = $this->actingAs($operationsUser)->get('/admin');
         $response->assertStatus(200);
-        
+
         // Since Operations has resource.invoices by default in our setup (assumed), they should see it.
         $response->assertSee('Total Booked Revenue');
     }
