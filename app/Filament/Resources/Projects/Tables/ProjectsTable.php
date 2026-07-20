@@ -11,6 +11,7 @@ use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreAction;
 use Filament\Actions\RestoreBulkAction;
+use Filament\Notifications\Notification;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TrashedFilter;
@@ -34,6 +35,16 @@ class ProjectsTable
                     ->sortable(),
                 TextColumn::make('contract_value')
                     ->money('usd')
+                    ->sortable(),
+                TextColumn::make('profit_margin_percent')
+                    ->label('Margin %')
+                    ->formatStateUsing(fn ($state) => $state.'%')
+                    ->badge()
+                    ->color(fn ($state) => match (true) {
+                        $state >= 40 => 'success',
+                        $state >= 20 => 'warning',
+                        default => 'danger',
+                    })
                     ->sortable(),
                 TextColumn::make('crew.name')
                     ->label('Crew')
@@ -73,6 +84,21 @@ class ProjectsTable
                 TrashedFilter::make(),
             ])
             ->recordActions([
+                Action::make('sendReviewRequest')
+                    ->label('Request Review')
+                    ->icon('heroicon-o-star')
+                    ->color('warning')
+                    ->visible(fn ($record) => $record->status === ProjectStatus::Completed)
+                    ->requiresConfirmation()
+                    ->modalHeading('Send Google Review Request')
+                    ->modalDescription('Generates a review request notification for this client.')
+                    ->action(function ($record) {
+                        Notification::make()
+                            ->title("Review request prepared for {$record->client_name}")
+                            ->body('Send link: https://g.page/r/texas-lawn-legends/review?client='.urlencode($record->client_name))
+                            ->success()
+                            ->send();
+                    }),
                 Action::make('viewDashboard')
                     ->label('View')
                     ->icon('heroicon-m-arrow-top-right-on-square')

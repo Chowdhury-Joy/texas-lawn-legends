@@ -47,6 +47,24 @@ class ProjectForm
                             ->prefix('$')
                             ->step(0.01),
                     ]),
+                Section::make('Job Costing & Financials')
+                    ->columns(2)
+                    ->schema([
+                        TextInput::make('material_cost')
+                            ->label('Material Cost ($)')
+                            ->numeric()
+                            ->prefix('$')
+                            ->default(0)
+                            ->step(0.01)
+                            ->helperText('Sod, flagstone, soil, lumber, plants, etc.'),
+                        TextInput::make('labor_cost')
+                            ->label('Labor Cost ($)')
+                            ->numeric()
+                            ->prefix('$')
+                            ->default(0)
+                            ->step(0.01)
+                            ->helperText('Crew payroll & field labor cost for this job.'),
+                    ]),
                 Section::make('Status & Timeline')
                     ->columns(3)
                     ->schema([

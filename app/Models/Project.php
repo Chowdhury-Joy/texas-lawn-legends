@@ -37,6 +37,8 @@ class Project extends Model
         'project_title',
         'neighborhood',
         'contract_value',
+        'material_cost',
+        'labor_cost',
         'status',
         'started_at',
         'completed_at',
@@ -46,10 +48,33 @@ class Project extends Model
     {
         return [
             'contract_value' => 'decimal:2',
+            'material_cost' => 'decimal:2',
+            'labor_cost' => 'decimal:2',
             'status' => ProjectStatus::class,
             'started_at' => 'date',
             'completed_at' => 'date',
         ];
+    }
+
+    public function getTotalCostAttribute(): float
+    {
+        return (float) $this->material_cost + (float) $this->labor_cost;
+    }
+
+    public function getProfitMarginAttribute(): float
+    {
+        return (float) $this->contract_value - $this->total_cost;
+    }
+
+    public function getProfitMarginPercentAttribute(): float
+    {
+        $contract = (float) $this->contract_value;
+
+        if ($contract <= 0) {
+            return 0;
+        }
+
+        return round(($this->profit_margin / $contract) * 100, 1);
     }
 
     protected static function booted(): void
