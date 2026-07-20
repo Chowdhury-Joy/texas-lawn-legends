@@ -5,7 +5,9 @@ namespace App\Filament\Resources\ProgressPhotos\Schemas;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Get;
 use Filament\Schemas\Schema;
+use App\Models\Milestone;
 
 class ProgressPhotoForm
 {
@@ -17,6 +19,7 @@ class ProgressPhotoForm
                     ->relationship('project', 'project_title')
                     ->searchable()
                     ->preload()
+                    ->live()
                     ->required(),
                 FileUpload::make('image_path')
                     ->image()
@@ -26,8 +29,9 @@ class ProgressPhotoForm
                     ->columnSpanFull(),
                 TextInput::make('caption')
                     ->maxLength(255),
-                TextInput::make('milestone_step')
-                    ->maxLength(255)
+                Select::make('milestone_step')
+                    ->options(fn (Get $get) => Milestone::where('project_id', $get('project_id'))->pluck('title', 'title'))
+                    ->searchable()
                     ->helperText('Label linking this photo to a milestone stage.'),
             ]);
     }

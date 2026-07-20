@@ -147,10 +147,10 @@
                             <div class="mt-5 grid grid-cols-2 gap-4 sm:grid-cols-3">
                                 @foreach ($stepPhotos as $photo)
                                     @php
-                                        $hasImage = filled($photo->image_path) && Storage::disk('public')->exists($photo->image_path);
+                                        $hasImage = filled($photo->image_path);
                                         $photoUrl = $hasImage ? Storage::disk('public')->url($photo->image_path) : '';
                                     @endphp
-                                    <figure @if ($hasImage) @click="showPhoto('{{ $photoUrl }}', '{{ addslashes($photo->caption) }}', '{{ addslashes($milestone->title) }}', '{{ $photo->created_at?->format('M j, Y') }}')" @endif
+                                    <figure @if ($hasImage) @click="showPhoto('{{ $photoUrl }}', @js($photo->caption), @js($milestone->title), '{{ $photo->created_at?->format('M j, Y') }}')" @endif
                                             @class([
                                                 'border-2 border-slate-950',
                                                 'cursor-pointer transition-transform hover:-translate-y-0.5 hover:shadow-md' => $hasImage,
@@ -225,7 +225,7 @@
                                             };
                                         @endphp
                                         <span class="border-2 border-slate-950 px-2.5 py-0.5 text-[10px] font-black uppercase tracking-widest {{ $badgeClass }}">
-                                            {{ $inv->status?->getLabel() ?? strtoupper($inv->status) }}
+                                            {{ $inv->status?->getLabel() ?? '' }}
                                         </span>
                                     </div>
                                     <p class="mt-1 text-xs text-slate-600">
@@ -234,7 +234,7 @@
                                 </div>
                                 <div class="flex items-center gap-4">
                                     <span class="font-mono text-xl font-black text-slate-950">${{ number_format($inv->total, 2) }}</span>
-                                    <a href="{{ route('invoices.show', $inv->invoice_number) }}" target="_blank" class="btn-brutal bg-yellow-400 px-4 py-2 text-xs font-black uppercase tracking-wider text-slate-950">
+                                    <a href="{{ route('invoices.show', $inv->unique_access_token) }}" target="_blank" class="btn-brutal bg-yellow-400 px-4 py-2 text-xs font-black uppercase tracking-wider text-slate-950">
                                         View / Print ↗
                                     </a>
                                 </div>

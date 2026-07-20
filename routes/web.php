@@ -52,8 +52,12 @@ Route::view('/estimate', 'estimate')->name('estimate');
 
 Route::view('/portal', 'portal')->name('portal');
 
-Route::get('/invoices/{invoice:invoice_number}', [InvoiceController::class, 'show'])->name('invoices.show');
-Route::get('/dashboard/{project:unique_dashboard_hash}', [DashboardController::class, 'show'])->name('dashboard');
+Route::get('/invoices/{invoice:unique_access_token}', [InvoiceController::class, 'show'])
+    ->middleware('throttle:60,1')
+    ->name('invoices.show');
+Route::get('/dashboard/{project:unique_dashboard_hash}', [DashboardController::class, 'show'])
+    ->middleware('throttle:60,1')
+    ->name('dashboard');
 
 /*
 |--------------------------------------------------------------------------

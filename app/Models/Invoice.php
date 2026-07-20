@@ -6,6 +6,8 @@ use App\Enums\InvoiceStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
@@ -58,27 +60,37 @@ class Invoice extends Model
             if (empty($invoice->invoice_number)) {
                 $invoice->invoice_number = static::generateNextNumber();
             }
+            if (empty($invoice->unique_access_token)) {
+                $invoice->unique_access_token = Str::random(32);
+            }
         });
     }
 
     public static function generateNextNumber(): string
     {
-        $year = date('Y');
-        $prefix = "INV-{$year}-";
+        return DB::transaction(function () {
+            $year = date('Y');
+            $prefix = "INV-{$year}-";
 
-        $lastInvoice = static::query()
-            ->where('invoice_number', 'like', "{$prefix}%")
-            ->orderByDesc('id')
-            ->first();
+            $lastInvoice = static::query()
+                ->where('invoice_number', 'like', "{$prefix}%")
+                ->lockForUpdate()
+                ->orderByDesc('id')
+                ->first();
 
-        if (! $lastInvoice) {
-            return "{$prefix}0001";
-        }
+            if (! $lastInvoice) {
+                return "{$prefix}0001";
+            }
 
-        $lastNum = (int) substr($lastInvoice->invoice_number, -4);
-        $nextNum = str_pad((string) ($lastNum + 1), 4, '0', STR_PAD_LEFT);
+            $lastInvoiceNumber = $lastInvoice->invoice_number;
+            $lastNumStr = substr($lastInvoiceNumber, strlen($prefix));
+            $lastNum = (int) $lastNumStr;
 
-        return "{$prefix}{$nextNum}";
+            $nextNum = $lastNum + 1;
+            $padded = str_pad((string) $nextNum, max(4, strlen((string) $nextNum)), '0', STR_PAD_LEFT);
+
+            return "{$prefix}{$padded}";
+        });
     }
 
     public function calculateTotals(): void
@@ -92,6 +104,8 @@ class Invoice extends Model
             'tax' => $tax,
             'total' => $total,
         ]);
+
+        $this->refresh();
     }
 
     public function project(): BelongsTo

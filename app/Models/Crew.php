@@ -18,7 +18,7 @@ class Crew extends Model
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->logOnly(['name', 'leader_name', 'phone', 'color'])
+            ->logOnly(['name', 'leader_name', 'phone', 'color', 'notes'])
             ->logOnlyDirty()
             ->useLogName('crew');
     }
@@ -30,6 +30,13 @@ class Crew extends Model
         'color',
         'notes',
     ];
+
+    protected static function booted(): void
+    {
+        static::deleting(function (Crew $crew) {
+            $crew->projects()->update(['crew_id' => null]);
+        });
+    }
 
     public function projects(): HasMany
     {

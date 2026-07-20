@@ -66,14 +66,14 @@ class InvoicesTable
                     ->label('View / Print')
                     ->icon(Heroicon::OutlinedPrinter)
                     ->color('gray')
-                    ->url(fn (Invoice $record): string => route('invoices.show', $record->invoice_number))
+                    ->url(fn (Invoice $record): string => route('invoices.show', $record->unique_access_token))
                     ->openUrlInNewTab(),
 
                 Action::make('markPaid')
                     ->label('Mark Paid')
                     ->icon(Heroicon::OutlinedCheckCircle)
                     ->color('success')
-                    ->visible(fn (Invoice $record): bool => $record->status !== InvoiceStatus::Paid)
+                    ->visible(fn (Invoice $record): bool => $record->status !== InvoiceStatus::Paid && $record->status !== InvoiceStatus::Cancelled)
                     ->requiresConfirmation()
                     ->action(function (Invoice $record) {
                         $record->update(['status' => InvoiceStatus::Paid]);

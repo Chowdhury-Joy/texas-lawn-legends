@@ -47,7 +47,7 @@
                     };
                 @endphp
                 <span class="inline-block px-3 py-1 text-xs font-black uppercase tracking-widest border-2 border-slate-950 {{ $statusColor }}">
-                    {{ $invoice->status?->getLabel() ?? strtoupper($invoice->status) }}
+                    {{ $invoice->status?->getLabel() ?? '' }}
                 </span>
             </div>
         </div>

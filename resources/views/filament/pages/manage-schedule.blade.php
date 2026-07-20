@@ -53,9 +53,9 @@
                             </div>
                             <div class="mt-3 pt-2 border-t border-gray-100 dark:border-gray-800">
                                 <label class="block text-[10px] font-bold text-gray-400 uppercase">Quick Assign Crew:</label>
-                                <select onchange="@this.assignCrew({{ $unassigned->id }}, this.value)" class="mt-1 w-full rounded-md border-gray-300 text-xs dark:bg-gray-800 dark:border-gray-700 dark:text-white">
+                                <select wire:change="assignCrew({{ $unassigned->id }}, $event.target.value)" class="mt-1 w-full rounded-md border-gray-300 text-xs dark:bg-gray-800 dark:border-gray-700 dark:text-white">
                                     <option value="">Select Crew...</option>
-                                    @foreach (\App\Models\Crew::all() as $c)
+                                    @foreach ($this->crews as $c)
                                         <option value="{{ $c->id }}">{{ $c->name }} ({{ $c->leader_name }})</option>
                                     @endforeach
                                 </select>
@@ -109,7 +109,7 @@
                                 </div>
                                 <div class="mt-2 flex items-center justify-between text-[11px] text-gray-500 dark:text-gray-400">
                                     <span>📅 {{ $pj->started_at?->format('M j') ?? 'TBD' }} @if ($pj->completed_at) – {{ $pj->completed_at->format('M j') }} @endif</span>
-                                    <a href="/admin/projects/{{ $pj->id }}/edit" class="text-primary-600 hover:underline font-semibold">Edit Job →</a>
+                                    <a href="{{ \App\Filament\Resources\Projects\ProjectResource::getUrl('edit', ['record' => $pj]) }}" class="text-primary-600 hover:underline font-semibold">Edit Job →</a>
                                 </div>
                             </div>
                         @empty

@@ -6,6 +6,7 @@ use App\Enums\InvoiceStatus;
 use App\Filament\Concerns\RestrictedWidget;
 use App\Models\Invoice;
 use App\Models\Project;
+use Illuminate\Support\Facades\DB;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 
@@ -16,6 +17,11 @@ class FinancialOverview extends StatsOverviewWidget
     protected static bool $isLazy = false;
 
     protected static ?int $sort = -2;
+
+    protected static function widgetPermissionKey(): string
+    {
+        return 'resource.invoices';
+    }
 
     protected function getStats(): array
     {
@@ -33,8 +39,9 @@ class FinancialOverview extends StatsOverviewWidget
             ->where('status', InvoiceStatus::Overdue)
             ->count();
 
-        $projects = Project::all();
-        $avgMargin = $projects->isNotEmpty() ? $projects->avg('profit_margin_percent') : 0;
+        $avgMargin = (float) Project::query()->avg(
+            DB::raw("((contract_value - material_cost - labor_cost) / NULLIF(contract_value, 0)) * 100")
+        );
 
         return [
             Stat::make('Total Booked Revenue', '$'.number_format((float) $totalBookedRevenue))
@@ -45,7 +52,7 @@ class FinancialOverview extends StatsOverviewWidget
             Stat::make('Collected Revenue', '$'.number_format((float) $paidInvoicesTotal))
                 ->description('Invoices marked as Paid')
                 ->icon('heroicon-o-check-circle')
-                ->color('emerald'),
+                ->color('success'),
 
             Stat::make('Outstanding Invoices', '$'.number_format((float) $outstandingInvoicesTotal))
                 ->description($overdueCount > 0 ? "{$overdueCount} overdue invoice(s)" : 'Pending client payment')

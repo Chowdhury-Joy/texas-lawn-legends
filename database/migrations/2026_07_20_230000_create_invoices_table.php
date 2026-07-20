@@ -13,11 +13,13 @@ return new class extends Migration
             $table->foreignId('project_id')->nullable()->constrained()->nullOnDelete();
             $table->foreignId('lead_id')->nullable()->constrained()->nullOnDelete();
             $table->string('invoice_number')->unique();
+            $table->string('unique_access_token', 32)->unique()->after('invoice_number');
             $table->string('client_name');
             $table->string('client_email')->nullable();
             $table->date('issue_date');
             $table->date('due_date')->nullable();
             $table->string('status')->default('draft');
+            $table->index('status');
             $table->decimal('subtotal', 10, 2)->default(0);
             $table->decimal('tax', 10, 2)->default(0);
             $table->decimal('total', 10, 2)->default(0);

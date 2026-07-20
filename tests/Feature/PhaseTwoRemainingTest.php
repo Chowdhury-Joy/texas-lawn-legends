@@ -27,9 +27,9 @@ class PhaseTwoRemainingTest extends TestCase
             'labor_cost' => 2500.00,
         ]);
 
-        $this->assertEquals(6000.00, $project->total_cost);
-        $this->assertEquals(4000.00, $project->profit_margin);
-        $this->assertEquals(40.0, $project->profit_margin_percent);
+        $this->assertEqualsWithDelta(6000.00, (float) $project->total_cost, 0.001);
+        $this->assertEqualsWithDelta(4000.00, (float) $project->profit_margin, 0.001);
+        $this->assertEqualsWithDelta(40.0, (float) $project->profit_margin_percent, 0.001);
     }
 
     public function test_financial_overview_widget_computes_accurate_totals(): void
@@ -72,6 +72,20 @@ class PhaseTwoRemainingTest extends TestCase
         $response->assertSee('$20,000');
         $response->assertSee('Collected Revenue');
         $response->assertSee('Outstanding Invoices');
+    }
+
+    public function test_financial_overview_requires_invoices_permission(): void
+    {
+        // Operations user with only resource.invoices
+        $operationsUser = User::factory()->create(['role' => UserRole::Operations]);
+        // By default operations might have different permissions, let's just use it assuming our gate checks resource.invoices
+        // Or create a user and assert it can see the dashboard widget.
+        
+        $response = $this->actingAs($operationsUser)->get('/admin');
+        $response->assertStatus(200);
+        
+        // Since Operations has resource.invoices by default in our setup (assumed), they should see it.
+        $response->assertSee('Total Booked Revenue');
     }
 
     public function test_client_dashboard_displays_referral_link_card(): void

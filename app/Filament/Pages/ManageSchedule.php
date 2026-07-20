@@ -34,9 +34,15 @@ class ManageSchedule extends Page
         return $user?->canAccessKey('resource.crews') ?? false;
     }
 
-    public function assignCrew(int $projectId, int $crewId): void
+    public function assignCrew(int $projectId, ?int $crewId = null): void
     {
         $project = Project::find($projectId);
+
+        if (! $crewId) {
+            $project?->update(['crew_id' => null]);
+            return;
+        }
+
         $crew = Crew::find($crewId);
 
         if ($project && $crew) {
@@ -51,7 +57,7 @@ class ManageSchedule extends Page
 
     public function getCrewsWithProjectsProperty()
     {
-        $query = Project::query()->with(['milestones', 'lead']);
+        $query = Project::query();
 
         match ($this->filterRange) {
             'this_week' => $query->whereBetween('started_at', [now()->startOfWeek(), now()->endOfWeek()]),
@@ -62,12 +68,17 @@ class ManageSchedule extends Page
 
         $projects = $query->orderBy('started_at')->get();
 
-        return Crew::query()->with('projects')->get()->map(function (Crew $crew) use ($projects) {
+        return Crew::query()->get()->map(function (Crew $crew) use ($projects) {
             return [
                 'crew' => $crew,
                 'projects' => $projects->where('crew_id', $crew->id),
             ];
         });
+    }
+
+    public function getCrewsProperty()
+    {
+        return Crew::all();
     }
 
     public function getUnassignedProjectsProperty()

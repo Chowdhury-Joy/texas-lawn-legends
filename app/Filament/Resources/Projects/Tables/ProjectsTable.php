@@ -45,7 +45,7 @@ class ProjectsTable
                         $state >= 20 => 'warning',
                         default => 'danger',
                     })
-                    ->sortable(),
+                    ->sortable(query: fn($query, $direction) => $query->orderByRaw("((contract_value - material_cost - labor_cost) / NULLIF(contract_value, 0)) * 100 $direction")),
                 TextColumn::make('crew.name')
                     ->label('Crew')
                     ->placeholder('Unassigned')

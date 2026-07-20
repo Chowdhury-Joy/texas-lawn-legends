@@ -61,6 +61,29 @@ class CrewSchedulingTest extends TestCase
         $this->assertNotNull($project->fresh());
     }
 
+    public function test_crew_soft_deletion_nulls_project_crew_id(): void
+    {
+        $crew = Crew::create([
+            'name' => 'Crew Gamma',
+            'leader_name' => 'John',
+            'color' => 'sky',
+        ]);
+
+        $project = Project::create([
+            'client_name' => 'Ford Prefect',
+            'project_title' => 'Towel Rack Install',
+            'neighborhood' => 'Deep Ellum',
+            'status' => 'active',
+            'started_at' => now(),
+            'contract_value' => 500.00,
+            'crew_id' => $crew->id,
+        ]);
+
+        $crew->delete();
+
+        $this->assertNull($project->fresh()->crew_id);
+    }
+
     public function test_admin_can_access_crews_resource_and_schedule_page(): void
     {
         $admin = User::factory()->create(['role' => UserRole::Admin]);
@@ -71,6 +94,15 @@ class CrewSchedulingTest extends TestCase
         $crewsResponse->assertStatus(200);
         $scheduleResponse->assertStatus(200);
         $scheduleResponse->assertSee('Schedule Overview');
+    }
+
+    public function test_non_admin_cannot_access_schedule_page(): void
+    {
+        $contentEditor = User::factory()->create(['role' => UserRole::Content]);
+
+        $response = $this->actingAs($contentEditor)->get('/admin/manage-schedule');
+        
+        $response->assertStatus(403);
     }
 
     public function test_schedule_page_detects_unassigned_projects(): void

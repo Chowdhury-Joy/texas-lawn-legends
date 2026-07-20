@@ -21,6 +21,7 @@ return new class extends Migration
 
         Schema::table('projects', function (Blueprint $table) {
             $table->foreignId('crew_id')->nullable()->after('lead_id')->constrained('crews')->nullOnDelete();
+            $table->index('crew_id');
         });
     }
 

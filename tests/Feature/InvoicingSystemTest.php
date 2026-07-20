@@ -60,13 +60,14 @@ class InvoicingSystemTest extends TestCase
             'unit_price' => 500.00,
         ]);
 
-        $this->assertEquals(3000.00, $item1->amount);
-        $this->assertEquals(500.00, $item2->amount);
+        $this->assertEqualsWithDelta(3000.00, (float) $item1->amount, 0.001);
+        $this->assertEqualsWithDelta(500.00, (float) $item2->amount, 0.001);
 
         $invoice->calculateTotals();
 
-        $this->assertEquals(3500.00, $invoice->fresh()->subtotal);
-        $this->assertEquals(3500.00, $invoice->fresh()->total);
+        $fresh = $invoice->fresh();
+        $this->assertEqualsWithDelta(3500.00, (float) $fresh->subtotal, 0.001);
+        $this->assertEqualsWithDelta(3500.00, (float) $fresh->total, 0.001);
     }
 
     public function test_admin_can_access_invoices_resource(): void
@@ -97,7 +98,7 @@ class InvoicingSystemTest extends TestCase
 
         $invoice->calculateTotals();
 
-        $response = $this->get(route('invoices.show', $invoice->invoice_number));
+        $response = $this->get(route('invoices.show', $invoice->unique_access_token));
 
         $response->assertStatus(200);
         $response->assertSee('INVOICE');
@@ -105,6 +106,12 @@ class InvoicingSystemTest extends TestCase
         $response->assertSee('Dwight Schrute');
         $response->assertSee('Irrigation System Install');
         $response->assertSee('$2,400.00');
+    }
+
+    public function test_invalid_invoice_access_token_returns_404(): void
+    {
+        $response = $this->get(route('invoices.show', 'invalid-token-123'));
+        $response->assertStatus(404);
     }
 
     public function test_client_portal_displays_project_invoices(): void
@@ -134,6 +141,24 @@ class InvoicingSystemTest extends TestCase
         $response->assertSee('Invoices & Billing', false);
         $response->assertSee('#'.$invoice->invoice_number);
         $response->assertSee('$4,500.00');
-        $response->assertSee(route('invoices.show', $invoice->invoice_number));
+        $response->assertSee(route('invoices.show', $invoice->unique_access_token));
+    }
+
+    public function test_invoice_number_overflows_gracefully(): void
+    {
+        $year = date('Y');
+        
+        Invoice::create([
+            'client_name' => 'Overflow Test',
+            'issue_date' => now(),
+            'invoice_number' => "INV-{$year}-9999",
+        ]);
+
+        $nextInvoice = Invoice::create([
+            'client_name' => 'Overflow Test 2',
+            'issue_date' => now(),
+        ]);
+
+        $this->assertEquals("INV-{$year}-10000", $nextInvoice->invoice_number);
     }
 }
