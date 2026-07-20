@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Support\PageBlocks;
 use BackedEnum;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\FileUpload;
@@ -54,14 +55,7 @@ class ManageBranding extends BaseSettingsPage
                         ->label('Site theme')
                         ->native(false)
                         ->default('clean')
-                        ->options([
-                            'clean' => 'Clean (flat, no shadows — default)',
-                            'minimal' => 'Minimal (flat with soft modern shadows)',
-                            'editorial' => 'Editorial (serif display, airy whitespace)',
-                            'rounded' => 'Rounded (pill buttons, large radii)',
-                            'retro' => 'Retro (70s earthy throwback)',
-                            'bold' => 'Bold (neo-brutalist hard shadows & borders)',
-                        ])
+                        ->options(PageBlocks::themes())
                         ->helperText('Clean is the default. Bold reproduces the original hard-edged brutalist look; the others are softer stylistic variants.'),
                 ]),
             Section::make('Logo & Identity')

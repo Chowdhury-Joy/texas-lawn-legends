@@ -49,7 +49,7 @@
                 <div class="flex items-center gap-2">
                     <label class="text-xs font-semibold uppercase tracking-wide text-gray-500">Theme</label>
                     <select x-model="theme" class="rounded-lg border-gray-300 text-sm">
-                        @foreach (['clean', 'minimal', 'editorial', 'rounded', 'retro', 'bold'] as $t)
+                        @foreach (array_keys(\App\Support\PageBlocks::themes()) as $t)
                             <option value="{{ $t }}">{{ ucfirst($t) }}</option>
                         @endforeach
                     </select>

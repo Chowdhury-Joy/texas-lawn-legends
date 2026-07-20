@@ -47,6 +47,23 @@ class PageBlocks
     }
 
     /**
+     * Single source of truth for available site themes.
+     *
+     * @return array<string, string>
+     */
+    public static function themes(): array
+    {
+        return [
+            'clean' => 'Clean (flat, no shadows — default)',
+            'minimal' => 'Minimal (flat with soft modern shadows)',
+            'editorial' => 'Editorial (serif display, airy whitespace)',
+            'rounded' => 'Rounded (pill buttons, large radii)',
+            'retro' => 'Retro (70s earthy throwback)',
+            'bold' => 'Bold (neo-brutalist hard shadows & borders)',
+        ];
+    }
+
+    /**
      * @return array<int, string>
      */
     public static function forHomepage(): array
@@ -132,6 +149,7 @@ class PageBlocks
             TextInput::make('heading')->label('Section heading'),
             Repeater::make('steps')
                 ->label('Steps')
+                ->minItems(1)
                 ->schema([
                     TextInput::make('number')->label('Number')->required()->maxLength(4),
                     TextInput::make('title')->label('Title')->required(),
@@ -196,6 +214,7 @@ class PageBlocks
         return [
             Repeater::make('images')
                 ->label('Images')
+                ->minItems(1)
                 ->schema([
                     FileUpload::make('image')->label('Image')->image()->directory('pages')->disk('public')->visibility('public')->imageEditor()->imageEditorAspectRatios([4 / 3, 1])->required(),
                     TextInput::make('caption')->label('Caption'),
@@ -213,6 +232,7 @@ class PageBlocks
             TextInput::make('heading')->label('Heading'),
             Repeater::make('items')
                 ->label('Questions')
+                ->minItems(1)
                 ->schema([
                     TextInput::make('question')->label('Question')->required(),
                     Textarea::make('answer')->label('Answer')->rows(3)->required(),
@@ -239,6 +259,7 @@ class PageBlocks
             Toggle::make('reverse')->label('Reverse layout (photo on right)'),
             Repeater::make('stats')
                 ->label('Stat callouts')
+                ->minItems(1)
                 ->schema([
                     TextInput::make('value')->label('Value (e.g. 250+)')->required(),
                     TextInput::make('label')->label('Label')->required(),
@@ -258,6 +279,7 @@ class PageBlocks
             TextInput::make('heading')->label('Heading')->columnSpanFull(),
             Repeater::make('stats')
                 ->label('Stat callouts')
+                ->minItems(1)
                 ->schema([
                     TextInput::make('value')->label('Value (e.g. 250+)')->required(),
                     TextInput::make('label')->label('Label')->required(),
@@ -298,6 +320,7 @@ class PageBlocks
             TextInput::make('heading')->label('Heading')->columnSpanFull(),
             Repeater::make('features')
                 ->label('Features')
+                ->minItems(1)
                 ->schema([
                     TextInput::make('icon')->label('Icon name (svg-icon)'),
                     TextInput::make('title')->label('Title')->required(),
@@ -318,6 +341,7 @@ class PageBlocks
             TextInput::make('heading')->label('Heading')->columnSpanFull(),
             Repeater::make('logos')
                 ->label('Logos')
+                ->minItems(1)
                 ->schema([
                     FileUpload::make('image')->label('Logo')->image()->directory('pages')->disk('public')->visibility('public')->imageEditor()->imageEditorAspectRatios([3 / 2, 2 / 1])->required(),
                     TextInput::make('label')->label('Alt text / label'),
