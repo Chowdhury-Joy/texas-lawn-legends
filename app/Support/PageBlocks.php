@@ -147,12 +147,23 @@ class PageBlocks
                         return $label;
                     }
 
+                    // First check flat top-level fields
                     $title = $state['heading']
                         ?? $state['title']
                         ?? $state['eyebrow']
                         ?? $state['quote']
                         ?? $state['create_suite_heading']
                         ?? null;
+
+                    // Then scan inside text_elements repeater for the first heading or eyebrow
+                    if (! filled($title) && ! empty($state['text_elements'])) {
+                        foreach ($state['text_elements'] as $el) {
+                            if (in_array($el['type'] ?? '', ['heading', 'eyebrow'], true) && filled($el['text'] ?? null)) {
+                                $title = $el['text'];
+                                break;
+                            }
+                        }
+                    }
 
                     return filled($title) ? "{$label} — {$title}" : $label;
                 })
@@ -200,11 +211,6 @@ class PageBlocks
     private static function hero(): array
     {
         return [
-            TextInput::make('eyebrow')->label('Eyebrow tag')->placeholder('e.g. Dallas, TX · Premier Landscape Design')->helperText('Small badge above headline. Leave empty to hide.')->columnSpanFull(),
-            TextInput::make('heading')->label('Headline')->placeholder('e.g. Transform Your Dallas Yard Into An Outdoor Retreat.')->required()->columnSpanFull(),
-            Textarea::make('subheading')->label('Sub-heading')->placeholder('e.g. Professional design, precision hardscaping, and premier maintenance...')->rows(3)->helperText('Brief introduction text under headline. Leave empty to hide.')->columnSpanFull(),
-            TextInput::make('cta_primary_label')->label('Primary button label')->placeholder('e.g. Get Instant Estimate')->helperText('Primary call to action button. Leave empty to hide.'),
-            TextInput::make('cta_secondary_label')->label('Secondary button label (phone appended)')->placeholder('e.g. Call Or Text')->helperText('Appends phone number from contact settings. Leave empty to hide.'),
             static::textElementsRepeater(['eyebrow', 'heading', 'subheading', 'primary_cta', 'secondary_cta']),
             FileUpload::make('media_image')
                 ->label('Hero image (optional)')
@@ -238,8 +244,6 @@ class PageBlocks
     private static function threeStep(): array
     {
         return [
-            TextInput::make('eyebrow')->label('Eyebrow tag'),
-            TextInput::make('heading')->label('Section heading'),
             static::textElementsRepeater(['eyebrow', 'heading', 'subheading']),
             Repeater::make('steps')
                 ->label('Steps')
@@ -280,12 +284,8 @@ class PageBlocks
     private static function ctaBanner(): array
     {
         return [
-            TextInput::make('eyebrow')->label('Eyebrow tag'),
-            TextInput::make('heading')->label('Heading'),
-            Textarea::make('subheading')->label('Sub-heading')->rows(2),
-            TextInput::make('button_label')->label('Button label'),
-            TextInput::make('button_url')->label('Button URL')->helperText('Defaults to /estimate when left blank.'),
             static::textElementsRepeater(['eyebrow', 'heading', 'subheading', 'button']),
+            TextInput::make('button_url')->label('Button URL')->helperText('If a Button subsection uses a custom URL, set it here. Defaults to /estimate.'),
         ];
     }
 
