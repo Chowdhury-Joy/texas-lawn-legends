@@ -183,6 +183,48 @@
                 </div>
             </div>
 
+            {{-- ============== INVOICES & BILLING SECTION ============== --}}
+            @if ($project->invoices->isNotEmpty())
+                <div class="mt-12">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-2xl font-black uppercase tracking-tight text-slate-900">Invoices & Billing</h2>
+                        <span class="text-xs font-bold uppercase tracking-widest text-slate-500">{{ $project->invoices->count() }} Invoice(s) Issued</span>
+                    </div>
+
+                    <div class="space-y-4">
+                        @foreach ($project->invoices as $inv)
+                            <div class="box-brutal p-5 bg-white flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                <div>
+                                    <div class="flex items-center gap-3">
+                                        <span class="font-mono text-sm font-black text-slate-950">#{{ $inv->invoice_number }}</span>
+                                        @php
+                                            $badgeClass = match ($inv->status?->value ?? 'draft') {
+                                                'paid' => 'bg-emerald-900 text-yellow-400',
+                                                'sent' => 'bg-yellow-400 text-slate-950',
+                                                'overdue' => 'bg-rose-600 text-white',
+                                                default => 'bg-slate-200 text-slate-700',
+                                            };
+                                        @endphp
+                                        <span class="border-2 border-slate-950 px-2.5 py-0.5 text-[10px] font-black uppercase tracking-widest {{ $badgeClass }}">
+                                            {{ $inv->status?->getLabel() ?? strtoupper($inv->status) }}
+                                        </span>
+                                    </div>
+                                    <p class="mt-1 text-xs text-slate-600">
+                                        Issued: {{ $inv->issue_date?->format('M j, Y') }} · Due: {{ $inv->due_date?->format('M j, Y') ?? 'Upon Receipt' }}
+                                    </p>
+                                </div>
+                                <div class="flex items-center gap-4">
+                                    <span class="font-mono text-xl font-black text-slate-950">${{ number_format($inv->total, 2) }}</span>
+                                    <a href="{{ route('invoices.show', $inv->invoice_number) }}" target="_blank" class="btn-brutal bg-yellow-400 px-4 py-2 text-xs font-black uppercase tracking-wider text-slate-950">
+                                        View / Print ↗
+                                    </a>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+
             <p class="mt-10 text-center text-xs text-slate-400">
                 This is your private project link. Questions? Call <a href="{{ 'tel:+1'.preg_replace('/\D/', '', (string) setting('primary_phone')) }}" class="font-bold text-slate-700 hover:text-slate-900">{{ setting('primary_phone') }}</a>.
             </p>

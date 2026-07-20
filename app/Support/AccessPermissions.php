@@ -31,6 +31,11 @@ final class AccessPermissions
                 'group' => 'Data',
                 'roles' => [UserRole::Admin, UserRole::Operations],
             ],
+            'resource.invoices' => [
+                'label' => 'Invoices & Billing',
+                'group' => 'Data',
+                'roles' => [UserRole::Admin, UserRole::Operations],
+            ],
             'resource.services' => [
                 'label' => 'Services',
                 'group' => 'Data',

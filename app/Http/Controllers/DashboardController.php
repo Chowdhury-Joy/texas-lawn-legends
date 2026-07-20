@@ -15,6 +15,7 @@ class DashboardController extends Controller
         $project->load([
             'milestones' => fn ($q) => $q->orderBy('id'),
             'progressPhotos' => fn ($q) => $q->latest('created_at'),
+            'invoices' => fn ($q) => $q->latest('issue_date'),
         ]);
 
         // Group progress photos by the milestone step they were tagged to.

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\PageController;
 use App\Models\Page;
 use Illuminate\Support\Facades\Route;
@@ -51,6 +52,7 @@ Route::view('/estimate', 'estimate')->name('estimate');
 
 Route::view('/portal', 'portal')->name('portal');
 
+Route::get('/invoices/{invoice:invoice_number}', [InvoiceController::class, 'show'])->name('invoices.show');
 Route::get('/dashboard/{project:unique_dashboard_hash}', [DashboardController::class, 'show'])->name('dashboard');
 
 /*

@@ -88,4 +88,9 @@ class Project extends Model
     {
         return $this->hasMany(ProgressPhoto::class);
     }
+
+    public function invoices(): HasMany
+    {
+        return $this->hasMany(Invoice::class);
+    }
 }
