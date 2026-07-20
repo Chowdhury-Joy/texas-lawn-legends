@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use App\Enums\InvoiceStatus;
 use App\Models\Invoice;
 use App\Models\Project;
 use Carbon\Carbon;
@@ -26,9 +27,10 @@ class RevenueChart extends ChartWidget
                 ->sum('contract_value');
             $bookedData[] = $booked;
 
-            $collected = Invoice::whereYear('paid_at', $date->year)
-                ->whereMonth('paid_at', $date->month)
-                ->sum('total_amount');
+            $collected = Invoice::where('status', InvoiceStatus::Paid)
+                ->whereYear('updated_at', $date->year)
+                ->whereMonth('updated_at', $date->month)
+                ->sum('total');
             $collectedData[] = $collected;
         }
 

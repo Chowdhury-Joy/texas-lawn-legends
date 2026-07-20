@@ -100,7 +100,10 @@
                         @csrf
                         <button type="submit" class="px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-lg transition-colors shadow-sm">Accept Proposal</button>
                     </form>
-                    <button class="px-6 py-3 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 font-bold rounded-lg transition-colors shadow-sm">Decline</button>
+                    <form method="POST" action="{{ route('proposals.decline', ['token' => $proposal->unique_token]) }}">
+                        @csrf
+                        <button type="submit" class="px-6 py-3 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 font-bold rounded-lg transition-colors shadow-sm">Decline</button>
+                    </form>
                 </div>
                 <p class="text-xs text-gray-400 mt-4">Accepting this proposal digitally acts as your signature.</p>
             </div>

@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Enums\ProposalStatus;
 use App\Models\Proposal;
-use Illuminate\Http\Request;
 
 class ProposalController extends Controller
 {
@@ -13,7 +12,7 @@ class ProposalController extends Controller
         $proposal = Proposal::where('unique_token', $token)->firstOrFail();
 
         abort_if($proposal->status === ProposalStatus::Draft, 404);
-        
+
         if ($proposal->expires_at && now()->isAfter($proposal->expires_at)) {
             abort(410, 'This proposal has expired.');
         }
@@ -26,7 +25,7 @@ class ProposalController extends Controller
     public function accept(string $token)
     {
         $proposal = Proposal::where('unique_token', $token)->firstOrFail();
-        
+
         abort_if($proposal->status === ProposalStatus::Draft, 404);
 
         if ($proposal->expires_at && now()->isAfter($proposal->expires_at)) {
@@ -35,8 +34,26 @@ class ProposalController extends Controller
 
         $proposal->update([
             'status' => ProposalStatus::Accepted,
+            'accepted_at' => now(),
         ]);
 
         return redirect()->back()->with('success', 'Proposal accepted successfully!');
+    }
+
+    public function decline(string $token)
+    {
+        $proposal = Proposal::where('unique_token', $token)->firstOrFail();
+
+        abort_if($proposal->status === ProposalStatus::Draft, 404);
+
+        if ($proposal->expires_at && now()->isAfter($proposal->expires_at)) {
+            abort(410, 'This proposal has expired.');
+        }
+
+        $proposal->update([
+            'status' => ProposalStatus::Declined,
+        ]);
+
+        return redirect()->back()->with('success', 'Proposal declined.');
     }
 }

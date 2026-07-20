@@ -65,6 +65,9 @@ Route::get('/proposals/{token}', [ProposalController::class, 'show'])
 Route::post('/proposals/{token}/accept', [ProposalController::class, 'accept'])
     ->middleware('throttle:60,1')
     ->name('proposals.accept');
+Route::post('/proposals/{token}/decline', [ProposalController::class, 'decline'])
+    ->middleware('throttle:60,1')
+    ->name('proposals.decline');
 
 /*
 |--------------------------------------------------------------------------
