@@ -524,10 +524,12 @@ class PageBlocks
                     Select::make($path.'columns')
                         ->label('Columns (grid)')
                         ->options([
+                            'auto' => 'Auto (fit to content — recommended)',
                             '1' => '1', '2' => '2', '3' => '3',
                             '4' => '4', '5' => '5', '6' => '6',
                         ])
-                        ->default('3')
+                        ->default('auto')
+                        ->helperText('Auto sizes columns to the available width and item count, so it never leaves an orphaned item on its own row. Pick a fixed number only to force an exact count.')
                         ->visible(fn (callable $get): bool => $get($path.'display') === 'grid'),
                     Select::make($path.'direction')
                         ->label('Direction (flex)')
@@ -573,6 +575,13 @@ class PageBlocks
      * `layout` config. Keyed by breakpoint: `mobile` (base), `tablet`
      * (`tab:`), `desktop` (`lg:`).
      *
+     * `columns` defaults to `auto`, which emits a `repeat(auto-fit,
+     * minmax(200px,1fr))` grid instead of a fixed `grid-cols-N` — column
+     * count then follows available width and item count on its own, so a
+     * gallery of 3 images and one of 7 both lay out cleanly without anyone
+     * having picked a number. A numeric `columns` value still forces an
+     * exact, fixed count for whoever wants to override it.
+     *
      * @param  array<string, array<string, mixed>>|null  $layout
      */
     public static function layoutClasses(?array $layout): string
@@ -603,8 +612,10 @@ class PageBlocks
                 $classes[] = $p.($row['wrap'] === 'nowrap' ? 'flex-nowrap' : 'flex-wrap');
             } else {
                 $classes[] = $p.'grid';
-                $cols = max(1, min(6, (int) ($row['columns'] ?? 3)));
-                $classes[] = $p.'grid-cols-'.$cols;
+                $columns = $row['columns'] ?? 'auto';
+                $classes[] = $p.(is_numeric($columns)
+                    ? 'grid-cols-'.max(1, min(6, (int) $columns))
+                    : 'grid-cols-[repeat(auto-fit,minmax(200px,1fr))]');
             }
 
             $classes[] = $p.'gap-'.$gap;

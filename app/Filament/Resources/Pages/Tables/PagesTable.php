@@ -62,6 +62,9 @@ class PagesTable
                         ->label('Unpublish')
                         ->icon('heroicon-m-eye-slash')
                         ->color('gray')
+                        ->requiresConfirmation()
+                        ->modalHeading('Unpublish pages?')
+                        ->modalDescription('Selected pages will stop being publicly visible immediately.')
                         ->action(fn (Collection $records) => static::setPublished($records, false))
                         ->deselectRecordsAfterCompletion(),
                     DeleteBulkAction::make(),

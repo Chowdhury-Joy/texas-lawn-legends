@@ -25,7 +25,7 @@ class LayoutClassesAreCompiledTest extends TestCase
      */
     private function emittableClasses(): array
     {
-        $columns = ['1', '2', '3', '4', '5', '6'];
+        $columns = ['auto', '1', '2', '3', '4', '5', '6'];
         $gaps = ['2', '4', '6', '8', '10', '12'];
         $justify = ['start', 'center', 'end', 'between'];
         $items = ['start', 'center', 'end'];
@@ -91,8 +91,12 @@ class LayoutClassesAreCompiledTest extends TestCase
         $missing = [];
 
         foreach ($this->emittableClasses() as $class) {
-            // Tailwind escapes `:` in selectors, e.g. `.lg\:grid-cols-4`.
-            if (! str_contains($css, '.'.str_replace(':', '\\:', $class))) {
+            // Tailwind backslash-escapes every non-alphanumeric character in a
+            // class selector, e.g. `.lg\:grid-cols-4` or, for an arbitrary
+            // value, `.grid-cols-\[repeat\(auto-fit\,minmax\(200px\,1fr\)\)\]`.
+            $selector = preg_replace('/([^a-zA-Z0-9_-])/', '\\\\$1', $class);
+
+            if (! str_contains($css, '.'.$selector)) {
                 $missing[] = $class;
             }
         }

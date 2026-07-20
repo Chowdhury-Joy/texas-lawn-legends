@@ -1,6 +1,20 @@
 <x-filament-panels::page>
     <div class="max-w-5xl pb-16">
-        <form wire:submit="create" class="space-y-6">
+        {{--
+            No visible "unsaved changes" indicator here on purpose: an x-show
+            badge bound to `dirty` gets left in a stale visual state across a
+            Livewire morph (e.g. right after this same form's own submit
+            request), so it can misleadingly read "unsaved" immediately after
+            a successful save. The beforeunload guard below doesn't have that
+            problem — it only reads `dirty` at the moment of unload, never
+            renders it — so it stays.
+        --}}
+        <form wire:submit="create" class="space-y-6"
+              x-data="{ dirty: false }"
+              x-init="window.addEventListener('beforeunload', (e) => { if (dirty) { e.preventDefault(); e.returnValue = ''; } })"
+              @input.capture="dirty = true"
+              @change.capture="dirty = true"
+              @submit="dirty = false">
             {{ $this->form }}
 
             {{-- Sticky Floating Save Bar with solid background — matches the Edit screen so

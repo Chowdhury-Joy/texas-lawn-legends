@@ -16,6 +16,12 @@
 @source inline("{,tab:,lg:}{flex,grid}");
 @source inline("{,tab:,lg:}flex-{row,col,wrap,nowrap}");
 @source inline("{,tab:,lg:}grid-cols-{1,2,3,4,5,6}");
+/* The "auto" columns option — kept as separate literals since the value
+   itself contains commas, which would collide with the brace-expansion
+   syntax above. */
+@source inline("grid-cols-[repeat(auto-fit,minmax(200px,1fr))]");
+@source inline("tab:grid-cols-[repeat(auto-fit,minmax(200px,1fr))]");
+@source inline("lg:grid-cols-[repeat(auto-fit,minmax(200px,1fr))]");
 @source inline("{,tab:,lg:}gap-{2,4,6,8,10,12}");
 @source inline("{,tab:,lg:}justify-{start,center,end,between}");
 @source inline("{,tab:,lg:}items-{start,center,end}");
