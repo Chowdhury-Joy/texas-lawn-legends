@@ -144,4 +144,22 @@ final class AccessPermissions
 
         return $groups;
     }
+
+    /**
+     * Flat options for Filament's CheckboxList (which renders a single
+     * key => label list and does not support nested optgroups in this
+     * view). Grouping is preserved visually via a "Group — Label" label.
+     *
+     * @return array<string, string>
+     */
+    public static function flatOptions(): array
+    {
+        $options = [];
+
+        foreach (self::all() as $key => $def) {
+            $options[$key] = $def['group'].' — '.$def['label'];
+        }
+
+        return $options;
+    }
 }

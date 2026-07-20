@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\ProgressPhotos;
 
-use App\Enums\UserRole;
 use App\Filament\Concerns\RoleRestricted;
 use App\Filament\Resources\ProgressPhotos\Pages\CreateProgressPhoto;
 use App\Filament\Resources\ProgressPhotos\Pages\EditProgressPhoto;
@@ -19,11 +18,6 @@ use Filament\Tables\Table;
 class ProgressPhotoResource extends Resource
 {
     use RoleRestricted;
-
-    public static function allowedRoles(): array
-    {
-        return [UserRole::Admin, UserRole::Operations];
-    }
 
     protected static ?string $model = ProgressPhoto::class;
 

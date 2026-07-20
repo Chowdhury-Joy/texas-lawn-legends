@@ -6,9 +6,9 @@ use App\Enums\UserRole;
 use App\Models\User;
 use App\Support\AccessPermissions;
 use Filament\Forms\Components\CheckboxList;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
 class UserForm
@@ -56,12 +56,10 @@ class UserForm
             ->schema([
                 CheckboxList::make('access_keys')
                     ->label('Granted areas')
-                    ->options(AccessPermissions::groupedOptions())
+                    ->options(AccessPermissions::flatOptions())
                     ->columns(2)
-                    ->gridDirection('row')
                     ->default(fn (?User $record) => $record?->effectiveKeys() ?? [])
-                    ->dehydrated()
-                    ->afterStateUpdated(fn () => null),
+                    ->dehydrated(),
             ]);
     }
 }

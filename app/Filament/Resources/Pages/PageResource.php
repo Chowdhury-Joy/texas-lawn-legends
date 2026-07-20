@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\Pages;
 
-use App\Enums\UserRole;
 use App\Filament\Concerns\RoleRestricted;
 use App\Filament\Resources\Pages\Pages\CreatePage;
 use App\Filament\Resources\Pages\Pages\EditPage;
@@ -20,11 +19,6 @@ use Illuminate\Database\Eloquent\Builder;
 class PageResource extends Resource
 {
     use RoleRestricted;
-
-    public static function allowedRoles(): array
-    {
-        return [UserRole::Admin, UserRole::Content, UserRole::Operations];
-    }
 
     protected static ?string $model = PageModel::class;
 

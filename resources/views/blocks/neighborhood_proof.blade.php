@@ -11,12 +11,42 @@
         <div class="mt-10 {{ $layout ?: 'grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3' }}">
             @forelse ($testimonials as $review)
                 <div class="box-brutal flex flex-col p-4 sm:p-6">
-                    <div class="grid grid-cols-2 border-b-2 border-slate-950">
-                        <div class="flex aspect-square items-center justify-center border-r-2 border-slate-950 bg-slate-200">
-                            <span class="text-xs font-black uppercase tracking-widest text-slate-500">Before</span>
+                    <div class="relative aspect-square overflow-hidden border-b-2 border-slate-950 select-none"
+                         x-data="{ pos: 50, dragging: false }"
+                         @mouseleave="dragging = false"
+                         @mouseup="dragging = false"
+                         @mousemove="if (dragging) {
+                             let rect = $el.getBoundingClientRect();
+                             let x = event.clientX - rect.left;
+                             pos = Math.max(0, Math.min(100, (x / rect.width) * 100));
+                         }"
+                         @touchmove="if (dragging) {
+                             let rect = $el.getBoundingClientRect();
+                             let x = event.touches[0].clientX - rect.left;
+                             pos = Math.max(0, Math.min(100, (x / rect.width) * 100));
+                         }">
+
+                        {{-- After Layer (Full Width Background) --}}
+                        <div class="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-emerald-700 to-emerald-900">
+                            <span class="bg-slate-950/80 px-2.5 py-1 text-xs font-black uppercase tracking-widest text-yellow-400">After Build</span>
                         </div>
-                        <div class="flex aspect-square items-center justify-center bg-gradient-to-br from-emerald-700 to-emerald-900">
-                            <span class="text-xs font-black uppercase tracking-widest text-yellow-400">After</span>
+
+                        {{-- Before Layer (Clipped Width) --}}
+                        <div class="absolute inset-y-0 left-0 overflow-hidden border-r-2 border-slate-950 bg-slate-300" :style="'width: ' + pos + '%'">
+                            <div class="absolute inset-0 flex h-full w-full items-center justify-center bg-slate-200">
+                                <span class="bg-white/80 px-2.5 py-1 text-xs font-black uppercase tracking-widest text-slate-800">Before Build</span>
+                            </div>
+                        </div>
+
+                        {{-- Slider Handle Divider --}}
+                        <div class="absolute inset-y-0 flex cursor-ew-resize items-center justify-center bg-yellow-400"
+                             style="width: 4px;"
+                             :style="'left: calc(' + pos + '% - 2px)'"
+                             @mousedown="dragging = true"
+                             @touchstart="dragging = true">
+                            <div class="flex h-7 w-7 items-center justify-center border-2 border-slate-950 bg-yellow-400 text-xs font-black text-slate-950 shadow-md">
+                                ↔
+                            </div>
                         </div>
                     </div>
                     <div class="flex flex-1 flex-col p-6">

@@ -2,6 +2,7 @@
 
 namespace App\Support;
 
+use Filament\Forms\Components\Builder\Block;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
@@ -64,39 +65,62 @@ class PageBlocks
     }
 
     /**
-     * Static literals safelist for Tailwind CSS scanner to prevent dynamic class purging.
+     * Preset block section stacks for one-click starter layouts.
      *
-     * @return array<int, string>
+     * @return array<string, array{label: string, description: string, blocks: array<int, array{type: string, data: array<string, mixed>}>}>
      */
-    public static function tailwindSafelist(): array
+    public static function presets(): array
     {
         return [
-            // Mobile (base)
-            'block', 'inline-block', 'flex', 'inline-flex', 'grid', 'hidden',
-            'flex-row', 'flex-col', 'flex-row-reverse', 'flex-col-reverse',
-            'flex-wrap', 'flex-nowrap', 'flex-wrap-reverse',
-            'grid-cols-1', 'grid-cols-2', 'grid-cols-3', 'grid-cols-4', 'grid-cols-5', 'grid-cols-6', 'grid-cols-12',
-            'gap-0', 'gap-1', 'gap-2', 'gap-3', 'gap-4', 'gap-5', 'gap-6', 'gap-8', 'gap-10', 'gap-12', 'gap-16',
-            'justify-start', 'justify-end', 'justify-center', 'justify-between', 'justify-around', 'justify-evenly',
-            'items-start', 'items-end', 'items-center', 'items-baseline', 'items-stretch',
-
-            // Tablet (tab:)
-            'tab:block', 'tab:inline-block', 'tab:flex', 'tab:inline-flex', 'tab:grid', 'tab:hidden',
-            'tab:flex-row', 'tab:flex-col', 'tab:flex-row-reverse', 'tab:flex-col-reverse',
-            'tab:flex-wrap', 'tab:flex-nowrap', 'tab:flex-wrap-reverse',
-            'tab:grid-cols-1', 'tab:grid-cols-2', 'tab:grid-cols-3', 'tab:grid-cols-4', 'tab:grid-cols-5', 'tab:grid-cols-6', 'tab:grid-cols-12',
-            'tab:gap-0', 'tab:gap-1', 'tab:gap-2', 'tab:gap-3', 'tab:gap-4', 'tab:gap-5', 'tab:gap-6', 'tab:gap-8', 'tab:gap-10', 'tab:gap-12', 'tab:gap-16',
-            'tab:justify-start', 'tab:justify-end', 'tab:justify-center', 'tab:justify-between', 'tab:justify-around', 'tab:justify-evenly',
-            'tab:items-start', 'tab:items-end', 'tab:items-center', 'tab:items-baseline', 'tab:items-stretch',
-
-            // Desktop (lg:)
-            'lg:block', 'lg:inline-block', 'lg:flex', 'lg:inline-flex', 'lg:grid', 'lg:hidden',
-            'lg:flex-row', 'lg:flex-col', 'lg:flex-row-reverse', 'lg:flex-col-reverse',
-            'lg:flex-wrap', 'lg:flex-nowrap', 'lg:flex-wrap-reverse',
-            'lg:grid-cols-1', 'lg:grid-cols-2', 'lg:grid-cols-3', 'lg:grid-cols-4', 'lg:grid-cols-5', 'lg:grid-cols-6', 'lg:grid-cols-12',
-            'lg:gap-0', 'lg:gap-1', 'lg:gap-2', 'lg:gap-3', 'lg:gap-4', 'lg:gap-5', 'lg:gap-6', 'lg:gap-8', 'lg:gap-10', 'lg:gap-12', 'lg:gap-16',
-            'lg:justify-start', 'lg:justify-end', 'lg:justify-center', 'lg:justify-between', 'lg:justify-around', 'lg:justify-evenly',
-            'lg:items-start', 'lg:items-end', 'lg:items-center', 'lg:items-baseline', 'lg:items-stretch',
+            'landing_page' => [
+                'label' => 'High-Converting Landing Page',
+                'description' => 'Hero, Trust Bar, 3-Step Process, Service Matrix, Testimonials, and CTA Banner.',
+                'blocks' => [
+                    ['type' => 'hero', 'data' => ['heading' => 'Transform Your Dallas Yard Into An Outdoor Retreat.', 'subheading' => 'Professional design, precision hardscaping, and premier maintenance you can rely on.']],
+                    ['type' => 'trust_bar', 'data' => []],
+                    ['type' => 'three_step', 'data' => ['heading' => 'Our 3-Step Process', 'steps' => [
+                        ['number' => '01', 'title' => 'Digital Consultation', 'body' => 'Instant valuation and property assessment.'],
+                        ['number' => '02', 'title' => 'Custom 3D Design', 'body' => 'Tailored landscape plans for your home.'],
+                        ['number' => '03', 'title' => 'Precision Build', 'body' => 'Professional execution on time.'],
+                    ]]],
+                    ['type' => 'service_matrix', 'data' => ['create_suite_heading' => 'The Create Suite', 'care_suite_heading' => 'The Care Suite']],
+                    ['type' => 'testimonial_grid', 'data' => ['heading' => 'Verified Neighborhood Reviews', 'featured_only' => true]],
+                    ['type' => 'cta_banner', 'data' => ['heading' => 'Ready to Start Your Project?', 'subheading' => 'Get a verified local price range in under 2 minutes.', 'button_label' => 'Start Your Free Estimate']],
+                ],
+            ],
+            'portfolio_showcase' => [
+                'label' => 'Portfolio & Proof Showcase',
+                'description' => 'Hero, Gallery, Neighborhood Proof, Review Spotlight, and CTA Banner.',
+                'blocks' => [
+                    ['type' => 'hero', 'data' => ['heading' => 'Explore Our Premier Dallas Landscapes.', 'subheading' => 'Real transformations from Kessler Park, Highland Park, and Bishop Arts.']],
+                    ['type' => 'gallery', 'data' => ['images' => [
+                        ['image' => null, 'caption' => 'Flagstone Patio & Fire Pit'],
+                        ['image' => null, 'caption' => 'Retaining Wall & Sod Install'],
+                        ['image' => null, 'caption' => 'Outdoor Living Build'],
+                    ]]],
+                    ['type' => 'neighborhood_proof', 'data' => ['heading' => 'Verified Local Proof', 'subheading' => 'Real Dallas homeowners share their experience.']],
+                    ['type' => 'review_spotlight', 'data' => ['heading' => 'Spotlight Review', 'eyebrow' => 'Customer Story']],
+                    ['type' => 'cta_banner', 'data' => ['heading' => 'Transform Your Outdoor Living Space', 'button_label' => 'Get Your Instant Price']],
+                ],
+            ],
+            'services_suite' => [
+                'label' => 'Services & Care Overview',
+                'description' => 'Hero, Icon Features, Service Matrix, FAQ, and CTA Banner.',
+                'blocks' => [
+                    ['type' => 'hero', 'data' => ['heading' => 'Comprehensive Landscaping & Lawn Care Services.', 'subheading' => 'Full-service design, build, and seasonal maintenance packages.']],
+                    ['type' => 'icon_feature', 'data' => ['heading' => 'Why Dallas Homeowners Choose Us', 'features' => [
+                        ['icon' => 'sparkles', 'title' => 'Licensed & Insured', 'body' => 'Full protection for your property.'],
+                        ['icon' => 'sparkles', 'title' => 'Transparent Pricing', 'body' => 'No hidden fees or surprise costs.'],
+                        ['icon' => 'sparkles', 'title' => 'Dedicated Project Manager', 'body' => 'One point of contact from start to finish.'],
+                    ]]],
+                    ['type' => 'service_matrix', 'data' => []],
+                    ['type' => 'faq', 'data' => ['heading' => 'Frequently Asked Questions', 'items' => [
+                        ['question' => 'How long does a typical estimate take?', 'answer' => 'Our digital calculator provides an instant price range in 2 minutes.'],
+                        ['question' => 'Do you handle permits and HOA approvals?', 'answer' => 'Yes, we manage all required city permits and HOA documentation.'],
+                    ]]],
+                    ['type' => 'cta_banner', 'data' => ['heading' => 'Schedule Your Site Visit Today', 'button_label' => 'Book Free Consultation']],
+                ],
+            ],
         ];
     }
 
@@ -106,6 +130,23 @@ class PageBlocks
     public static function forHomepage(): array
     {
         return static::all();
+    }
+
+    /**
+     * Builder blocks for every registered type, built from labels() so the
+     * homepage editor and the Pages resource can never drift apart.
+     *
+     * @return array<int, Block>
+     */
+    public static function builderBlocks(): array
+    {
+        return array_map(
+            fn (string $type, string $label): Block => Block::make($type)
+                ->label($label)
+                ->schema(static::fields($type)),
+            static::all(),
+            array_values(static::labels()),
+        );
     }
 
     /**
@@ -183,6 +224,7 @@ class PageBlocks
     private static function threeStep(): array
     {
         return [
+            TextInput::make('eyebrow')->label('Eyebrow tag'),
             TextInput::make('heading')->label('Section heading'),
             Repeater::make('steps')
                 ->label('Steps')
@@ -221,6 +263,7 @@ class PageBlocks
     private static function ctaBanner(): array
     {
         return [
+            TextInput::make('eyebrow')->label('Eyebrow tag'),
             TextInput::make('heading')->label('Heading'),
             Textarea::make('subheading')->label('Sub-heading')->rows(2),
             TextInput::make('button_label')->label('Button label'),
@@ -240,6 +283,7 @@ class PageBlocks
     {
         return [
             FileUpload::make('image')->label('Image')->image()->directory('pages')->disk('public')->visibility('public')->imageEditor()->imageEditorAspectRatios([1])->required(),
+            TextInput::make('eyebrow')->label('Eyebrow tag'),
             TextInput::make('heading')->label('Heading'),
             Textarea::make('body')->label('Body')->rows(4),
             Toggle::make('reverse')->label('Reverse layout (image on right)'),
@@ -429,11 +473,6 @@ class PageBlocks
      */
     public static function layout(): array
     {
-        $breakpoints = [
-            'mobile' => 'Mobile (base)',
-            'desktop' => 'Desktop (1024px+)',
-        ];
-
         $make = function (string $key, string $label): Section {
             $path = 'layout.'.$key.'.';
 
@@ -501,8 +540,8 @@ class PageBlocks
 
     /**
      * Build the Tailwind class string for an item container from a block's
-     * `layout` config. Keyed by breakpoint: `mobile` (base), `desktop`
-     * (`lg:`).
+     * `layout` config. Keyed by breakpoint: `mobile` (base), `tablet`
+     * (`tab:`), `desktop` (`lg:`).
      *
      * @param  array<string, array<string, mixed>>|null  $layout
      */

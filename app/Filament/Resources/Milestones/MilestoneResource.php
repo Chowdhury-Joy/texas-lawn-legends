@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\Milestones;
 
-use App\Enums\UserRole;
 use App\Filament\Concerns\RoleRestricted;
 use App\Filament\Resources\Milestones\Pages\CreateMilestone;
 use App\Filament\Resources\Milestones\Pages\EditMilestone;
@@ -19,11 +18,6 @@ use Filament\Tables\Table;
 class MilestoneResource extends Resource
 {
     use RoleRestricted;
-
-    public static function allowedRoles(): array
-    {
-        return [UserRole::Admin, UserRole::Operations];
-    }
 
     protected static ?string $model = Milestone::class;
 

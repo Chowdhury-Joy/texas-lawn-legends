@@ -11,21 +11,27 @@
                 </span>
             @endif
 
-            <blockquote data-field="quote" class="max-w-3xl text-2xl font-medium leading-snug tracking-tighter text-slate-900 sm:text-3xl">
-                “{{ filled($data['quote'] ?? null) ? $data['quote'] : '[A standout client result worth featuring front and center.]' }}”
-            </blockquote>
+            @if (filled($data['quote'] ?? null))
+                <blockquote data-field="quote" class="max-w-3xl text-2xl font-medium leading-snug tracking-tighter text-slate-900 sm:text-3xl">
+                    “{{ $data['quote'] }}”
+                </blockquote>
+            @endif
 
-            <figcaption class="flex items-center gap-3">
-                @if ($avatar)
-                    <img src="{{ $avatar }}" alt="{{ $data['author'] ?? '' }}" class="h-12 w-12 rounded-full border-2 border-slate-950 object-cover">
-                @endif
-                <span class="text-left">
-                    <span data-field="author" class="block text-sm font-bold uppercase tracking-wide text-slate-900">{{ filled($data['author'] ?? null) ? $data['author'] : '[Client Name]' }}</span>
-                    @if (filled($data['role'] ?? null))
-                        <span data-field="role" class="block text-xs font-medium text-slate-500">{{ $data['role'] }}</span>
+            @if (filled($data['author'] ?? null) || $avatar)
+                <figcaption class="flex items-center gap-3">
+                    @if ($avatar)
+                        <img src="{{ $avatar }}" alt="{{ $data['author'] ?? '' }}" class="h-12 w-12 rounded-full border-2 border-slate-950 object-cover">
                     @endif
-                </span>
-            </figcaption>
+                    @if (filled($data['author'] ?? null))
+                        <span class="text-left">
+                            <span data-field="author" class="block text-sm font-bold uppercase tracking-wide text-slate-900">{{ $data['author'] }}</span>
+                            @if (filled($data['role'] ?? null))
+                                <span data-field="role" class="block text-xs font-medium text-slate-500">{{ $data['role'] }}</span>
+                            @endif
+                        </span>
+                    @endif
+                </figcaption>
+            @endif
         </figure>
     </div>
 </section>

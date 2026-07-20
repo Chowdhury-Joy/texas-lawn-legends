@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\Projects;
 
-use App\Enums\UserRole;
 use App\Filament\Concerns\RoleRestricted;
 use App\Filament\Resources\Projects\Pages\CreateProject;
 use App\Filament\Resources\Projects\Pages\EditProject;
@@ -21,11 +20,6 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class ProjectResource extends Resource
 {
     use RoleRestricted;
-
-    public static function allowedRoles(): array
-    {
-        return [UserRole::Admin, UserRole::Operations];
-    }
 
     protected static ?string $model = Project::class;
 

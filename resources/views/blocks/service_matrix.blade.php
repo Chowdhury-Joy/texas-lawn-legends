@@ -50,5 +50,37 @@
                 </div>
             @endforeach
         </div>
+
+        {{-- Interactive Quick Price Preview Mini-Widget --}}
+        <div class="mt-12 box-brutal bg-slate-950 p-6 text-white"
+             x-data="{
+                 sqft: 1200,
+                 low() { return Math.round(this.sqft * 0.85); },
+                 high() { return Math.round(this.sqft * 1.45); }
+             }">
+            <div class="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+                <div>
+                    <span class="bg-yellow-400 px-2.5 py-1 text-[10px] font-black uppercase tracking-widest text-slate-950">Quick Calculator</span>
+                    <h3 class="mt-2 text-xl font-black uppercase tracking-tight text-white sm:text-2xl">Instant Price Range Preview</h3>
+                    <p class="mt-1 text-xs text-slate-400">Slide to estimate range before launching full booking wizard.</p>
+                </div>
+                <div class="text-left sm:text-right">
+                    <span class="text-xs font-bold uppercase tracking-widest text-slate-400">Estimated Range</span>
+                    <p class="text-3xl font-black text-yellow-400">$<span x-text="low().toLocaleString()"></span> <span class="text-slate-400">–</span> $<span x-text="high().toLocaleString()"></span></p>
+                </div>
+            </div>
+            <div class="mt-6">
+                <div class="mb-1.5 flex justify-between text-xs font-bold text-slate-400">
+                    <span>Approx. Area</span>
+                    <span class="font-mono text-yellow-400"><span x-text="Number(sqft).toLocaleString()"></span> sq ft</span>
+                </div>
+                <input type="range" min="300" max="5000" step="100" x-model.number="sqft" class="h-3 w-full cursor-pointer appearance-none border-2 border-slate-950 bg-slate-800 accent-yellow-400">
+            </div>
+            <div class="mt-6 flex justify-end">
+                <a :href="'{{ url('/estimate') }}?sqft=' + sqft" class="btn-brutal bg-yellow-400 px-6 py-3 text-xs text-slate-950">
+                    Continue With <span x-text="Number(sqft).toLocaleString()"></span> sq ft Estimate →
+                </a>
+            </div>
+        </div>
     </div>
 </section>

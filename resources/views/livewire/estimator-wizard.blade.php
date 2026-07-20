@@ -1,23 +1,37 @@
 <div class="mx-auto max-w-4xl">
 
     {{-- Progress rail --}}
-    @php $labels = ['Details', 'Scope', 'Dimensions', 'Your Estimate']; @endphp
-    <div class="mb-10 grid grid-cols-4 gap-2">
-        @foreach ($labels as $i => $label)
-            @php $n = $i + 1; @endphp
-            <div class="flex flex-col items-center text-center">
-                <div @class([
-                    'flex h-10 w-10 items-center justify-center border-2 border-slate-950 text-sm font-black',
-                    'bg-yellow-400 text-slate-950' => $step >= $n,
-                    'bg-white text-slate-400' => $step < $n,
-                ])>{{ $n }}</div>
-                <span @class([
-                    'mt-2 text-[11px] font-black uppercase tracking-widest',
-                    'text-slate-900' => $step >= $n,
-                    'text-slate-400' => $step < $n,
-                ])>{{ $label }}</span>
-            </div>
-        @endforeach
+    @php
+        $labels = ['Details', 'Scope', 'Dimensions', 'Your Estimate'];
+        $progressPct = match ($step) {
+            1 => '0%',
+            2 => '33.33%',
+            3 => '66.66%',
+            4 => '100%',
+            default => '0%',
+        };
+    @endphp
+    <div class="relative mb-10">
+        <div class="absolute left-0 top-5 -z-0 h-1.5 w-full bg-slate-200">
+            <div class="h-full bg-yellow-400 transition-all duration-500 ease-in-out" style="width: {{ $progressPct }}"></div>
+        </div>
+        <div class="relative z-10 grid grid-cols-4 gap-2">
+            @foreach ($labels as $i => $label)
+                @php $n = $i + 1; @endphp
+                <div class="flex flex-col items-center text-center">
+                    <div @class([
+                        'flex h-10 w-10 items-center justify-center border-2 border-slate-950 text-sm font-black transition-colors duration-300',
+                        'bg-yellow-400 text-slate-950' => $step >= $n,
+                        'bg-white text-slate-400' => $step < $n,
+                    ])>{{ $n }}</div>
+                    <span @class([
+                        'mt-2 text-[11px] font-black uppercase tracking-widest transition-colors duration-300',
+                        'text-slate-900' => $step >= $n,
+                        'text-slate-400' => $step < $n,
+                    ])>{{ $label }}</span>
+                </div>
+            @endforeach
+        </div>
     </div>
 
     <div class="box-brutal p-6 sm:p-10">
@@ -119,6 +133,25 @@
                 </div>
                 @error('complexity') <p class="mt-1 text-xs font-bold text-red-600">{{ $message }}</p> @enderror
             </div>
+
+            @if ($preview = $this->liveEstimatePreview)
+                <div class="mt-8 border-2 border-slate-950 bg-slate-950 p-4 text-center text-white" style="box-shadow: 4px 4px 0px 0px rgba(250,204,21,1);">
+                    <div class="flex items-center justify-between text-[11px] font-bold uppercase tracking-widest text-slate-400">
+                        <span>Live Ticker</span>
+                        <span class="inline-flex items-center gap-1.5 text-yellow-400">
+                            <span class="h-2 w-2 rounded-full bg-yellow-400 animate-pulse"></span>
+                            Real-time valuation preview
+                        </span>
+                    </div>
+                    <p class="mt-2 text-2xl font-black text-yellow-400">
+                        @if ($preview['is_custom'])
+                            Custom Quote Required
+                        @else
+                            ${{ number_format($preview['low']) }} <span class="text-slate-400">–</span> ${{ number_format($preview['high']) }}
+                        @endif
+                    </p>
+                </div>
+            @endif
         @endif
 
         {{-- ================= STEP 4: Value Gate / Booking ================= --}}
@@ -145,10 +178,29 @@
                     @include('livewire.partials.booking-grid')
                 </div>
             @else
-                <div class="text-center">
+                <div class="text-center" x-data="{
+                    targetLow: {{ (int) ($estimateLow ?? 0) }},
+                    targetHigh: {{ (int) ($estimateHigh ?? 0) }},
+                    currentLow: 0,
+                    currentHigh: 0,
+                    init() {
+                        const duration = 800;
+                        const start = performance.now();
+                        const step = (now) => {
+                            const progress = Math.min((now - start) / duration, 1);
+                            const ease = 1 - Math.pow(1 - progress, 3);
+                            this.currentLow = Math.floor(ease * this.targetLow);
+                            this.currentHigh = Math.floor(ease * this.targetHigh);
+                            if (progress < 1) {
+                                requestAnimationFrame(step);
+                            }
+                        };
+                        requestAnimationFrame(step);
+                    }
+                }">
                     <span class="inline-block bg-emerald-900 px-3 py-1 text-xs font-black uppercase tracking-widest text-yellow-400">Your Instant Estimate</span>
                     <h2 class="mt-4 text-4xl font-black tracking-tight text-slate-900 sm:text-5xl">
-                        ${{ number_format($estimateLow) }} <span class="text-slate-400">–</span> ${{ number_format($estimateHigh) }}
+                        $<span x-text="currentLow.toLocaleString()"></span> <span class="text-slate-400">–</span> $<span x-text="currentHigh.toLocaleString()"></span>
                     </h2>
                     <p class="mx-auto mt-3 max-w-lg text-slate-600">
                         Based on {{ number_format($sqft) }} sq ft of {{ optional($this->services->firstWhere('id', $service_id))->title }} in {{ $neighborhood }}.

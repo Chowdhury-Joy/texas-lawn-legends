@@ -2,29 +2,21 @@
 
 namespace App\Filament\Concerns;
 
-use App\Enums\UserRole;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 /**
- * Lets a Filament resource restrict visibility to specific user roles.
- * Override allowedRoles() on the resource (defaults to all staff roles).
+ * Gates a Filament resource on the current user's effective access keys.
+ *
+ * Which roles reach a resource by default is declared centrally in
+ * App\Support\AccessPermissions — not here — so that enforcement and the
+ * per-user Access matrix in the User form always read from one registry.
+ * Override permissionKey() only when a resource's key can't be derived
+ * from its class name.
  */
 trait RoleRestricted
 {
-    /**
-     * @return array<int, UserRole>
-     */
-    public static function allowedRoles(): array
-    {
-        return [
-            UserRole::Admin,
-            UserRole::Content,
-            UserRole::Operations,
-        ];
-    }
-
     public static function canViewAny(): bool
     {
         /** @var User|null $user */

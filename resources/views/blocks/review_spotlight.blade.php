@@ -24,7 +24,8 @@
                 <div class="text-2xl font-black leading-none text-yellow-400" style="-webkit-text-stroke: 2px #0f172a;">“</div>
                 <blockquote class="mt-2 text-xl font-medium leading-snug tracking-tighter sm:text-2xl">“{{ $review->review_text }}”</blockquote>
                 <div class="mt-6 flex items-center justify-center gap-3">
-                    <div class="text-yellow-500">{!! str_repeat('★', $review->rating) . str_repeat('☆', 5 - $review->rating) !!}</div>
+                    @php $stars = max(0, min(5, (int) $review->rating)); @endphp
+                    <div class="text-yellow-500">{!! str_repeat('★', $stars) . str_repeat('☆', 5 - $stars) !!}</div>
                     <figcaption class="text-left">
                         <span class="block text-sm font-bold uppercase tracking-wide text-slate-900">{{ $review->author }}</span>
                         @if (filled($review->neighborhood))

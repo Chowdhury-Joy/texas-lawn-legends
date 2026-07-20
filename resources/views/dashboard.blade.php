@@ -88,7 +88,22 @@
             </div>
 
             {{-- ============== MILESTONE TIMELINE ============== --}}
-            <div class="mt-12 space-y-6">
+            <div class="mt-12 space-y-6"
+                 x-data="{
+                     open: false,
+                     activeUrl: '',
+                     activeCaption: '',
+                     activeMilestone: '',
+                     activeDate: '',
+                     showPhoto(url, caption, milestone, date) {
+                         this.activeUrl = url;
+                         this.activeCaption = caption;
+                         this.activeMilestone = milestone;
+                         this.activeDate = date;
+                         this.open = true;
+                     }
+                 }"
+                 @keydown.escape.window="open = false">
                 <h2 class="text-2xl font-black uppercase tracking-tight text-slate-900">Build Timeline</h2>
 
                 @foreach ($milestones as $milestone)
@@ -114,10 +129,15 @@
                                 @foreach ($stepPhotos as $photo)
                                     @php
                                         $hasImage = filled($photo->image_path) && Storage::disk('public')->exists($photo->image_path);
+                                        $photoUrl = $hasImage ? Storage::disk('public')->url($photo->image_path) : '';
                                     @endphp
-                                    <figure class="border-2 border-slate-950">
+                                    <figure @if ($hasImage) @click="showPhoto('{{ $photoUrl }}', '{{ addslashes($photo->caption) }}', '{{ addslashes($milestone->title) }}', '{{ $photo->created_at?->format('M j, Y') }}')" @endif
+                                            @class([
+                                                'border-2 border-slate-950',
+                                                'cursor-pointer transition-transform hover:-translate-y-0.5 hover:shadow-md' => $hasImage,
+                                            ])>
                                         @if ($hasImage)
-                                            <img src="{{ Storage::disk('public')->url($photo->image_path) }}" alt="{{ $photo->caption }}" class="aspect-square w-full object-cover">
+                                            <img src="{{ $photoUrl }}" alt="{{ $photo->caption }}" class="aspect-square w-full object-cover">
                                         @else
                                             <div class="flex aspect-square w-full items-center justify-center bg-gradient-to-br from-emerald-700 to-emerald-900">
                                                 <svg class="h-8 w-8 text-yellow-400/80" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM18.75 10.5h.008v.008h-.008V10.5Z"/></svg>
@@ -135,6 +155,32 @@
                         @endif
                     </div>
                 @endforeach
+
+                {{-- Photo Lightbox Overlay Modal --}}
+                <div x-show="open" x-cloak
+                     class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/90 p-4 sm:p-6 backdrop-blur-sm"
+                     x-transition:enter="transition ease-out duration-300"
+                     x-transition:enter-start="opacity-0"
+                     x-transition:enter-end="opacity-100"
+                     x-transition:leave="transition ease-in duration-200"
+                     x-transition:leave-start="opacity-100"
+                     x-transition:leave-end="opacity-0"
+                     @click.self="open = false">
+                    
+                    <div class="box-brutal w-full max-w-4xl overflow-hidden bg-white" @click.stop>
+                        <div class="flex items-center justify-between border-b-2 border-slate-950 bg-slate-950 px-4 py-3 text-white">
+                            <span class="text-xs font-black uppercase tracking-widest text-yellow-400" x-text="activeMilestone"></span>
+                            <button type="button" @click="open = false" class="text-xs font-black uppercase tracking-widest text-slate-300 hover:text-white">✕ Close (Esc)</button>
+                        </div>
+                        <div class="flex max-h-[70vh] items-center justify-center bg-black">
+                            <img :src="activeUrl" :alt="activeCaption" class="max-h-[70vh] w-auto object-contain">
+                        </div>
+                        <div class="flex flex-col justify-between gap-2 border-t-2 border-slate-950 bg-brand-paper p-4 sm:flex-row sm:items-center">
+                            <p class="text-sm font-bold text-slate-900" x-text="activeCaption"></p>
+                            <span class="text-xs font-bold uppercase tracking-widest text-emerald-800" x-text="activeDate"></span>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <p class="mt-10 text-center text-xs text-slate-400">

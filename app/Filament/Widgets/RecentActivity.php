@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use App\Filament\Concerns\RestrictedWidget;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget;
@@ -9,6 +10,8 @@ use Spatie\Activitylog\Models\Activity;
 
 class RecentActivity extends TableWidget
 {
+    use RestrictedWidget;
+
     protected static bool $isLazy = false;
 
     protected static ?int $sort = 2;

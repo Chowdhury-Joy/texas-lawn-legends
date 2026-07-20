@@ -2,12 +2,15 @@
 
 namespace App\Filament\Widgets;
 
+use App\Filament\Concerns\RestrictedWidget;
 use App\Models\Lead;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Carbon;
 
 class WeeklyLeadTrend extends ChartWidget
 {
+    use RestrictedWidget;
+
     protected static bool $isLazy = false;
 
     protected ?string $heading = 'New Leads — Last 7 Days';

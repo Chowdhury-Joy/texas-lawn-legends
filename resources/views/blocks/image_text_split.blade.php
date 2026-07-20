@@ -10,12 +10,21 @@
             @endif
         </div>
         <div class="flex flex-col justify-center {{ $reverse ? 'lg:order-1' : '' }}">
-            <h2 data-field="heading" data-gjs-type="text" class="text-3xl font-medium tracking-tighter text-slate-900 sm:text-4xl">
-                {{ filled($data['heading'] ?? null) ? $data['heading'] : '[Split Heading]' }}
-            </h2>
-            <p data-field="body" data-gjs-type="text" class="mt-5 text-base leading-relaxed text-slate-600">
-                {{ filled($data['body'] ?? null) ? $data['body'] : '[Split description text goes here]' }}
-            </p>
+            @if (filled($data['eyebrow'] ?? null))
+                <span data-field="eyebrow" class="mb-3 inline-block w-fit bg-slate-950 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-yellow-400">
+                    {{ $data['eyebrow'] }}
+                </span>
+            @endif
+            @if (! array_key_exists('heading', $data) || filled($data['heading'] ?? null))
+                <h2 data-field="heading" class="text-3xl font-medium tracking-tighter text-slate-900 sm:text-4xl">
+                    {{ filled($data['heading'] ?? null) ? $data['heading'] : 'Precision Landscape Execution' }}
+                </h2>
+            @endif
+            @if (filled($data['body'] ?? null))
+                <p data-field="body" class="mt-5 text-base leading-relaxed text-slate-600">
+                    {{ $data['body'] }}
+                </p>
+            @endif
         </div>
     </div>
 </section>

@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\Leads;
 
-use App\Enums\UserRole;
 use App\Filament\Concerns\RoleRestricted;
 use App\Filament\Resources\Leads\Pages\CreateLead;
 use App\Filament\Resources\Leads\Pages\EditLead;
@@ -21,11 +20,6 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class LeadResource extends Resource
 {
     use RoleRestricted;
-
-    public static function allowedRoles(): array
-    {
-        return [UserRole::Admin, UserRole::Operations];
-    }
 
     protected static ?string $model = Lead::class;
 

@@ -37,7 +37,22 @@ class Page extends Model
         return $query->where('is_published', true);
     }
 
+    /**
+     * The homepage record, read-only — public page renders must never write.
+     * Returns an unsaved instance if none exists yet (fresh installs before
+     * PagesSeeder runs), so the site renders an empty homepage instead of
+     * erroring or inserting a row mid-request.
+     */
     public static function home(): self
+    {
+        return static::query()->where('is_home', true)->first()
+            ?? new static(['title' => 'Home', 'blocks' => [], 'is_published' => true]);
+    }
+
+    /**
+     * The homepage record, creating it if absent. For admin/seeder paths only.
+     */
+    public static function homeOrCreate(): self
     {
         return static::query()->firstOrCreate(
             ['is_home' => true],

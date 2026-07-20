@@ -3,6 +3,7 @@
 namespace App\Filament\Widgets;
 
 use App\Enums\LeadStatus;
+use App\Filament\Concerns\RestrictedWidget;
 use App\Models\Lead;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -10,6 +11,8 @@ use Filament\Widgets\TableWidget;
 
 class NeedsAttention extends TableWidget
 {
+    use RestrictedWidget;
+
     protected static bool $isLazy = false;
 
     protected static ?int $sort = -2;

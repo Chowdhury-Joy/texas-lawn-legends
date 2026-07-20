@@ -4,6 +4,22 @@
 @source '../../storage/framework/views/*.php';
 @source '../views';
 
+/* ---------------------------------------------------------------------------
+   Page-builder responsive layout safelist.
+
+   PageBlocks::layoutClasses() assembles these class names at runtime from
+   editor-chosen values, so they never appear as literals in any scanned file
+   and Tailwind would otherwise omit them from the build. The sets below must
+   stay in sync with the Select options in PageBlocks::layout() — anything an
+   editor can pick has to be listed here or it silently renders as a no-op.
+   --------------------------------------------------------------------------- */
+@source inline("{,tab:,lg:}{flex,grid}");
+@source inline("{,tab:,lg:}flex-{row,col,wrap,nowrap}");
+@source inline("{,tab:,lg:}grid-cols-{1,2,3,4,5,6}");
+@source inline("{,tab:,lg:}gap-{2,4,6,8,10,12}");
+@source inline("{,tab:,lg:}justify-{start,center,end,between}");
+@source inline("{,tab:,lg:}items-{start,center,end}");
+
 @theme {
     --font-sans: 'Montserrat', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';

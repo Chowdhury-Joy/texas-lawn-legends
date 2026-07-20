@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\Services;
 
-use App\Enums\UserRole;
 use App\Filament\Concerns\RoleRestricted;
 use App\Filament\Resources\Services\Pages\CreateService;
 use App\Filament\Resources\Services\Pages\EditService;
@@ -19,11 +18,6 @@ use Filament\Tables\Table;
 class ServiceResource extends Resource
 {
     use RoleRestricted;
-
-    public static function allowedRoles(): array
-    {
-        return [UserRole::Admin, UserRole::Content, UserRole::Operations];
-    }
 
     protected static ?string $model = Service::class;
 

@@ -4,6 +4,7 @@ namespace App\Filament\Widgets;
 
 use App\Enums\LeadStatus;
 use App\Enums\ProjectStatus;
+use App\Filament\Concerns\RestrictedWidget;
 use App\Models\Lead;
 use App\Models\Project;
 use Filament\Widgets\StatsOverviewWidget;
@@ -11,6 +12,8 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class BusinessSnapshot extends StatsOverviewWidget
 {
+    use RestrictedWidget;
+
     protected static bool $isLazy = false;
 
     protected static ?int $sort = -3;

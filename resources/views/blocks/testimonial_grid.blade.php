@@ -23,10 +23,11 @@
         @endif
 
         @if ($reviews->isNotEmpty())
-            <div class="{{ $layout ?: 'mt-10 grid grid-cols-1 gap-6 lg:grid-cols-3' }}">
+            <div class="mt-10 {{ $layout ?: 'grid grid-cols-1 gap-6 lg:grid-cols-3' }}">
                 @foreach ($reviews as $review)
                     <figure class="box-brutal flex flex-col p-4 sm:p-6">
-                        <div class="text-yellow-500">{!! str_repeat('★', $review->rating) . str_repeat('☆', 5 - $review->rating) !!}</div>
+                        @php $stars = max(0, min(5, (int) $review->rating)); @endphp
+                        <div class="text-yellow-500">{!! str_repeat('★', $stars) . str_repeat('☆', 5 - $stars) !!}</div>
                         <blockquote class="mt-3 flex-1 text-sm leading-relaxed text-slate-700">“{{ $review->review_text }}”</blockquote>
                         <figcaption class="mt-4 border-t-2 border-slate-200 pt-4">
                             <p class="text-sm font-medium tracking-tighter text-slate-900">{{ $review->author }}</p>

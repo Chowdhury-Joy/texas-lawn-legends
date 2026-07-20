@@ -14,30 +14,40 @@
 
         <div class="flex flex-col justify-center {{ $data['reverse'] ?? false ? 'lg:order-1' : '' }}">
             @if (filled($data['eyebrow'] ?? null))
-                <span data-field="eyebrow" data-gjs-type="text" class="inline-block w-fit bg-emerald-900 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-yellow-400">
+                <span data-field="eyebrow" class="inline-block w-fit bg-emerald-900 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-yellow-400">
                     {{ $data['eyebrow'] }}
                 </span>
             @endif
 
-            <h2 data-field="heading" data-gjs-type="text" class="mt-4 text-3xl font-medium tracking-tighter text-slate-900 sm:text-4xl">
-                {{ filled($data['heading'] ?? null) ? $data['heading'] : '[About Us Heading]' }}
-            </h2>
+            @if (! array_key_exists('heading', $data) || filled($data['heading'] ?? null))
+                <h2 data-field="heading" class="mt-4 text-3xl font-medium tracking-tighter text-slate-900 sm:text-4xl">
+                    {{ filled($data['heading'] ?? null) ? $data['heading'] : 'About Texas Lawn Legends' }}
+                </h2>
+            @endif
 
-            <p data-field="body" data-gjs-type="text" class="mt-5 text-base leading-snug tracking-tight text-slate-600">
-                {{ filled($data['body'] ?? null) ? $data['body'] : '[Tell visitors who you are and what makes your work different.]' }}
-            </p>
+            @if (filled($data['body'] ?? null))
+                <p data-field="body" class="mt-5 text-base leading-snug tracking-tight text-slate-600">
+                    {{ $data['body'] }}
+                </p>
+            @endif
 
             @if (! empty($stats))
                 <div class="mt-8 {{ $layout ?: 'grid grid-cols-2 gap-4 sm:grid-cols-3' }}">
                     @foreach ($stats as $index => $stat)
-                        <div data-field="stats.{{ $index }}" class="box-brutal p-3 sm:p-4">
-                            <h3 data-field="stats.{{ $index }}.value" data-gjs-type="text" class="block text-4xl font-medium leading-none tracking-tighter text-emerald-900">
-                                {{ filled($stat['value'] ?? null) ? $stat['value'] : '[00]' }}
-                            </h3>
-                            <span data-field="stats.{{ $index }}.label" data-gjs-type="text" class="mt-1 block text-xs font-bold uppercase tracking-wide text-slate-500">
-                                {{ filled($stat['label'] ?? null) ? $stat['label'] : '[Label]' }}
-                            </span>
-                        </div>
+                        @if (filled($stat['value'] ?? null) || filled($stat['label'] ?? null))
+                            <div data-field="stats.{{ $index }}" class="box-brutal p-3 sm:p-4">
+                                @if (filled($stat['value'] ?? null))
+                                    <h3 data-field="stats.{{ $index }}.value" class="block text-4xl font-medium leading-none tracking-tighter text-emerald-900">
+                                        {{ $stat['value'] }}
+                                    </h3>
+                                @endif
+                                @if (filled($stat['label'] ?? null))
+                                    <span data-field="stats.{{ $index }}.label" class="mt-1 block text-xs font-bold uppercase tracking-wide text-slate-500">
+                                        {{ $stat['label'] }}
+                                    </span>
+                                @endif
+                            </div>
+                        @endif
                     @endforeach
                 </div>
             @endif

@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\Addons;
 
-use App\Enums\UserRole;
 use App\Filament\Concerns\RoleRestricted;
 use App\Filament\Resources\Addons\Pages\CreateAddon;
 use App\Filament\Resources\Addons\Pages\EditAddon;
@@ -19,11 +18,6 @@ use Filament\Tables\Table;
 class AddonResource extends Resource
 {
     use RoleRestricted;
-
-    public static function allowedRoles(): array
-    {
-        return [UserRole::Admin, UserRole::Content, UserRole::Operations];
-    }
 
     protected static ?string $model = Addon::class;
 

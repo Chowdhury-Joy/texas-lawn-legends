@@ -216,6 +216,32 @@ class EstimatorWizard extends Component
         ];
     }
 
+    /**
+     * Live estimated range calculation preview for Step 3 interaction.
+     *
+     * @return array{low: float, high: float, is_custom: bool}|null
+     */
+    #[Computed]
+    public function liveEstimatePreview(): ?array
+    {
+        if (! $this->service_id) {
+            return null;
+        }
+
+        $service = Service::find($this->service_id);
+
+        if (! $service) {
+            return null;
+        }
+
+        return app(EstimatePricingEngine::class)->calculate(
+            $service,
+            $this->sqft,
+            $this->neighborhood ?: (string) collect($this->neighborhoods)->first(),
+            $this->complexity,
+        );
+    }
+
     public function render()
     {
         return view('livewire.estimator-wizard');

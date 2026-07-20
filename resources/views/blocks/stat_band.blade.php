@@ -20,14 +20,20 @@
         @if (! empty($stats))
             <div class="mt-10 {{ $layout ?: 'grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4' }}">
                 @foreach ($stats as $index => $stat)
-                    <div data-field="stats.{{ $index }}" class="border-2 border-yellow-400 p-4 sm:p-5">
-                        <h3 data-field="stats.{{ $index }}.value" class="block text-4xl font-medium leading-none tracking-tighter text-yellow-400 sm:text-5xl">
-                            {{ filled($stat['value'] ?? null) ? $stat['value'] : '[00]' }}
-                        </h3>
-                        <span data-field="stats.{{ $index }}.label" class="mt-2 block text-xs font-bold uppercase tracking-wide text-emerald-100">
-                            {{ filled($stat['label'] ?? null) ? $stat['label'] : '[Label]' }}
-                        </span>
-                    </div>
+                    @if (filled($stat['value'] ?? null) || filled($stat['label'] ?? null))
+                        <div data-field="stats.{{ $index }}" class="border-2 border-yellow-400 p-4 sm:p-5">
+                            @if (filled($stat['value'] ?? null))
+                                <h3 data-field="stats.{{ $index }}.value" class="block text-4xl font-medium leading-none tracking-tighter text-yellow-400 sm:text-5xl">
+                                    {{ $stat['value'] }}
+                                </h3>
+                            @endif
+                            @if (filled($stat['label'] ?? null))
+                                <span data-field="stats.{{ $index }}.label" class="mt-2 block text-xs font-bold uppercase tracking-wide text-emerald-100">
+                                    {{ $stat['label'] }}
+                                </span>
+                            @endif
+                        </div>
+                    @endif
                 @endforeach
             </div>
         @endif

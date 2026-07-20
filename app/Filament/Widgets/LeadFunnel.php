@@ -3,11 +3,14 @@
 namespace App\Filament\Widgets;
 
 use App\Enums\LeadStatus;
+use App\Filament\Concerns\RestrictedWidget;
 use App\Models\Lead;
 use Filament\Widgets\ChartWidget;
 
 class LeadFunnel extends ChartWidget
 {
+    use RestrictedWidget;
+
     protected static bool $isLazy = false;
 
     protected ?string $heading = 'Lead Funnel — Last 30 Days';

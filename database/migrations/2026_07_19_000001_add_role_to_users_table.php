@@ -10,7 +10,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('role')->default(UserRole::Admin->value)->after('email');
+            // Least-privileged default: granting admin must always be deliberate.
+            $table->string('role')->default(UserRole::Content->value)->after('email');
         });
     }
 

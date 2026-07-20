@@ -1,9 +1,17 @@
 <div
-    x-data="{}"
+    x-data="{ isDark: false }"
+    :class="{ 'dark bg-slate-950 text-white': isDark }"
     x-init="
         window.addEventListener('message', (e) => {
-            if (!e.data || e.data.type !== 'page-preview:blocks') return;
-            $wire.set('blocks', e.data.blocks, () => $wire.$refresh());
+            // Only trust the editor on our own origin.
+            if (e.origin !== window.location.origin) return;
+            if (!e.data) return;
+            if (e.data.type === 'page-preview:blocks') {
+                $wire.set('blocks', e.data.blocks, () => $wire.$refresh());
+            }
+            if (e.data.type === 'page-preview:darkMode') {
+                isDark = Boolean(e.data.isDark);
+            }
         });
     ">
 

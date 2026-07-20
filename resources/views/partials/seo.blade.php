@@ -63,5 +63,5 @@
         '@type' => 'Place',
         'name' => $a,
     ], $areas)) : null,
-], fn ($v) => $v !== null), JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
+], fn ($v) => $v !== null), JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT | JSON_HEX_TAG) !!}
 </script>

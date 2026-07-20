@@ -16,7 +16,7 @@
         @endif
 
         @if (! empty($logos))
-            <div class="{{ $layout ?: 'mt-8 flex flex-wrap items-center justify-center gap-8' }}">
+            <div class="mt-8 {{ $layout ?: 'flex flex-wrap items-center justify-center gap-8' }}">
                 @foreach ($logos as $index => $logo)
                     @php $url = filled($logo['image'] ?? null) ? public_url($logo['image']) : null; @endphp
                     <img data-field="logos.{{ $index }}.image" src="{{ $url ?: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="160" height="60" viewBox="0 0 160 60"><rect width="160" height="60" fill="%23334155" rx="4"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="%2394a3b8">Logo</text></svg>' }}" alt="{{ $logo['label'] ?? '' }}" class="h-10 w-auto object-contain opacity-80 transition-opacity hover:opacity-100">

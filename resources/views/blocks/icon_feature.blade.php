@@ -23,9 +23,11 @@
                         @if (filled($feature['icon'] ?? null))
                             <x-svg-icon :name="$feature['icon']" class="h-8 w-8 text-emerald-900" />
                         @endif
-                        <h3 data-field="features.{{ $index }}.title" class="mt-4 text-xl font-medium tracking-tighter text-slate-900">
-                            {{ filled($feature['title'] ?? null) ? $feature['title'] : '[Feature]' }}
-                        </h3>
+                        @if (filled($feature['title'] ?? null))
+                            <h3 data-field="features.{{ $index }}.title" class="mt-4 text-xl font-medium tracking-tighter text-slate-900">
+                                {{ $feature['title'] }}
+                            </h3>
+                        @endif
                         @if (filled($feature['body'] ?? null))
                             <p data-field="features.{{ $index }}.body" class="mt-2 text-sm leading-relaxed text-slate-600">{{ $feature['body'] }}</p>
                         @endif

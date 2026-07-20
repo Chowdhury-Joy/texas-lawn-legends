@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\Testimonials;
 
-use App\Enums\UserRole;
 use App\Filament\Concerns\RoleRestricted;
 use App\Filament\Resources\Testimonials\Pages\CreateTestimonial;
 use App\Filament\Resources\Testimonials\Pages\EditTestimonial;
@@ -19,11 +18,6 @@ use Filament\Tables\Table;
 class TestimonialResource extends Resource
 {
     use RoleRestricted;
-
-    public static function allowedRoles(): array
-    {
-        return [UserRole::Admin, UserRole::Content, UserRole::Operations];
-    }
 
     protected static ?string $model = Testimonial::class;
 
