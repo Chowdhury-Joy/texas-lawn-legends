@@ -319,7 +319,8 @@ class PageBlocks
                 ->reorderable()
                 ->collapsible()
                 ->collapsed()
-                ->cloneable(),
+                ->cloneable()
+                ->itemLabel(fn (array $state): ?string => $state['caption'] ?? 'Untitled image'),
             ...static::layout(),
         ];
     }
@@ -456,7 +457,8 @@ class PageBlocks
                 ->reorderable()
                 ->collapsible()
                 ->collapsed()
-                ->cloneable(),
+                ->cloneable()
+                ->itemLabel(fn (array $state): ?string => $state['label'] ?? 'Untitled logo'),
             ...static::layout(),
         ];
     }

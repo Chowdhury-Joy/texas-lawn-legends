@@ -83,6 +83,30 @@ class UnfilledElementHidingTest extends TestCase
                         'author' => '',
                     ],
                 ],
+                [
+                    'type' => 'faq',
+                    'data' => [
+                        'heading' => '',
+                        'items' => [
+                            ['question' => '', 'answer' => ''],
+                        ],
+                    ],
+                ],
+                [
+                    'type' => 'rich_text',
+                    'data' => [
+                        'heading' => '',
+                        'body' => '',
+                    ],
+                ],
+                [
+                    'type' => 'gallery',
+                    'data' => [
+                        'images' => [
+                            ['image' => null, 'caption' => ''],
+                        ],
+                    ],
+                ],
             ],
         ]);
 
@@ -97,5 +121,11 @@ class UnfilledElementHidingTest extends TestCase
         $response->assertDontSee('[Step Description]');
         $response->assertDontSee('[A standout client result');
         $response->assertDontSee('[Client Name]');
+        $response->assertDontSee('[Frequently Asked Questions]');
+        $response->assertDontSee('[FAQ Question]');
+        $response->assertDontSee('[FAQ Answer]');
+        $response->assertDontSee('[Rich Text Heading]');
+        $response->assertDontSee('[Write rich text contents here]');
+        $response->assertDontSee('[Gallery Caption]');
     }
 }

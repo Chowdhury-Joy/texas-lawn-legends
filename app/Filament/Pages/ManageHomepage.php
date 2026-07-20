@@ -69,11 +69,6 @@ class ManageHomepage extends Page
             ->statePath('data');
     }
 
-    public function areFormActionsSticky(): bool
-    {
-        return true;
-    }
-
     public function save(): void
     {
         $data = $this->form->getState();

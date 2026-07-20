@@ -9,8 +9,10 @@ class CreatePage extends CreateRecord
 {
     protected static string $resource = PageResource::class;
 
-    public function areFormActionsSticky(): bool
+    protected string $view = 'filament.resources.pages.pages.create';
+
+    public function getMaxContentWidth(): string
     {
-        return true;
+        return 'full';
     }
 }

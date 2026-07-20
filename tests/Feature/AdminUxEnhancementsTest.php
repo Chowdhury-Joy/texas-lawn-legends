@@ -3,9 +3,7 @@
 namespace Tests\Feature;
 
 use App\Enums\UserRole;
-use App\Filament\Pages\ManageHomepage;
-use App\Filament\Resources\Pages\Pages\CreatePage;
-use App\Filament\Resources\Pages\Pages\EditPage;
+use App\Models\Page;
 use App\Models\User;
 use App\Support\AccessPermissions;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -23,16 +21,26 @@ class AdminUxEnhancementsTest extends TestCase
         $this->assertEquals('Advanced Block Layout & Grid Controls', $all['settings.advanced_layout']['label']);
     }
 
-    public function test_form_actions_are_sticky_on_cms_pages(): void
+    /**
+     * The Create and Edit screens for a Page render the exact same custom
+     * Blade view, so the save bar and content width can't drift between
+     * "new page" and "existing page" the way they would if only one of the
+     * two had a hand-styled sticky bar.
+     */
+    public function test_create_and_edit_page_screens_render_matching_sticky_save_bars(): void
     {
-        $homepage = new ManageHomepage;
-        $this->assertTrue($homepage->areFormActionsSticky());
+        $admin = User::factory()->create(['role' => UserRole::Admin]);
 
-        $editPage = new EditPage;
-        $this->assertTrue($editPage->areFormActionsSticky());
+        $createHtml = $this->actingAs($admin)->get('/admin/pages/create')->assertStatus(200)->getContent();
 
-        $createPage = new CreatePage;
-        $this->assertTrue($createPage->areFormActionsSticky());
+        $page = Page::create(['title' => 'Parity Check', 'slug' => 'parity-check', 'is_published' => true, 'blocks' => []]);
+        $editHtml = $this->actingAs($admin)->get("/admin/pages/{$page->slug}/edit")->assertStatus(200)->getContent();
+
+        foreach ([$createHtml, $editHtml] as $html) {
+            $this->assertStringContainsString('sticky bottom-0 z-40', $html);
+            $this->assertStringContainsString('Page Content Editor', $html);
+            $this->assertStringContainsString('max-w-5xl pb-16', $html);
+        }
     }
 
     public function test_homepage_builder_page_loads(): void
