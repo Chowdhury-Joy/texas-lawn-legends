@@ -35,6 +35,19 @@ class ProjectsTable
                 TextColumn::make('contract_value')
                     ->money('usd')
                     ->sortable(),
+                TextColumn::make('crew.name')
+                    ->label('Crew')
+                    ->placeholder('Unassigned')
+                    ->badge()
+                    ->color(fn ($record) => match ($record->crew?->color) {
+                        'emerald' => 'success',
+                        'amber' => 'warning',
+                        'sky' => 'info',
+                        'purple' => 'primary',
+                        'rose' => 'danger',
+                        default => 'gray',
+                    })
+                    ->sortable(),
                 TextColumn::make('status')
                     ->badge()
                     ->sortable(),
@@ -54,6 +67,9 @@ class ProjectsTable
             ->filters([
                 SelectFilter::make('status')
                     ->options(ProjectStatus::class),
+                SelectFilter::make('crew_id')
+                    ->relationship('crew', 'name')
+                    ->label('Crew'),
                 TrashedFilter::make(),
             ])
             ->recordActions([

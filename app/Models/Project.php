@@ -31,6 +31,7 @@ class Project extends Model
 
     protected $fillable = [
         'lead_id',
+        'crew_id',
         'unique_dashboard_hash',
         'client_name',
         'project_title',
@@ -77,6 +78,11 @@ class Project extends Model
     public function lead(): BelongsTo
     {
         return $this->belongsTo(Lead::class);
+    }
+
+    public function crew(): BelongsTo
+    {
+        return $this->belongsTo(Crew::class);
     }
 
     public function milestones(): HasMany

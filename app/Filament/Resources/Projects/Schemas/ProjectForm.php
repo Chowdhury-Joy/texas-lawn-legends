@@ -35,6 +35,12 @@ class ProjectForm
                             ->preload()
                             ->label('Linked lead')
                             ->helperText('Optionally connect this project to an existing lead.'),
+                        Select::make('crew_id')
+                            ->relationship('crew', 'name')
+                            ->searchable()
+                            ->preload()
+                            ->label('Assigned Field Crew')
+                            ->helperText('Assign a field crew responsible for this job.'),
                         TextInput::make('contract_value')
                             ->required()
                             ->numeric()
