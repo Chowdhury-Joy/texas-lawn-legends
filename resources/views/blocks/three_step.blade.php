@@ -1,42 +1,55 @@
 @php
     $processSteps = (array) ($data['steps'] ?? []);
     $layout = \App\Support\PageBlocks::layoutClasses($data['layout'] ?? []);
+
+    /*
+     * Merge strategy — same safe pattern as hero/cta_banner:
+     * Repeater entries render in drag order, then classic fields not already
+     * covered are appended — so adding one repeater entry never drops the rest.
+     */
+    $repeaterElements = $data['text_elements'] ?? [];
+    $handledTypes     = array_column($repeaterElements, 'type');
+
+    $classicFallbacks = [];
+
+    if (! in_array('eyebrow', $handledTypes) && filled($data['eyebrow'] ?? null)) {
+        $classicFallbacks[] = ['type' => 'eyebrow', 'text' => $data['eyebrow']];
+    }
+
+    if (! in_array('heading', $handledTypes) && (! array_key_exists('heading', $data) || filled($data['heading'] ?? null))) {
+        $classicFallbacks[] = ['type' => 'heading', 'text' => $data['heading'] ?? null];
+    }
+
+    if (! in_array('subheading', $handledTypes) && filled($data['subheading'] ?? null)) {
+        $classicFallbacks[] = ['type' => 'subheading', 'text' => $data['subheading']];
+    }
+
+    $renderElements = array_merge($repeaterElements, $classicFallbacks);
 @endphp
 <section class="border-t-4 border-slate-950 bg-white">
     <div class="mx-auto max-w-7xl px-6 py-20 text-center">
-        @if (filled($data['text_elements'] ?? null))
-            @foreach ($data['text_elements'] as $element)
-                @php
-                    $type = $element['type'] ?? '';
-                    $text = $element['text'] ?? '';
-                @endphp
+        @foreach ($renderElements as $element)
+            @php
+                $type = $element['type'] ?? '';
+                $text = $element['text'] ?? null;
+            @endphp
 
-                @if ($type === 'eyebrow' && filled($text))
-                    <span data-field="eyebrow" class="mx-auto mb-3 inline-block w-fit bg-emerald-900 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-yellow-400">
-                        {{ $text }}
-                    </span>
-                @elseif ($type === 'heading' && filled($text))
-                    <h2 data-field="heading" class="mx-auto mb-4 max-w-3xl text-4xl font-medium leading-tight tracking-tighter text-slate-900 sm:text-5xl">
-                        {{ $text }}
-                    </h2>
-                @elseif ($type === 'subheading' && filled($text))
-                    <p data-field="subheading" class="mx-auto mb-4 max-w-2xl text-base text-slate-600">
-                        {{ $text }}
-                    </p>
-                @endif
-            @endforeach
-        @else
-            @if (filled($data['eyebrow'] ?? null))
+            @if ($type === 'eyebrow' && filled($text))
                 <span data-field="eyebrow" class="mx-auto mb-3 inline-block w-fit bg-emerald-900 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-yellow-400">
-                    {{ $data['eyebrow'] }}
+                    {{ $text }}
                 </span>
-            @endif
-            @if (! array_key_exists('heading', $data) || filled($data['heading'] ?? null))
+
+            @elseif ($type === 'heading')
                 <h2 data-field="heading" class="mx-auto max-w-3xl text-4xl font-medium leading-tight tracking-tighter text-slate-900 sm:text-5xl">
-                    {{ filled($data['heading'] ?? null) ? $data['heading'] : 'Our 3-Step Process — Deliver The Wow' }}
+                    {{ filled($text) ? $text : 'Our 3-Step Process — Deliver The Wow' }}
                 </h2>
+
+            @elseif ($type === 'subheading' && filled($text))
+                <p data-field="subheading" class="mx-auto mt-4 max-w-2xl text-base text-slate-600">
+                    {{ $text }}
+                </p>
             @endif
-        @endif
+        @endforeach
         <div class="mt-14 text-left {{ $layout ?: 'grid grid-cols-1 gap-8 lg:grid-cols-3' }}">
             @foreach ($processSteps as $index => $step)
                 <div class="box-brutal p-5 sm:p-8 mr-[8px] lg:mr-0">

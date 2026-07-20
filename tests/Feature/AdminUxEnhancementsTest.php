@@ -51,6 +51,49 @@ class AdminUxEnhancementsTest extends TestCase
         $response->assertStatus(200);
     }
 
+    /**
+     * The critical failure case: a block already has classic-field content, then the editor
+     * adds a SINGLE entry to the text_elements repeater. All other classic fields must still
+     * appear on the live page — none should be silently dropped.
+     */
+    public function test_classic_fields_survive_partial_repeater_population(): void
+    {
+        $page = Page::create([
+            'title' => 'Partial Population Test',
+            'slug' => 'partial-population-test',
+            'is_published' => true,
+            'blocks' => [
+                [
+                    'type' => 'hero',
+                    'data' => [
+                        // Classic fields — existing real content
+                        'heading' => 'CLASSIC HEADING',
+                        'subheading' => 'CLASSIC SUBHEADING',
+                        'cta_primary_label' => 'CLASSIC PRIMARY CTA',
+                        // Editor adds only ONE repeater entry (just the eyebrow):
+                        'text_elements' => [
+                            ['type' => 'eyebrow', 'text' => 'CLASSIC EYEBROW'],
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+
+        $html = $this->get('/partial-population-test')->assertStatus(200)->getContent();
+
+        // Eyebrow came from the repeater
+        $this->assertStringContainsString('CLASSIC EYEBROW', $html);
+
+        // These must NOT disappear just because text_elements is partially populated
+        $this->assertStringContainsString('CLASSIC HEADING', $html, 'heading vanished after partial repeater population');
+        $this->assertStringContainsString('CLASSIC SUBHEADING', $html, 'subheading vanished after partial repeater population');
+        $this->assertStringContainsString('CLASSIC PRIMARY CTA', $html, 'primary CTA vanished after partial repeater population');
+    }
+
+    /**
+     * When text_elements is fully populated, items render in the saved drag order,
+     * not in the hardcoded default order.
+     */
     public function test_draggable_text_elements_render_in_custom_order(): void
     {
         $page = Page::create([
@@ -70,15 +113,16 @@ class AdminUxEnhancementsTest extends TestCase
             ],
         ]);
 
-        $response = $this->get('/custom-order-test');
-        $response->assertStatus(200);
+        $html = $this->get('/custom-order-test')->assertStatus(200)->getContent();
 
-        $content = $response->getContent();
-        $headlinePos = strpos($content, 'FIRST HEADLINE');
-        $eyebrowPos = strpos($content, 'SECOND EYEBROW');
+        $this->assertStringContainsString('FIRST HEADLINE', $html);
+        $this->assertStringContainsString('SECOND EYEBROW', $html);
 
-        $this->assertNotFalse($headlinePos);
-        $this->assertNotFalse($eyebrowPos);
-        $this->assertLessThan($eyebrowPos, $headlinePos);
+        // Heading must appear before eyebrow in the HTML output
+        $this->assertLessThan(
+            strpos($html, 'SECOND EYEBROW'),
+            strpos($html, 'FIRST HEADLINE'),
+            'text_elements drag order was not respected in rendered output'
+        );
     }
 }
