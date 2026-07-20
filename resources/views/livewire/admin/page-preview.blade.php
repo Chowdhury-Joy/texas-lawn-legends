@@ -8,8 +8,14 @@
     ">
 
     @foreach ((array) $blocks as $block)
-        <div data-reveal>
-            @include('blocks.'.$block['type'], ['data' => $block['data'] ?? []])
-        </div>
+        @php
+            $blockType = $block['type'] ?? null;
+            $isValid = $blockType && in_array($blockType, \App\Support\PageBlocks::all(), true) && view()->exists('blocks.'.$blockType);
+        @endphp
+        @if ($isValid)
+            <div data-reveal>
+                @include('blocks.'.$blockType, ['data' => $block['data'] ?? []])
+            </div>
+        @endif
     @endforeach
 </div>

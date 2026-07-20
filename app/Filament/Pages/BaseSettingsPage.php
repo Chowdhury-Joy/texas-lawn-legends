@@ -3,10 +3,12 @@
 namespace App\Filament\Pages;
 
 use App\Models\Setting;
+use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Str;
 
 /**
  * Base class for CMS settings pages backed by the key/value `settings` table.
@@ -21,6 +23,27 @@ abstract class BaseSettingsPage extends Page
     public ?array $data = [];
 
     protected string $view = 'filament.pages.settings-form';
+
+    public static function canAccess(): bool
+    {
+        /** @var User|null $user */
+        $user = auth()->user();
+
+        return $user?->canAccessKey(static::permissionKey()) ?? false;
+    }
+
+    /**
+     * Stable access key for this settings page in the permission registry.
+     * Defaults to "settings.{snake(short-class-name)}" (e.g.
+     * ManageSeo -> settings.seo). Override if it differs.
+     */
+    public static function permissionKey(): string
+    {
+        $short = (new \ReflectionClass(static::class))->getShortName();
+        $short = preg_replace('/^Manage/', '', $short);
+
+        return 'settings.'.Str::snake($short);
+    }
 
     /**
      * Map of setting key => storage type for every field this page manages.

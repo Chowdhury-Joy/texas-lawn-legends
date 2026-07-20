@@ -22,7 +22,7 @@ class TestimonialResource extends Resource
 
     public static function allowedRoles(): array
     {
-        return [UserRole::Admin, UserRole::Operations];
+        return [UserRole::Admin, UserRole::Content, UserRole::Operations];
     }
 
     protected static ?string $model = Testimonial::class;

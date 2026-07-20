@@ -5,6 +5,7 @@ namespace App\Filament\Concerns;
 use App\Enums\UserRole;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 /**
  * Lets a Filament resource restrict visibility to specific user roles.
@@ -33,7 +34,20 @@ trait RoleRestricted
             return false;
         }
 
-        return in_array($user->role, static::allowedRoles(), true);
+        return $user->canAccessKey(static::permissionKey());
+    }
+
+    /**
+     * Stable access key for this resource in the permission registry.
+     * Defaults to "resource.{snake(short-class-name)}" (e.g. LeadsResource
+     * -> resource.leads). Override on a resource only if it differs.
+     */
+    public static function permissionKey(): string
+    {
+        $short = (new \ReflectionClass(static::class))->getShortName();
+        $short = preg_replace('/Resource$/', '', $short);
+
+        return 'resource.'.Str::plural(Str::snake($short));
     }
 
     public static function canView(Model $record): bool

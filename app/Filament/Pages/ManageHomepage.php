@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Models\Page as PageModel;
+use App\Models\User;
 use App\Support\PageBlocks;
 use BackedEnum;
 use Filament\Actions\Action;
@@ -25,6 +26,14 @@ class ManageHomepage extends Page
     protected static ?string $title = 'Homepage Content';
 
     protected string $view = 'filament.pages.manage-homepage';
+
+    public static function canAccess(): bool
+    {
+        /** @var User|null $user */
+        $user = auth()->user();
+
+        return $user?->canAccessKey('settings.homepage') ?? false;
+    }
 
     /**
      * @var array<string, mixed> | null

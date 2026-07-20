@@ -64,6 +64,43 @@ class PageBlocks
     }
 
     /**
+     * Static literals safelist for Tailwind CSS scanner to prevent dynamic class purging.
+     *
+     * @return array<int, string>
+     */
+    public static function tailwindSafelist(): array
+    {
+        return [
+            // Mobile (base)
+            'block', 'inline-block', 'flex', 'inline-flex', 'grid', 'hidden',
+            'flex-row', 'flex-col', 'flex-row-reverse', 'flex-col-reverse',
+            'flex-wrap', 'flex-nowrap', 'flex-wrap-reverse',
+            'grid-cols-1', 'grid-cols-2', 'grid-cols-3', 'grid-cols-4', 'grid-cols-5', 'grid-cols-6', 'grid-cols-12',
+            'gap-0', 'gap-1', 'gap-2', 'gap-3', 'gap-4', 'gap-5', 'gap-6', 'gap-8', 'gap-10', 'gap-12', 'gap-16',
+            'justify-start', 'justify-end', 'justify-center', 'justify-between', 'justify-around', 'justify-evenly',
+            'items-start', 'items-end', 'items-center', 'items-baseline', 'items-stretch',
+
+            // Tablet (tab:)
+            'tab:block', 'tab:inline-block', 'tab:flex', 'tab:inline-flex', 'tab:grid', 'tab:hidden',
+            'tab:flex-row', 'tab:flex-col', 'tab:flex-row-reverse', 'tab:flex-col-reverse',
+            'tab:flex-wrap', 'tab:flex-nowrap', 'tab:flex-wrap-reverse',
+            'tab:grid-cols-1', 'tab:grid-cols-2', 'tab:grid-cols-3', 'tab:grid-cols-4', 'tab:grid-cols-5', 'tab:grid-cols-6', 'tab:grid-cols-12',
+            'tab:gap-0', 'tab:gap-1', 'tab:gap-2', 'tab:gap-3', 'tab:gap-4', 'tab:gap-5', 'tab:gap-6', 'tab:gap-8', 'tab:gap-10', 'tab:gap-12', 'tab:gap-16',
+            'tab:justify-start', 'tab:justify-end', 'tab:justify-center', 'tab:justify-between', 'tab:justify-around', 'tab:justify-evenly',
+            'tab:items-start', 'tab:items-end', 'tab:items-center', 'tab:items-baseline', 'tab:items-stretch',
+
+            // Desktop (lg:)
+            'lg:block', 'lg:inline-block', 'lg:flex', 'lg:inline-flex', 'lg:grid', 'lg:hidden',
+            'lg:flex-row', 'lg:flex-col', 'lg:flex-row-reverse', 'lg:flex-col-reverse',
+            'lg:flex-wrap', 'lg:flex-nowrap', 'lg:flex-wrap-reverse',
+            'lg:grid-cols-1', 'lg:grid-cols-2', 'lg:grid-cols-3', 'lg:grid-cols-4', 'lg:grid-cols-5', 'lg:grid-cols-6', 'lg:grid-cols-12',
+            'lg:gap-0', 'lg:gap-1', 'lg:gap-2', 'lg:gap-3', 'lg:gap-4', 'lg:gap-5', 'lg:gap-6', 'lg:gap-8', 'lg:gap-10', 'lg:gap-12', 'lg:gap-16',
+            'lg:justify-start', 'lg:justify-end', 'lg:justify-center', 'lg:justify-between', 'lg:justify-around', 'lg:justify-evenly',
+            'lg:items-start', 'lg:items-end', 'lg:items-center', 'lg:items-baseline', 'lg:items-stretch',
+        ];
+    }
+
+    /**
      * @return array<int, string>
      */
     public static function forHomepage(): array
