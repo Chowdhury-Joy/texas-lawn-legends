@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'TLL Administrator',
                 'password' => Hash::make('pass'),
+                'role' => \App\Enums\UserRole::Admin,
             ],
         );
 
