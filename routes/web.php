@@ -3,6 +3,7 @@
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\PageController;
+use App\Http\Controllers\ProposalController;
 use App\Models\Page;
 use Illuminate\Support\Facades\Route;
 
@@ -58,6 +59,12 @@ Route::get('/invoices/{invoice:unique_access_token}', [InvoiceController::class,
 Route::get('/dashboard/{project:unique_dashboard_hash}', [DashboardController::class, 'show'])
     ->middleware('throttle:60,1')
     ->name('dashboard');
+Route::get('/proposals/{token}', [ProposalController::class, 'show'])
+    ->middleware('throttle:60,1')
+    ->name('proposals.show');
+Route::post('/proposals/{token}/accept', [ProposalController::class, 'accept'])
+    ->middleware('throttle:60,1')
+    ->name('proposals.accept');
 
 /*
 |--------------------------------------------------------------------------

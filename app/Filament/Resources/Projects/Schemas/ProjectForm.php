@@ -7,6 +7,8 @@ use App\Models\Project;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Get;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
@@ -59,6 +61,12 @@ class ProjectForm
                             ->default(0)
                             ->step(0.01)
                             ->helperText('Sod, flagstone, soil, lumber, plants, etc.'),
+                        Toggle::make('use_manual_labor_cost')
+                            ->label('Override Automated Labor Cost')
+                            ->helperText('If enabled, time tracking entries will NOT update the labor cost automatically.')
+                            ->default(false)
+                            ->live()
+                            ->columnSpanFull(),
                         TextInput::make('labor_cost')
                             ->label('Labor Cost ($)')
                             ->numeric()
@@ -66,6 +74,8 @@ class ProjectForm
                             ->prefix('$')
                             ->default(0)
                             ->step(0.01)
+                            ->disabled(fn (Get $get) => ! $get('use_manual_labor_cost'))
+                            ->dehydrated()
                             ->helperText('Crew payroll & field labor cost for this job.'),
                     ]),
                 Section::make('Status & Timeline')

@@ -4,9 +4,11 @@ namespace App\Providers\Filament;
 
 use App\Filament\Pages\Auth\Login;
 use App\Filament\Widgets\BusinessSnapshot;
+use App\Filament\Widgets\LeadConversionStats;
 use App\Filament\Widgets\LeadFunnel;
 use App\Filament\Widgets\NeedsAttention;
 use App\Filament\Widgets\RecentActivity;
+use App\Filament\Widgets\RevenueChart;
 use App\Filament\Widgets\UpcomingSiteVisits;
 use App\Filament\Widgets\WeeklyLeadTrend;
 use Filament\Http\Middleware\Authenticate;
@@ -56,6 +58,8 @@ class AdminPanelProvider extends PanelProvider
                 BusinessSnapshot::class,
                 NeedsAttention::class,
                 UpcomingSiteVisits::class,
+                LeadConversionStats::class,
+                RevenueChart::class,
                 LeadFunnel::class,
                 WeeklyLeadTrend::class,
                 RecentActivity::class,

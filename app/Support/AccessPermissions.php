@@ -41,6 +41,21 @@ final class AccessPermissions
                 'group' => 'Data',
                 'roles' => [UserRole::Admin, UserRole::Operations],
             ],
+            'resource.proposals' => [
+                'label' => 'Proposals',
+                'group' => 'Data',
+                'roles' => [UserRole::Admin, UserRole::Operations],
+            ],
+            'resource.equipment' => [
+                'label' => 'Equipment',
+                'group' => 'Data',
+                'roles' => [UserRole::Admin, UserRole::Operations],
+            ],
+            'resource.time_entries' => [
+                'label' => 'Time Entries',
+                'group' => 'Data',
+                'roles' => [UserRole::Admin, UserRole::Operations],
+            ],
             'resource.services' => [
                 'label' => 'Services',
                 'group' => 'Data',
