@@ -6,6 +6,7 @@ use App\Enums\UserRole;
 use App\Models\Page;
 use App\Models\User;
 use App\Support\AccessPermissions;
+use App\Support\PageBlocks;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -55,39 +56,83 @@ class AdminUxEnhancementsTest extends TestCase
      * The critical failure case: a block already has classic-field content, then the editor
      * adds a SINGLE entry to the text_elements repeater. All other classic fields must still
      * appear on the live page — none should be silently dropped.
+     *
+     * Covers all three affected block types to prevent the "test only the easy block" gap.
      */
-    public function test_classic_fields_survive_partial_repeater_population(): void
+    public function test_classic_fields_survive_partial_repeater_population_hero(): void
     {
-        $page = Page::create([
-            'title' => 'Partial Population Test',
-            'slug' => 'partial-population-test',
+        Page::create([
+            'title' => 'Hero Partial Test',
+            'slug' => 'hero-partial-test',
             'is_published' => true,
-            'blocks' => [
-                [
-                    'type' => 'hero',
-                    'data' => [
-                        // Classic fields — existing real content
-                        'heading' => 'CLASSIC HEADING',
-                        'subheading' => 'CLASSIC SUBHEADING',
-                        'cta_primary_label' => 'CLASSIC PRIMARY CTA',
-                        // Editor adds only ONE repeater entry (just the eyebrow):
-                        'text_elements' => [
-                            ['type' => 'eyebrow', 'text' => 'CLASSIC EYEBROW'],
-                        ],
-                    ],
+            'blocks' => [[
+                'type' => 'hero',
+                'data' => [
+                    'heading' => 'HERO HEADING',
+                    'subheading' => 'HERO SUBHEADING',
+                    'cta_primary_label' => 'HERO PRIMARY CTA',
+                    // Only the eyebrow goes into the repeater
+                    'text_elements' => [['type' => 'eyebrow', 'text' => 'HERO EYEBROW']],
                 ],
-            ],
+            ]],
         ]);
 
-        $html = $this->get('/partial-population-test')->assertStatus(200)->getContent();
+        $html = $this->get('/hero-partial-test')->assertStatus(200)->getContent();
 
-        // Eyebrow came from the repeater
-        $this->assertStringContainsString('CLASSIC EYEBROW', $html);
+        $this->assertStringContainsString('HERO EYEBROW', $html);
+        $this->assertStringContainsString('HERO HEADING', $html, 'hero heading vanished after partial repeater population');
+        $this->assertStringContainsString('HERO SUBHEADING', $html, 'hero subheading vanished after partial repeater population');
+        $this->assertStringContainsString('HERO PRIMARY CTA', $html, 'hero primary CTA vanished after partial repeater population');
+    }
 
-        // These must NOT disappear just because text_elements is partially populated
-        $this->assertStringContainsString('CLASSIC HEADING', $html, 'heading vanished after partial repeater population');
-        $this->assertStringContainsString('CLASSIC SUBHEADING', $html, 'subheading vanished after partial repeater population');
-        $this->assertStringContainsString('CLASSIC PRIMARY CTA', $html, 'primary CTA vanished after partial repeater population');
+    public function test_classic_fields_survive_partial_repeater_population_cta_banner(): void
+    {
+        Page::create([
+            'title' => 'CTA Partial Test',
+            'slug' => 'cta-partial-test',
+            'is_published' => true,
+            'blocks' => [[
+                'type' => 'cta_banner',
+                'data' => [
+                    'heading' => 'CTA HEADING',
+                    'subheading' => 'CTA SUBHEADING',
+                    'button_label' => 'CTA BUTTON',
+                    // Only the eyebrow goes into the repeater
+                    'text_elements' => [['type' => 'eyebrow', 'text' => 'CTA EYEBROW']],
+                ],
+            ]],
+        ]);
+
+        $html = $this->get('/cta-partial-test')->assertStatus(200)->getContent();
+
+        $this->assertStringContainsString('CTA EYEBROW', $html);
+        $this->assertStringContainsString('CTA HEADING', $html, 'cta_banner heading vanished after partial repeater population');
+        $this->assertStringContainsString('CTA SUBHEADING', $html, 'cta_banner subheading vanished after partial repeater population');
+        $this->assertStringContainsString('CTA BUTTON', $html, 'cta_banner button label vanished after partial repeater population');
+    }
+
+    public function test_classic_fields_survive_partial_repeater_population_three_step(): void
+    {
+        Page::create([
+            'title' => '3-Step Partial Test',
+            'slug' => 'three-step-partial-test',
+            'is_published' => true,
+            'blocks' => [[
+                'type' => 'three_step',
+                'data' => [
+                    'heading' => 'THREE STEP HEADING',
+                    'subheading' => 'THREE STEP SUBHEADING',
+                    // Only the eyebrow goes into the repeater
+                    'text_elements' => [['type' => 'eyebrow', 'text' => 'THREE STEP EYEBROW']],
+                ],
+            ]],
+        ]);
+
+        $html = $this->get('/three-step-partial-test')->assertStatus(200)->getContent();
+
+        $this->assertStringContainsString('THREE STEP EYEBROW', $html);
+        $this->assertStringContainsString('THREE STEP HEADING', $html, 'three_step heading vanished after partial repeater population');
+        $this->assertStringContainsString('THREE STEP SUBHEADING', $html, 'three_step subheading vanished after partial repeater population');
     }
 
     /**
@@ -96,21 +141,19 @@ class AdminUxEnhancementsTest extends TestCase
      */
     public function test_draggable_text_elements_render_in_custom_order(): void
     {
-        $page = Page::create([
+        Page::create([
             'title' => 'Custom Order Test',
             'slug' => 'custom-order-test',
             'is_published' => true,
-            'blocks' => [
-                [
-                    'type' => 'hero',
-                    'data' => [
-                        'text_elements' => [
-                            ['type' => 'heading', 'text' => 'FIRST HEADLINE'],
-                            ['type' => 'eyebrow', 'text' => 'SECOND EYEBROW'],
-                        ],
+            'blocks' => [[
+                'type' => 'hero',
+                'data' => [
+                    'text_elements' => [
+                        ['type' => 'heading', 'text' => 'FIRST HEADLINE'],
+                        ['type' => 'eyebrow', 'text' => 'SECOND EYEBROW'],
                     ],
                 ],
-            ],
+            ]],
         ]);
 
         $html = $this->get('/custom-order-test')->assertStatus(200)->getContent();
@@ -124,5 +167,64 @@ class AdminUxEnhancementsTest extends TestCase
             strpos($html, 'FIRST HEADLINE'),
             'text_elements drag order was not respected in rendered output'
         );
+    }
+
+    // ─── Unit tests for PageBlocks::seedTextElementsForBlock() ───────────────
+
+    public function test_seed_hero_populates_text_elements_from_classic_fields(): void
+    {
+        $data = PageBlocks::seedTextElementsForBlock('hero', [
+            'eyebrow' => 'EYEBROW',
+            'heading' => 'HEADING',
+            'subheading' => 'SUBHEADING',
+            'cta_primary_label' => 'PRIMARY',
+        ]);
+
+        $types = array_column($data['text_elements'], 'type');
+        $this->assertContains('eyebrow', $types);
+        $this->assertContains('heading', $types);
+        $this->assertContains('subheading', $types);
+        $this->assertContains('primary_cta', $types);
+    }
+
+    public function test_seed_cta_banner_populates_text_elements_from_classic_fields(): void
+    {
+        $data = PageBlocks::seedTextElementsForBlock('cta_banner', [
+            'heading' => 'HEADING',
+            'subheading' => 'SUBHEADING',
+            'button_label' => 'CLICK ME',
+        ]);
+
+        $types = array_column($data['text_elements'], 'type');
+        $this->assertContains('heading', $types);
+        $this->assertContains('subheading', $types);
+        $this->assertContains('button', $types);
+    }
+
+    public function test_seed_three_step_populates_text_elements_from_classic_fields(): void
+    {
+        $data = PageBlocks::seedTextElementsForBlock('three_step', [
+            'eyebrow' => 'EYEBROW',
+            'heading' => 'HEADING',
+            'subheading' => 'SUBHEADING',
+        ]);
+
+        $types = array_column($data['text_elements'], 'type');
+        $this->assertContains('eyebrow', $types);
+        $this->assertContains('heading', $types);
+        $this->assertContains('subheading', $types);
+    }
+
+    public function test_seed_does_not_overwrite_existing_text_elements(): void
+    {
+        $existing = [['type' => 'heading', 'text' => 'CUSTOM ORDER HEADING']];
+
+        $data = PageBlocks::seedTextElementsForBlock('hero', [
+            'heading' => 'CLASSIC HEADING',
+            'text_elements' => $existing,
+        ]);
+
+        // Must not overwrite the existing repeater data
+        $this->assertSame($existing, $data['text_elements']);
     }
 }

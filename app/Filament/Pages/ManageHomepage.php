@@ -48,8 +48,10 @@ class ManageHomepage extends Page
 
     public function mount(): void
     {
+        $blocks = $this->getPageRecord()->blocks ?? [];
+
         $this->form->fill([
-            'blocks' => $this->getPageRecord()->blocks ?? [],
+            'blocks' => PageBlocks::seedTextElementsForBlocks($blocks),
         ]);
     }
 

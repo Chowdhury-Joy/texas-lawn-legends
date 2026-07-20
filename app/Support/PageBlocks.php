@@ -208,6 +208,82 @@ class PageBlocks
         };
     }
 
+    /**
+     * Auto-migrate a block's classic flat fields into the `text_elements` repeater so that
+     * existing database content is immediately visible and editable in the admin form.
+     *
+     * Call this in any form lifecycle hook that fires *before* the form is filled
+     * (e.g. `mount()` for settings pages, `mutateFormDataBeforeFill()` for resource edit pages).
+     *
+     * Rules:
+     * - If `text_elements` is already non-empty, return $data unchanged — the editor has already
+     *   taken ownership of the repeater and we must not overwrite their order.
+     * - Otherwise, build a seed list from whichever classic fields are present and non-empty,
+     *   in the original default render order, and set them as `text_elements`.
+     *
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
+    public static function seedTextElementsForBlock(string $type, array $data): array
+    {
+        // Already managed by the repeater — hands off.
+        if (! empty($data['text_elements'])) {
+            return $data;
+        }
+
+        $seeds = match ($type) {
+            'hero' => array_filter([
+                filled($data['eyebrow'] ?? null) ? ['type' => 'eyebrow',       'text' => $data['eyebrow']] : null,
+                (! array_key_exists('heading', $data) || filled($data['heading'] ?? null))
+                                                           ? ['type' => 'heading',        'text' => $data['heading'] ?? null] : null,
+                filled($data['subheading'] ?? null) ? ['type' => 'subheading',     'text' => $data['subheading']] : null,
+                (! array_key_exists('cta_primary_label', $data) || filled($data['cta_primary_label'] ?? null))
+                                                           ? ['type' => 'primary_cta',    'text' => $data['cta_primary_label'] ?? null] : null,
+                (! array_key_exists('cta_secondary_label', $data) || filled($data['cta_secondary_label'] ?? null))
+                                                           ? ['type' => 'secondary_cta',  'text' => $data['cta_secondary_label'] ?? null] : null,
+            ]),
+            'cta_banner' => array_filter([
+                filled($data['eyebrow'] ?? null) ? ['type' => 'eyebrow',  'text' => $data['eyebrow']] : null,
+                (! array_key_exists('heading', $data) || filled($data['heading'] ?? null))
+                                                           ? ['type' => 'heading',  'text' => $data['heading'] ?? null] : null,
+                filled($data['subheading'] ?? null) ? ['type' => 'subheading', 'text' => $data['subheading']] : null,
+                filled($data['button_label'] ?? null) ? ['type' => 'button',   'text' => $data['button_label']] : null,
+            ]),
+            'three_step' => array_filter([
+                filled($data['eyebrow'] ?? null) ? ['type' => 'eyebrow',    'text' => $data['eyebrow']] : null,
+                (! array_key_exists('heading', $data) || filled($data['heading'] ?? null))
+                                                           ? ['type' => 'heading',    'text' => $data['heading'] ?? null] : null,
+                filled($data['subheading'] ?? null) ? ['type' => 'subheading', 'text' => $data['subheading']] : null,
+            ]),
+            default => [],
+        };
+
+        $seeds = array_values($seeds); // re-index after array_filter
+
+        if (! empty($seeds)) {
+            $data['text_elements'] = $seeds;
+        }
+
+        return $data;
+    }
+
+    /**
+     * Apply seedTextElementsForBlock() across an entire blocks array (for use in
+     * form lifecycle hooks that operate on the full blocks collection).
+     *
+     * @param  array<int, array{type: string, data: array<string, mixed>}>  $blocks
+     * @return array<int, array{type: string, data: array<string, mixed>}>
+     */
+    public static function seedTextElementsForBlocks(array $blocks): array
+    {
+        return array_map(
+            fn (array $block): array => array_merge($block, [
+                'data' => static::seedTextElementsForBlock($block['type'] ?? '', $block['data'] ?? []),
+            ]),
+            $blocks,
+        );
+    }
+
     private static function hero(): array
     {
         return [
