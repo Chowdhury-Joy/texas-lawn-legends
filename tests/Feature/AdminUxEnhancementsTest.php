@@ -50,4 +50,35 @@ class AdminUxEnhancementsTest extends TestCase
         $response = $this->actingAs($user)->get(route('filament.admin.pages.manage-homepage'));
         $response->assertStatus(200);
     }
+
+    public function test_draggable_text_elements_render_in_custom_order(): void
+    {
+        $page = Page::create([
+            'title' => 'Custom Order Test',
+            'slug' => 'custom-order-test',
+            'is_published' => true,
+            'blocks' => [
+                [
+                    'type' => 'hero',
+                    'data' => [
+                        'text_elements' => [
+                            ['type' => 'heading', 'text' => 'FIRST HEADLINE'],
+                            ['type' => 'eyebrow', 'text' => 'SECOND EYEBROW'],
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+
+        $response = $this->get('/custom-order-test');
+        $response->assertStatus(200);
+
+        $content = $response->getContent();
+        $headlinePos = strpos($content, 'FIRST HEADLINE');
+        $eyebrowPos = strpos($content, 'SECOND EYEBROW');
+
+        $this->assertNotFalse($headlinePos);
+        $this->assertNotFalse($eyebrowPos);
+        $this->assertLessThan($eyebrowPos, $headlinePos);
+    }
 }

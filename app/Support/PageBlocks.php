@@ -205,6 +205,7 @@ class PageBlocks
             Textarea::make('subheading')->label('Sub-heading')->placeholder('e.g. Professional design, precision hardscaping, and premier maintenance...')->rows(3)->helperText('Brief introduction text under headline. Leave empty to hide.')->columnSpanFull(),
             TextInput::make('cta_primary_label')->label('Primary button label')->placeholder('e.g. Get Instant Estimate')->helperText('Primary call to action button. Leave empty to hide.'),
             TextInput::make('cta_secondary_label')->label('Secondary button label (phone appended)')->placeholder('e.g. Call Or Text')->helperText('Appends phone number from contact settings. Leave empty to hide.'),
+            static::textElementsRepeater(['eyebrow', 'heading', 'subheading', 'primary_cta', 'secondary_cta']),
             FileUpload::make('media_image')
                 ->label('Hero image (optional)')
                 ->image()->directory('homepage')->disk('public')->visibility('public')
@@ -239,6 +240,7 @@ class PageBlocks
         return [
             TextInput::make('eyebrow')->label('Eyebrow tag'),
             TextInput::make('heading')->label('Section heading'),
+            static::textElementsRepeater(['eyebrow', 'heading', 'subheading']),
             Repeater::make('steps')
                 ->label('Steps')
                 ->minItems(1)
@@ -283,6 +285,7 @@ class PageBlocks
             Textarea::make('subheading')->label('Sub-heading')->rows(2),
             TextInput::make('button_label')->label('Button label'),
             TextInput::make('button_url')->label('Button URL')->helperText('Defaults to /estimate when left blank.'),
+            static::textElementsRepeater(['eyebrow', 'heading', 'subheading', 'button']),
         ];
     }
 
@@ -488,6 +491,59 @@ class PageBlocks
                 ->columnSpanFull(),
             ...static::layout(),
         ];
+    }
+
+    /**
+     * Draggable text & button subsections repeater for customizing element order.
+     *
+     * @param  array<int, string>  $allowedTypes
+     */
+    public static function textElementsRepeater(array $allowedTypes = ['eyebrow', 'heading', 'subheading']): Repeater
+    {
+        $options = [
+            'eyebrow' => 'Eyebrow Tag (Badge)',
+            'heading' => 'Headline / Main Title',
+            'subheading' => 'Sub-heading / Paragraph',
+            'primary_cta' => 'Primary Button (Instant Price Form)',
+            'secondary_cta' => 'Secondary Button (Phone Call / Text)',
+            'button' => 'Action Button (Link)',
+        ];
+
+        $filteredOptions = array_intersect_key($options, array_flip($allowedTypes));
+
+        return Repeater::make('text_elements')
+            ->label('Subsections Layout (Drag to Reorder)')
+            ->helperText('Drag items to reorder how Eyebrow, Headline, Subheading, and Buttons appear in this block.')
+            ->schema([
+                Select::make('type')
+                    ->label('Subsection Type')
+                    ->options($filteredOptions)
+                    ->required()
+                    ->live(),
+                TextInput::make('text')
+                    ->label('Text / Label Content')
+                    ->placeholder('Enter text content...')
+                    ->columnSpanFull(),
+                TextInput::make('url')
+                    ->label('Button URL (optional)')
+                    ->placeholder('e.g. /estimate')
+                    ->visible(fn (callable $get) => $get('type') === 'button'),
+            ])
+            ->columns(2)
+            ->reorderable()
+            ->cloneable()
+            ->collapsible()
+            ->collapsed()
+            ->columnSpanFull()
+            ->itemLabel(fn (array $state): string => match ($state['type'] ?? '') {
+                'eyebrow' => '🏷️ Eyebrow — '.($state['text'] ?? 'Badge'),
+                'heading' => '🔤 Headline — '.($state['text'] ?? 'Title'),
+                'subheading' => '📝 Subheading — '.($state['text'] ?? 'Description'),
+                'primary_cta' => '🔘 Primary Button — '.($state['text'] ?? 'Price Form'),
+                'secondary_cta' => '📞 Secondary Button — '.($state['text'] ?? 'Call/Text'),
+                'button' => '🔗 Button — '.($state['text'] ?? 'Action Link'),
+                default => 'Subsection',
+            });
     }
 
     /**

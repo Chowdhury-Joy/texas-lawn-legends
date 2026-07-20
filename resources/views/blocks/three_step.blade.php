@@ -4,15 +4,38 @@
 @endphp
 <section class="border-t-4 border-slate-950 bg-white">
     <div class="mx-auto max-w-7xl px-6 py-20 text-center">
-        @if (filled($data['eyebrow'] ?? null))
-            <span data-field="eyebrow" class="mx-auto mb-3 inline-block w-fit bg-emerald-900 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-yellow-400">
-                {{ $data['eyebrow'] }}
-            </span>
-        @endif
-        @if (! array_key_exists('heading', $data) || filled($data['heading'] ?? null))
-            <h2 data-field="heading" class="mx-auto max-w-3xl text-4xl font-medium leading-tight tracking-tighter text-slate-900 sm:text-5xl">
-                {{ filled($data['heading'] ?? null) ? $data['heading'] : 'Our 3-Step Process — Deliver The Wow' }}
-            </h2>
+        @if (filled($data['text_elements'] ?? null))
+            @foreach ($data['text_elements'] as $element)
+                @php
+                    $type = $element['type'] ?? '';
+                    $text = $element['text'] ?? '';
+                @endphp
+
+                @if ($type === 'eyebrow' && filled($text))
+                    <span data-field="eyebrow" class="mx-auto mb-3 inline-block w-fit bg-emerald-900 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-yellow-400">
+                        {{ $text }}
+                    </span>
+                @elseif ($type === 'heading' && filled($text))
+                    <h2 data-field="heading" class="mx-auto mb-4 max-w-3xl text-4xl font-medium leading-tight tracking-tighter text-slate-900 sm:text-5xl">
+                        {{ $text }}
+                    </h2>
+                @elseif ($type === 'subheading' && filled($text))
+                    <p data-field="subheading" class="mx-auto mb-4 max-w-2xl text-base text-slate-600">
+                        {{ $text }}
+                    </p>
+                @endif
+            @endforeach
+        @else
+            @if (filled($data['eyebrow'] ?? null))
+                <span data-field="eyebrow" class="mx-auto mb-3 inline-block w-fit bg-emerald-900 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-yellow-400">
+                    {{ $data['eyebrow'] }}
+                </span>
+            @endif
+            @if (! array_key_exists('heading', $data) || filled($data['heading'] ?? null))
+                <h2 data-field="heading" class="mx-auto max-w-3xl text-4xl font-medium leading-tight tracking-tighter text-slate-900 sm:text-5xl">
+                    {{ filled($data['heading'] ?? null) ? $data['heading'] : 'Our 3-Step Process — Deliver The Wow' }}
+                </h2>
+            @endif
         @endif
         <div class="mt-14 text-left {{ $layout ?: 'grid grid-cols-1 gap-8 lg:grid-cols-3' }}">
             @foreach ($processSteps as $index => $step)
