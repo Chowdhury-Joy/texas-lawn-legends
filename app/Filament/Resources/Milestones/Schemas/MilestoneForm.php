@@ -16,6 +16,7 @@ class MilestoneForm
             ->components([
                 Select::make('project_id')
                     ->relationship('project', 'project_title')
+                    ->getOptionLabelFromRecordUsing(fn (\App\Models\Project $record) => $record->project_title ?: "Project #{$record->id}")
                     ->searchable()
                     ->preload()
                     ->required(),

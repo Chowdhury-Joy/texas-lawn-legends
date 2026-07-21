@@ -17,6 +17,7 @@ class ProgressPhotoForm
             ->components([
                 Select::make('project_id')
                     ->relationship('project', 'project_title')
+                    ->getOptionLabelFromRecordUsing(fn (\App\Models\Project $record) => $record->project_title ?: "Project #{$record->id}")
                     ->searchable()
                     ->preload()
                     ->live()
@@ -30,7 +31,7 @@ class ProgressPhotoForm
                 TextInput::make('caption')
                     ->maxLength(255),
                 Select::make('milestone_step')
-                    ->options(fn (Get $get) => Milestone::where('project_id', $get('project_id'))->pluck('title', 'title'))
+                    ->options(fn (Get $get) => Milestone::where('project_id', $get('project_id'))->whereNotNull('title')->pluck('title', 'title')->toArray())
                     ->searchable()
                     ->helperText('Label linking this photo to a milestone stage.'),
             ]);

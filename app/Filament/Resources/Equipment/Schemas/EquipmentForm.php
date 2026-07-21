@@ -34,6 +34,7 @@ class EquipmentForm
                             ->default(EquipmentStatus::Active->value),
                         Select::make('crew_id')
                             ->relationship('crew', 'name')
+                            ->getOptionLabelFromRecordUsing(fn (\App\Models\Crew $record) => $record->name ?: "Crew #{$record->id}")
                             ->searchable()
                             ->preload()
                             ->label('Assigned Crew'),

@@ -34,7 +34,7 @@ class SettingsTable
             ])
             ->filters([
                 SelectFilter::make('group')
-                    ->options(fn () => Setting::query()->distinct()->pluck('group', 'group')->toArray()),
+                    ->options(fn () => Setting::query()->whereNotNull('group')->where('group', '!=', '')->distinct()->pluck('group', 'group')->toArray()),
                 SelectFilter::make('type')
                     ->options([
                         'string' => 'String',

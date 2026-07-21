@@ -44,6 +44,8 @@ class AccessCodesTable
                 TernaryFilter::make('is_active'),
                 SelectFilter::make('target_month')
                     ->options(fn () => AccessCode::query()
+                        ->whereNotNull('target_month')
+                        ->where('target_month', '!=', '')
                         ->distinct()
                         ->orderByDesc('target_month')
                         ->pluck('target_month', 'target_month')

@@ -73,6 +73,7 @@ class LeadsTable
                 SelectFilter::make('neighborhood')
                     ->options(fn () => Lead::query()
                         ->whereNotNull('neighborhood')
+                        ->where('neighborhood', '!=', '')
                         ->distinct()
                         ->pluck('neighborhood', 'neighborhood')
                         ->toArray()),

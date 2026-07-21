@@ -33,12 +33,14 @@ class ProjectForm
                             ->maxLength(255),
                         Select::make('lead_id')
                             ->relationship('lead', 'name')
+                            ->getOptionLabelFromRecordUsing(fn (\App\Models\Lead $record) => $record->name ?: "Lead #{$record->id}" . ($record->service_type ? " ({$record->service_type})" : ''))
                             ->searchable()
                             ->preload()
                             ->label('Linked lead')
                             ->helperText('Optionally connect this project to an existing lead.'),
                         Select::make('crew_id')
                             ->relationship('crew', 'name')
+                            ->getOptionLabelFromRecordUsing(fn (\App\Models\Crew $record) => $record->name ?: "Crew #{$record->id}")
                             ->searchable()
                             ->preload()
                             ->label('Assigned Field Crew')

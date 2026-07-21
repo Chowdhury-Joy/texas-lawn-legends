@@ -23,11 +23,13 @@ class ProposalForm
                     ->schema([
                         Select::make('lead_id')
                             ->relationship('lead', 'name')
+                            ->getOptionLabelFromRecordUsing(fn (\App\Models\Lead $record) => $record->name ?: "Lead #{$record->id}" . ($record->service_type ? " ({$record->service_type})" : ''))
                             ->searchable()
                             ->preload()
                             ->label('Linked Lead'),
                         Select::make('project_id')
                             ->relationship('project', 'project_title')
+                            ->getOptionLabelFromRecordUsing(fn (\App\Models\Project $record) => $record->project_title ?: "Project #{$record->id}")
                             ->searchable()
                             ->preload()
                             ->label('Linked Project (After Conversion)'),

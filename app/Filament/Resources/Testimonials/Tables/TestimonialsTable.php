@@ -53,6 +53,8 @@ class TestimonialsTable
                     ]),
                 SelectFilter::make('neighborhood')
                     ->options(fn () => Testimonial::query()
+                        ->whereNotNull('neighborhood')
+                        ->where('neighborhood', '!=', '')
                         ->distinct()
                         ->pluck('neighborhood', 'neighborhood')
                         ->toArray()),
