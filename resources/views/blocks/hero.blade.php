@@ -101,21 +101,11 @@
                     </p>
 
                 @elseif ($type === 'primary_cta')
-                    {{-- Unified Location-Based Instant Pricing CTA Form --}}
-                    <form action="{{ url('/estimate') }}" method="GET" class="mt-8 max-w-xl"
-                          x-data="{ location: '' }">
-                        <label class="mb-1.5 block text-xs font-black uppercase tracking-widest text-slate-700">View Instant Property Valuation</label>
-                        <div class="flex flex-col gap-3 sm:flex-row">
-                            <input type="text"
-                                   name="neighborhood"
-                                   x-model="location"
-                                   placeholder="Enter Dallas ZIP code or neighborhood..."
-                                   class="w-full border-4 border-slate-950 bg-white px-4 py-3 text-sm font-bold placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-yellow-400 sm:py-4">
-                            <button type="submit" class="btn-brutal flex shrink-0 items-center justify-center bg-yellow-400 px-6 py-3 text-sm text-slate-950 sm:px-8 sm:py-4 sm:text-base">
-                                {{ filled($text) ? $text : 'View Instant Pricing →' }}
-                            </button>
-                        </div>
-                    </form>
+                    <div class="mt-8">
+                        <a href="{{ url('/estimate') }}" class="btn-brutal inline-flex items-center justify-center bg-yellow-400 px-6 py-3 text-sm font-black uppercase tracking-widest text-slate-950 sm:px-8 sm:py-4 sm:text-base">
+                            {{ filled($text) ? $text : 'Get Free Estimate →' }}
+                        </a>
+                    </div>
 
                 @elseif ($type === 'secondary_cta')
                     <div class="mt-4 flex flex-col items-start gap-4">
