@@ -103,11 +103,11 @@
                 @elseif ($type === 'primary_cta')
                     {{-- Unified Location-Based Instant Pricing CTA Form --}}
                     <form action="{{ url('/estimate') }}" method="GET" class="mt-8 max-w-xl"
-                          x-data="{ location: '' }"
-                          @submit.prevent="$dispatch('open-estimate-modal', { location: location.trim() })">
+                          x-data="{ location: '' }">
                         <label class="mb-1.5 block text-xs font-black uppercase tracking-widest text-slate-700">View Instant Property Valuation</label>
                         <div class="flex flex-col gap-3 sm:flex-row">
                             <input type="text"
+                                   name="neighborhood"
                                    x-model="location"
                                    placeholder="Enter Dallas ZIP code or neighborhood..."
                                    class="w-full border-4 border-slate-950 bg-white px-4 py-3 text-sm font-bold placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-yellow-400 sm:py-4">

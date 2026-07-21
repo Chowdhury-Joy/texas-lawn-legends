@@ -31,6 +31,7 @@ class EstimatorWizard extends Component
 
     public string $address = '';
 
+    #[Url]
     public string $neighborhood = '';
 
     // Step 2 — service scope
@@ -69,18 +70,18 @@ class EstimatorWizard extends Component
     {
         return match ($step) {
             1 => [
+                'service_id' => ['required', 'integer', Rule::exists('services', 'id')->where('is_active', true)],
+                'neighborhood' => ['required', 'string', Rule::in((array) setting('service_areas', []))],
+            ],
+            2 => [
+                'sqft' => ['required', 'integer', 'min:'.(int) setting('estimate_min_sqft', 100), 'max:'.(int) setting('estimate_max_sqft', 10000)],
+                'complexity' => ['required', Rule::in(array_keys((array) setting('complexity_modifiers', ['simple' => 0, 'standard' => 0, 'complex' => 0])))],
+            ],
+            3 => [
                 'name' => ['required', 'string', 'max:255'],
                 'email' => ['required', 'email', 'max:255'],
                 'phone' => ['required', 'regex:/^[\d\s\-\(\)\+\.]{7,20}$/'],
                 'address' => ['nullable', 'string', 'max:255'],
-                'neighborhood' => ['required', 'string', Rule::in((array) setting('service_areas', []))],
-            ],
-            2 => [
-                'service_id' => ['required', 'integer', Rule::exists('services', 'id')->where('is_active', true)],
-            ],
-            3 => [
-                'sqft' => ['required', 'integer', 'min:'.(int) setting('estimate_min_sqft', 100), 'max:'.(int) setting('estimate_max_sqft', 10000)],
-                'complexity' => ['required', Rule::in(array_keys((array) setting('complexity_modifiers', ['simple' => 0, 'standard' => 0, 'complex' => 0])))],
             ],
             default => [],
         };
@@ -101,7 +102,7 @@ class EstimatorWizard extends Component
     {
         $this->validate($this->rulesForStep($this->step));
 
-        if ($this->step === 3) {
+        if ($this->step === 2) {
             $this->computeEstimate();
         }
 

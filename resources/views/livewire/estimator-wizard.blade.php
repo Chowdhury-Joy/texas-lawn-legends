@@ -2,7 +2,7 @@
 
     {{-- Progress rail --}}
     @php
-        $labels = ['Details', 'Scope', 'Dimensions', 'Your Estimate'];
+        $labels = ['Scope', 'Dimensions', 'Details', 'Your Estimate'];
         $progressPct = match ($step) {
             1 => '0%',
             2 => '33.33%',
@@ -36,51 +36,23 @@
 
     <div class="box-brutal p-6 sm:p-10">
 
-        {{-- ================= STEP 1: Contact + Neighborhood ================= --}}
+        {{-- ================= STEP 1: Service Scope + Neighborhood ================= --}}
         @if ($step === 1)
-            <h2 class="text-2xl font-black uppercase tracking-tight text-slate-900 sm:text-3xl">Let's verify your service zone</h2>
-            <p class="mt-2 text-slate-600">Tell us where the project is and how to reach you.</p>
-
-            <div class="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2">
-                <div>
-                    <label class="block text-xs font-black uppercase tracking-widest text-slate-700">Full name</label>
-                    <input type="text" wire:model="name" class="mt-2 w-full border-2 border-slate-950 px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-yellow-400" placeholder="Jordan Rivera">
-                    @error('name') <p class="mt-1 text-xs font-bold text-red-600">{{ $message }}</p> @enderror
-                </div>
-                <div>
-                    <label class="block text-xs font-black uppercase tracking-widest text-slate-700">Email</label>
-                    <input type="email" wire:model="email" class="mt-2 w-full border-2 border-slate-950 px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-yellow-400" placeholder="you@example.com">
-                    @error('email') <p class="mt-1 text-xs font-bold text-red-600">{{ $message }}</p> @enderror
-                </div>
-                <div>
-                    <label class="block text-xs font-black uppercase tracking-widest text-slate-700">Phone</label>
-                    <input type="tel" wire:model="phone" class="mt-2 w-full border-2 border-slate-950 px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-yellow-400" placeholder="(214) 555-0100">
-                    @error('phone') <p class="mt-1 text-xs font-bold text-red-600">{{ $message }}</p> @enderror
-                </div>
-                <div>
-                    <label class="block text-xs font-black uppercase tracking-widest text-slate-700">Neighborhood</label>
-                    <select wire:model="neighborhood" class="mt-2 w-full border-2 border-slate-950 bg-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-yellow-400">
-                        <option value="">Select your neighborhood…</option>
-                        @foreach ($this->neighborhoods as $area)
-                            <option value="{{ $area }}">{{ $area }}</option>
-                        @endforeach
-                    </select>
-                    @error('neighborhood') <p class="mt-1 text-xs font-bold text-red-600">{{ $message }}</p> @enderror
-                </div>
-                <div class="sm:col-span-2">
-                    <label class="block text-xs font-black uppercase tracking-widest text-slate-700">Property address <span class="text-slate-400">(optional)</span></label>
-                    <input type="text" wire:model="address" class="mt-2 w-full border-2 border-slate-950 px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-yellow-400" placeholder="1420 Kessler Pkwy, Dallas, TX">
-                    @error('address') <p class="mt-1 text-xs font-bold text-red-600">{{ $message }}</p> @enderror
-                </div>
-            </div>
-        @endif
-
-        {{-- ================= STEP 2: Service Scope ================= --}}
-        @if ($step === 2)
             <h2 class="text-2xl font-black uppercase tracking-tight text-slate-900 sm:text-3xl">What are we building?</h2>
-            <p class="mt-2 text-slate-600">Pick the primary scope for your project.</p>
+            <p class="mt-2 text-slate-600">Pick the primary scope for your project and tell us where you're located.</p>
 
-            <div class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div class="mt-8">
+                <label class="block text-xs font-black uppercase tracking-widest text-slate-700">Neighborhood</label>
+                <select wire:model="neighborhood" class="mt-2 w-full border-2 border-slate-950 bg-white px-3 py-3 focus:outline-none focus:ring-2 focus:ring-yellow-400">
+                    <option value="">Select your neighborhood…</option>
+                    @foreach ($this->neighborhoods as $area)
+                        <option value="{{ $area }}">{{ $area }}</option>
+                    @endforeach
+                </select>
+                @error('neighborhood') <p class="mt-1 text-xs font-bold text-red-600">{{ $message }}</p> @enderror
+            </div>
+
+            <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
                 @foreach ($this->services as $service)
                     <button type="button" wire:click="selectService({{ $service->id }})"
                             @class([
@@ -99,8 +71,8 @@
             @error('service_id') <p class="mt-3 text-xs font-bold text-red-600">{{ $message }}</p> @enderror
         @endif
 
-        {{-- ================= STEP 3: Dimensions + Complexity ================= --}}
-        @if ($step === 3)
+        {{-- ================= STEP 2: Dimensions + Complexity ================= --}}
+        @if ($step === 2)
             <h2 class="text-2xl font-black uppercase tracking-tight text-slate-900 sm:text-3xl">Project dimensions</h2>
             <p class="mt-2 text-slate-600">Drag to estimate the area, then tell us how involved it is.</p>
 
@@ -152,6 +124,35 @@
                     </p>
                 </div>
             @endif
+        @endif
+
+        {{-- ================= STEP 3: Contact Details ================= --}}
+        @if ($step === 3)
+            <h2 class="text-2xl font-black uppercase tracking-tight text-slate-900 sm:text-3xl">Where should we send your estimate?</h2>
+            <p class="mt-2 text-slate-600">Tell us how to reach you so we can deliver your final pricing.</p>
+
+            <div class="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2">
+                <div>
+                    <label class="block text-xs font-black uppercase tracking-widest text-slate-700">Full name</label>
+                    <input type="text" wire:model="name" class="mt-2 w-full border-2 border-slate-950 px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-yellow-400" placeholder="Jordan Rivera">
+                    @error('name') <p class="mt-1 text-xs font-bold text-red-600">{{ $message }}</p> @enderror
+                </div>
+                <div>
+                    <label class="block text-xs font-black uppercase tracking-widest text-slate-700">Email</label>
+                    <input type="email" wire:model="email" class="mt-2 w-full border-2 border-slate-950 px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-yellow-400" placeholder="you@example.com">
+                    @error('email') <p class="mt-1 text-xs font-bold text-red-600">{{ $message }}</p> @enderror
+                </div>
+                <div>
+                    <label class="block text-xs font-black uppercase tracking-widest text-slate-700">Phone</label>
+                    <input type="tel" wire:model="phone" class="mt-2 w-full border-2 border-slate-950 px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-yellow-400" placeholder="(214) 555-0100">
+                    @error('phone') <p class="mt-1 text-xs font-bold text-red-600">{{ $message }}</p> @enderror
+                </div>
+                <div>
+                    <label class="block text-xs font-black uppercase tracking-widest text-slate-700">Property address <span class="text-slate-400">(optional)</span></label>
+                    <input type="text" wire:model="address" class="mt-2 w-full border-2 border-slate-950 px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-yellow-400" placeholder="1420 Kessler Pkwy, Dallas, TX">
+                    @error('address') <p class="mt-1 text-xs font-bold text-red-600">{{ $message }}</p> @enderror
+                </div>
+            </div>
         @endif
 
         {{-- ================= STEP 4: Value Gate / Booking ================= --}}
