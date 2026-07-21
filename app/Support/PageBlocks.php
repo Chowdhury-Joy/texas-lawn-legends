@@ -2,7 +2,7 @@
 
 namespace App\Support;
 
-use Filament\Forms\Components\Actions\Action;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Builder\Block;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\FileUpload;
