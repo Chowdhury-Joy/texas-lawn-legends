@@ -57,7 +57,7 @@
                 @keydown.escape.window="mobileOpen = false">
 
             {{-- Top Info & Phone Banner --}}
-            <div class="border-b-2 border-slate-950 bg-slate-950 px-6 py-2 text-xs text-white">
+            <div class="border-b-2 border-slate-950 bg-slate-950 px-4 md:px-8 py-2 text-xs text-white">
                 <div class="mx-auto flex max-w-7xl items-center justify-between gap-4">
                     <div class="flex items-center gap-2 font-bold uppercase tracking-widest text-yellow-400">
                         <span>📍 Dallas, TX</span>
@@ -75,7 +75,7 @@
 
             {{-- Main Navigation Bar --}}
             <div class="w-full border-b-4 border-slate-950 bg-white">
-                <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 py-3">
+                <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 md:px-8 py-3">
                 <a href="{{ url('/') }}" class="flex flex-col leading-none">
                     @if ($logoImage)
                         <img src="{{ $logoImage }}" alt="{{ $logoText }}" class="h-10 w-auto max-w-[220px] object-contain">
@@ -137,7 +137,7 @@
                  x-transition
                  class="fixed inset-x-0 z-50 flex flex-col overflow-y-auto border-t-2 border-slate-950 bg-white shadow-xl lg:hidden"
                  style="top: var(--header-h, 57px); height: calc(100dvh - var(--header-h, 57px));">
-                <div class="mx-auto flex w-full flex-col px-6 py-2">
+                <div class="mx-auto flex w-full flex-col px-4 md:px-8 py-2">
                     @foreach ($navItems as $label => $href)
                         <a href="{{ $href }}" @click="mobileOpen = false"
                            @class([
@@ -159,7 +159,7 @@
         </main>
 
         {{-- ============================= FOOTER ============================= --}}
-        <footer class="border-t-4 border-slate-950 bg-slate-950 px-6 py-12 text-slate-200">
+        <footer class="border-t-4 border-slate-950 bg-slate-950 px-4 md:px-8 py-12 text-slate-200">
             <div class="mx-auto grid max-w-7xl grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-4">
                 <div>
                     <span class="text-lg font-black uppercase tracking-tight text-white">{{ $logoText }}</span>
