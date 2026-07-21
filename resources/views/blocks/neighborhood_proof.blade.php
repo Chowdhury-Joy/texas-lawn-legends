@@ -49,7 +49,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="flex flex-1 flex-col p-6">
+                    <div class="flex flex-1 flex-col pt-6">
                         <div class="text-yellow-500">{!! str_repeat('★', $review->rating) . str_repeat('☆', 5 - $review->rating) !!}</div>
                         <blockquote class="mt-3 flex-1 text-sm leading-relaxed text-slate-700">“{{ $review->review_text }}”</blockquote>
                         <div class="mt-4 border-t-2 border-slate-200 pt-4">
