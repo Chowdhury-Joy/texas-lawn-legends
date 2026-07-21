@@ -68,6 +68,12 @@
 <section class="border-b-4 border-slate-950 bg-brand-paper">
     <div class="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-6 py-16 lg:grid-cols-12 lg:items-center">
         <div class="lg:col-span-7">
+            {{-- Micro-Social Proof Trust Badge (Static) --}}
+            <div class="mb-4 flex items-center gap-1.5 text-sm font-bold text-slate-700">
+                <span class="inline-flex items-center text-yellow-500 font-black">★★★★★</span>
+                <span>4.9/5 Rating (140+ Dallas Homeowners)</span>
+            </div>
+
             @foreach ($renderElements as $element)
                 @php
                     if ($element['is_hidden'] ?? false) {
@@ -120,12 +126,6 @@
                     </div>
                 @endif
             @endforeach
-            
-            {{-- Micro-Social Proof Trust Badge (Static) --}}
-            <div class="mt-6 flex items-center gap-1.5 text-sm font-bold text-slate-700">
-                <span class="inline-flex items-center text-yellow-500 font-black">★★★★★</span>
-                <span>4.9/5 Rating (140+ Dallas Homeowners)</span>
-            </div>
         </div>
 
         {{-- Right media box --}}
