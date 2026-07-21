@@ -117,14 +117,15 @@
                             <span data-field="cta_secondary_label">{{ filled($text) ? $text : 'Call or Text' }}</span>
                             <span>: {{ $phone }}</span>
                         </a>
-                        {{-- Micro-Social Proof Trust Badge --}}
-                        <div class="flex items-center gap-1.5 text-sm font-bold text-slate-700">
-                            <span class="inline-flex items-center text-yellow-500 font-black">★★★★★</span>
-                            <span>4.9/5 Rating (140+ Dallas Homeowners)</span>
-                        </div>
                     </div>
                 @endif
             @endforeach
+            
+            {{-- Micro-Social Proof Trust Badge (Static) --}}
+            <div class="mt-6 flex items-center gap-1.5 text-sm font-bold text-slate-700">
+                <span class="inline-flex items-center text-yellow-500 font-black">★★★★★</span>
+                <span>4.9/5 Rating (140+ Dallas Homeowners)</span>
+            </div>
         </div>
 
         {{-- Right media box --}}
