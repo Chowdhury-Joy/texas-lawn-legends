@@ -108,7 +108,7 @@
                 </nav>
 
                 <div class="flex items-center gap-3">
-                    <a href="{{ url('/estimate') }}"  class="btn-brutal bg-yellow-400 px-3.5 py-2 text-xs font-black uppercase tracking-wider text-slate-950 sm:px-5">
+                    <a href="{{ url('/estimate') }}" class="btn-brutal hidden items-center justify-center bg-yellow-400 px-5 py-2 text-xs font-black uppercase tracking-wider text-slate-950 lg:inline-flex">
                         Get Free Estimate
                     </a>
 
