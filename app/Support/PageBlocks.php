@@ -14,6 +14,7 @@ use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use InvalidArgumentException;
@@ -303,10 +304,12 @@ class PageBlocks
                 ->imageEditor()->imageEditorAspectRatios([1, 4 / 5])
                 ->helperText('Used on small screens. Falls back to default mobile image when empty.')
                 ->columnSpanFull(),
-            TextInput::make('media_badge')->label('Media badge')->placeholder('e.g. Featured Project'),
-            TextInput::make('media_neighborhood')->label('Media neighborhood label')->placeholder('e.g. Highland Park, TX'),
-            TextInput::make('media_title')->label('Media project title')->placeholder('e.g. Custom Outdoor Living & Fire Pit'),
-            TextInput::make('media_subtitle')->label('Media project subtitle')->placeholder('e.g. Completed June 2026'),
+            Grid::make(2)->schema([
+                TextInput::make('media_badge')->label('Media badge')->placeholder('e.g. Featured Project'),
+                TextInput::make('media_neighborhood')->label('Media neighborhood label')->placeholder('e.g. Highland Park, TX'),
+                TextInput::make('media_title')->label('Media project title')->placeholder('e.g. Custom Outdoor Living & Fire Pit'),
+                TextInput::make('media_subtitle')->label('Media project subtitle')->placeholder('e.g. Completed June 2026'),
+            ]),
         ];
     }
 
@@ -345,8 +348,10 @@ class PageBlocks
     private static function serviceMatrix(): array
     {
         return [
-            TextInput::make('create_suite_heading')->label('Create Suite heading'),
-            TextInput::make('care_suite_heading')->label('Care Suite heading'),
+            Grid::make(2)->schema([
+                TextInput::make('create_suite_heading')->label('Create Suite heading'),
+                TextInput::make('care_suite_heading')->label('Care Suite heading'),
+            ]),
             ...static::layout(),
         ];
     }
@@ -354,8 +359,10 @@ class PageBlocks
     private static function neighborhoodProof(): array
     {
         return [
-            TextInput::make('heading')->label('Heading'),
-            TextInput::make('subheading')->label('Sub-heading'),
+            Grid::make(2)->schema([
+                TextInput::make('heading')->label('Heading'),
+                TextInput::make('subheading')->label('Sub-heading'),
+            ]),
             ...static::layout(),
         ];
     }
@@ -380,8 +387,10 @@ class PageBlocks
     {
         return [
             FileUpload::make('image')->label('Image')->image()->directory('pages')->disk('public')->visibility('public')->imageEditor()->imageEditorAspectRatios([1])->required(),
-            TextInput::make('eyebrow')->label('Eyebrow tag'),
-            TextInput::make('heading')->label('Heading'),
+            Grid::make(2)->schema([
+                TextInput::make('eyebrow')->label('Eyebrow tag'),
+                TextInput::make('heading')->label('Heading'),
+            ]),
             Textarea::make('body')->label('Body')->rows(4),
             Toggle::make('reverse')->label('Reverse layout (image on right)'),
         ];
