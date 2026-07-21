@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Pages\Schemas;
 
 use App\Support\PageBlocks;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
@@ -47,6 +48,8 @@ class PageForm
                             ->blocks(PageBlocks::builderBlocks())
                             ->collapsible()
                             ->collapsed()
+                            ->collapseAllAction(fn (Action $action) => $action->button()->color('gray'))
+                            ->expandAllAction(fn (Action $action) => $action->button()->color('gray'))
                             ->cloneable()
                             ->blockNumbers(false)
                             ->columnSpanFull(),

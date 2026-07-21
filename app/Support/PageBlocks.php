@@ -627,6 +627,8 @@ class PageBlocks
             ->cloneable()
             ->collapsible()
             ->collapsed()
+            ->collapseAllAction(fn (Action $action) => $action->button()->color('gray'))
+            ->expandAllAction(fn (Action $action) => $action->button()->color('gray'))
             ->columnSpanFull()
             ->itemLabel(function (array $state): string {
                 $label = match ($state['type'] ?? '') {
