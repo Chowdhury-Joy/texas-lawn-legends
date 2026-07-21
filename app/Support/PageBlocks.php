@@ -2,9 +2,11 @@
 
 namespace App\Support;
 
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Builder\Block;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
@@ -605,10 +607,20 @@ class PageBlocks
                     ->label('Button URL (optional)')
                     ->placeholder('e.g. /estimate')
                     ->visible(fn (Get $get) => $get('type') === 'button'),
-                Toggle::make('is_hidden')
-                    ->label('Hide this subsection')
-                    ->default(false)
-                    ->columnSpanFull(),
+                Hidden::make('is_hidden')
+                    ->default(false),
+            ])
+            ->extraItemActions([
+                Action::make('toggleVisibility')
+                    ->label(fn (array $arguments, Repeater $component): string => $component->getRawItemState($arguments['item'])['is_hidden'] ?? false ? 'Show' : 'Hide')
+                    ->icon(fn (array $arguments, Repeater $component): string => $component->getRawItemState($arguments['item'])['is_hidden'] ?? false ? 'heroicon-m-eye' : 'heroicon-m-eye-slash')
+                    ->color(fn (array $arguments, Repeater $component): string => $component->getRawItemState($arguments['item'])['is_hidden'] ?? false ? 'gray' : 'primary')
+                    ->action(function (array $arguments, Repeater $component): void {
+                        $state = $component->getState();
+                        $isHidden = $state[$arguments['item']]['is_hidden'] ?? false;
+                        $state[$arguments['item']]['is_hidden'] = ! $isHidden;
+                        $component->state($state);
+                    }),
             ])
             ->columns(2)
             ->reorderable()
@@ -616,14 +628,18 @@ class PageBlocks
             ->collapsible()
             ->collapsed()
             ->columnSpanFull()
-            ->itemLabel(fn (array $state): string => match ($state['type'] ?? '') {
-                'eyebrow' => '🏷️ Eyebrow — '.($state['text'] ?? 'Badge'),
-                'heading' => '🔤 Headline — '.($state['text'] ?? 'Title'),
-                'subheading' => '📝 Subheading — '.($state['text'] ?? 'Description'),
-                'primary_cta' => '🔘 Primary Button — '.($state['text'] ?? 'Price Form'),
-                'secondary_cta' => '📞 Secondary Button — '.($state['text'] ?? 'Call/Text'),
-                'button' => '🔗 Button — '.($state['text'] ?? 'Action Link'),
-                default => 'Subsection',
+            ->itemLabel(function (array $state): string {
+                $label = match ($state['type'] ?? '') {
+                    'eyebrow' => '🏷️ Eyebrow — '.($state['text'] ?? 'Badge'),
+                    'heading' => '🔤 Headline — '.($state['text'] ?? 'Title'),
+                    'subheading' => '📝 Subheading — '.($state['text'] ?? 'Description'),
+                    'primary_cta' => '🔘 Primary Button — '.($state['text'] ?? 'Price Form'),
+                    'secondary_cta' => '📞 Secondary Button — '.($state['text'] ?? 'Call/Text'),
+                    'button' => '🔗 Button — '.($state['text'] ?? 'Action Link'),
+                    default => 'Subsection',
+                };
+
+                return $label.(($state['is_hidden'] ?? false) ? ' (Hidden)' : '');
             });
     }
 
