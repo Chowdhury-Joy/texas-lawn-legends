@@ -292,18 +292,18 @@ class PageBlocks
     {
         return [
             static::textElementsRepeater(['eyebrow', 'heading', 'subheading', 'primary_cta', 'secondary_cta']),
-            FileUpload::make('media_image')
-                ->label('Hero image (optional)')
-                ->image()->directory('homepage')->disk('public')->visibility('public')
-                ->imageEditor()->imageEditorAspectRatios([16 / 9, 21 / 9])
-                ->helperText('Recommended 16:9 ratio. Falls back to default desktop image when empty.')
-                ->columnSpanFull(),
-            FileUpload::make('media_image_mobile')
-                ->label('Hero mobile image (optional)')
-                ->image()->directory('homepage')->disk('public')->visibility('public')
-                ->imageEditor()->imageEditorAspectRatios([1, 4 / 5])
-                ->helperText('Used on small screens. Falls back to default mobile image when empty.')
-                ->columnSpanFull(),
+            Grid::make(2)->schema([
+                FileUpload::make('media_image')
+                    ->label('Hero image (optional)')
+                    ->image()->directory('homepage')->disk('public')->visibility('public')
+                    ->imageEditor()->imageEditorAspectRatios([16 / 9, 21 / 9])
+                    ->helperText('Recommended 16:9 ratio. Falls back to default desktop image when empty.'),
+                FileUpload::make('media_image_mobile')
+                    ->label('Hero mobile image (optional)')
+                    ->image()->directory('homepage')->disk('public')->visibility('public')
+                    ->imageEditor()->imageEditorAspectRatios([1, 4 / 5])
+                    ->helperText('Used on small screens. Falls back to default mobile image when empty.'),
+            ]),
             Grid::make(2)->schema([
                 TextInput::make('media_badge')->label('Media badge')->placeholder('e.g. Featured Project'),
                 TextInput::make('media_neighborhood')->label('Media neighborhood label')->placeholder('e.g. Highland Park, TX'),
