@@ -24,52 +24,52 @@ final class AccessPermissions
             'resource.leads' => [
                 'label' => 'Leads',
                 'group' => 'Data',
-                'roles' => [UserRole::Admin, UserRole::Operations],
+                'roles' => [UserRole::Admin, UserRole::Operations, UserRole::Sales, UserRole::Dispatch],
             ],
             'resource.projects' => [
                 'label' => 'Projects',
                 'group' => 'Data',
-                'roles' => [UserRole::Admin, UserRole::Operations],
+                'roles' => [UserRole::Admin, UserRole::Operations, UserRole::Sales, UserRole::Foreman, UserRole::Bookkeeper, UserRole::Dispatch],
             ],
             'resource.crews' => [
                 'label' => 'Field Crews',
                 'group' => 'Data',
-                'roles' => [UserRole::Admin, UserRole::Operations],
+                'roles' => [UserRole::Admin, UserRole::Operations, UserRole::Foreman, UserRole::Dispatch],
             ],
             'resource.invoices' => [
                 'label' => 'Invoices & Billing',
                 'group' => 'Data',
-                'roles' => [UserRole::Admin, UserRole::Operations],
+                'roles' => [UserRole::Admin, UserRole::Operations, UserRole::Bookkeeper],
             ],
             'resource.proposals' => [
                 'label' => 'Proposals',
                 'group' => 'Data',
-                'roles' => [UserRole::Admin, UserRole::Operations],
+                'roles' => [UserRole::Admin, UserRole::Operations, UserRole::Sales],
             ],
             'resource.equipment' => [
                 'label' => 'Equipment',
                 'group' => 'Data',
-                'roles' => [UserRole::Admin, UserRole::Operations],
+                'roles' => [UserRole::Admin, UserRole::Operations, UserRole::Foreman],
             ],
             'resource.time_entries' => [
                 'label' => 'Time Entries',
                 'group' => 'Data',
-                'roles' => [UserRole::Admin, UserRole::Operations],
+                'roles' => [UserRole::Admin, UserRole::Operations, UserRole::Bookkeeper, UserRole::Foreman],
             ],
             'resource.services' => [
                 'label' => 'Services',
                 'group' => 'Data',
-                'roles' => [UserRole::Admin, UserRole::Content, UserRole::Operations],
+                'roles' => [UserRole::Admin, UserRole::Content, UserRole::Operations, UserRole::Marketing],
             ],
             'resource.pages' => [
                 'label' => 'Pages',
                 'group' => 'Data',
-                'roles' => [UserRole::Admin, UserRole::Content, UserRole::Operations],
+                'roles' => [UserRole::Admin, UserRole::Content, UserRole::Operations, UserRole::Marketing],
             ],
             'resource.testimonials' => [
                 'label' => 'Testimonials',
                 'group' => 'Data',
-                'roles' => [UserRole::Admin, UserRole::Content, UserRole::Operations],
+                'roles' => [UserRole::Admin, UserRole::Content, UserRole::Operations, UserRole::Marketing],
             ],
             'resource.access_codes' => [
                 'label' => 'Access Codes',
@@ -79,7 +79,7 @@ final class AccessPermissions
             'resource.progress_photos' => [
                 'label' => 'Progress Photos',
                 'group' => 'Data',
-                'roles' => [UserRole::Admin, UserRole::Operations],
+                'roles' => [UserRole::Admin, UserRole::Operations, UserRole::Foreman],
             ],
             'resource.addons' => [
                 'label' => 'Add-ons',
@@ -89,7 +89,7 @@ final class AccessPermissions
             'resource.milestones' => [
                 'label' => 'Milestones',
                 'group' => 'Data',
-                'roles' => [UserRole::Admin, UserRole::Operations],
+                'roles' => [UserRole::Admin, UserRole::Operations, UserRole::Foreman],
             ],
             'resource.users' => [
                 'label' => 'Users',
@@ -111,7 +111,7 @@ final class AccessPermissions
             'settings.branding' => [
                 'label' => 'Branding & Theme',
                 'group' => 'Site Settings',
-                'roles' => [UserRole::Admin],
+                'roles' => [UserRole::Admin, UserRole::Marketing],
             ],
             'settings.contact' => [
                 'label' => 'Contact & Footer',
@@ -131,7 +131,7 @@ final class AccessPermissions
             'settings.seo' => [
                 'label' => 'SEO & Analytics',
                 'group' => 'Site Settings',
-                'roles' => [UserRole::Admin],
+                'roles' => [UserRole::Admin, UserRole::Marketing],
             ],
             'settings.advanced_layout' => [
                 'label' => 'Advanced Block Layout & Grid Controls',
