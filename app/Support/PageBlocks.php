@@ -13,6 +13,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
 use InvalidArgumentException;
 
 /**
@@ -603,7 +604,7 @@ class PageBlocks
                 TextInput::make('url')
                     ->label('Button URL (optional)')
                     ->placeholder('e.g. /estimate')
-                    ->visible(fn (callable $get) => $get('type') === 'button'),
+                    ->visible(fn (Get $get) => $get('type') === 'button'),
             ])
             ->columns(2)
             ->reorderable()
@@ -662,17 +663,17 @@ class PageBlocks
                         ])
                         ->default('auto')
                         ->helperText('Auto sizes columns to the available width and item count, so it never leaves an orphaned item on its own row. Pick a fixed number only to force an exact count.')
-                        ->visible(fn (callable $get): bool => $get($path.'display') === 'grid'),
+                        ->visible(fn (Get $get): bool => $get($path.'display') === 'grid'),
                     Select::make($path.'direction')
                         ->label('Direction (flex)')
                         ->options(['row' => 'Row', 'col' => 'Column'])
                         ->default('row')
-                        ->visible(fn (callable $get): bool => $get($path.'display') === 'flex'),
+                        ->visible(fn (Get $get): bool => $get($path.'display') === 'flex'),
                     Select::make($path.'wrap')
                         ->label('Wrap (flex)')
                         ->options(['wrap' => 'Wrap', 'nowrap' => 'No wrap'])
                         ->default('wrap')
-                        ->visible(fn (callable $get): bool => $get($path.'display') === 'flex'),
+                        ->visible(fn (Get $get): bool => $get($path.'display') === 'flex'),
                     Select::make($path.'justify')
                         ->label('Justify')
                         ->options([

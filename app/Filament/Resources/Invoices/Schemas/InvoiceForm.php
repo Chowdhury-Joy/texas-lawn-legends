@@ -23,7 +23,7 @@ class InvoiceForm
             ->components([
                 Section::make('Invoice Information')
                     ->columns(2)
-                    ->components([
+                    ->schema([
                         TextInput::make('invoice_number')
                             ->label('Invoice Number')
                             ->placeholder('Auto-generated (e.g. INV-2026-0001)')
@@ -89,11 +89,11 @@ class InvoiceForm
                     ]),
 
                 Section::make('Line Items')
-                    ->components([
+                    ->schema([
                         Repeater::make('items')
                             ->relationship()
                             ->columns(12)
-                            ->components([
+                            ->schema([
                                 TextInput::make('description')
                                     ->label('Description')
                                     ->required()
@@ -132,7 +132,7 @@ class InvoiceForm
 
                 Section::make('Totals & Notes')
                     ->columns(2)
-                    ->components([
+                    ->schema([
                         Textarea::make('notes')
                             ->label('Invoice Notes / Payment Instructions')
                             ->placeholder('Payment due within 14 days. Make checks payable to Texas Lawn Legends LLC or pay via Zelle/wire.')
