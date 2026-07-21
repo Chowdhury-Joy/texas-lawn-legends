@@ -5,7 +5,7 @@
     
 @endphp
 <section id="about" class="border-t-4 border-slate-950 bg-brand-paper">
-    <div class="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-6 py-16 lg:grid-cols-2 lg:items-center">
+    <div class="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-6 py-section lg:grid-cols-2 lg:items-center">
         <div class="{{ $data['reverse'] ?? false ? 'lg:order-2' : '' }}">
             @if ($image)
                 <img src="{{ $image }}" alt="{{ $data['heading'] ?? 'About Texas Lawn Legends' }}" loading="lazy" decoding="async" class="box-brutal aspect-[4/3] w-full object-cover">
@@ -35,7 +35,7 @@
                 <div class="mt-8 {{ $layout ?: 'grid grid-cols-2 gap-4 sm:grid-cols-3' }}">
                     @foreach ($stats as $index => $stat)
                         @if (filled($stat['value'] ?? null) || filled($stat['label'] ?? null))
-                            <div data-field="stats.{{ $index }}" class="box-brutal p-3 sm:p-4">
+                            <div data-field="stats.{{ $index }}" data-stagger style="--stagger-i: {{ $index }}" class="box-brutal p-3 sm:p-4">
                                 @if (filled($stat['value'] ?? null))
                                     <h3 data-field="stats.{{ $index }}.value" class="block text-4xl font-medium leading-none tracking-tighter text-emerald-900">
                                         {{ $stat['value'] }}

@@ -5,10 +5,14 @@
 // Register any custom Alpine plugins/directives on the livewire:init hook:
 // document.addEventListener('livewire:init', () => { /* Alpine.plugin(...) */ });
 
-// Subtle scroll-reveal: add `.is-visible` to any [data-reveal] element as it
-// enters the viewport. Re-scans after Livewire navigations/updates.
+// Subtle scroll-reveal: add `.is-visible` to any [data-reveal]/[data-stagger]
+// element as it individually enters the viewport — each element is observed
+// on its own, so staggered cards only start their fade once they themselves
+// are visible, not as soon as the (possibly much taller) section they live
+// in first pokes into view. Re-scans after Livewire navigations/updates.
 document.addEventListener('DOMContentLoaded', () => {
-    const reveals = document.querySelectorAll('[data-reveal]');
+    const revealSelector = '[data-reveal], [data-stagger]';
+    const reveals = document.querySelectorAll(revealSelector);
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     if (reduce || ! ('IntersectionObserver' in window)) {
@@ -29,6 +33,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Re-scan after Livewire swaps content (estimator/portal steps, etc.).
     document.addEventListener('livewire:navigated', () => {
-        document.querySelectorAll('[data-reveal]:not(.is-visible)').forEach((el) => observer.observe(el));
+        document.querySelectorAll(`${revealSelector}:not(.is-visible)`).forEach((el) => observer.observe(el));
     });
 });

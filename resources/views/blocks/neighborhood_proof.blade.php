@@ -2,7 +2,7 @@
     $layout = \App\Support\PageBlocks::layoutClasses($data['layout'] ?? []);
 @endphp
 <section id="portfolio" class="border-t-4 border-slate-950 bg-brand-paper">
-    <div class="mx-auto max-w-7xl px-6 py-20">
+    <div class="mx-auto max-w-7xl px-6 py-section">
         <h2 data-field="heading" class="text-center text-4xl font-medium tracking-tighter text-slate-900 sm:text-5xl">{{ $data['heading'] ?? 'Verified Local Proof' }}</h2>
         @if ($proofSub = $data['subheading'] ?? null)
             <p data-field="subheading" class="mx-auto mt-3 max-w-2xl text-center text-slate-600">{{ $proofSub }}</p>
@@ -10,7 +10,7 @@
 
         <div class="mt-10 {{ $layout ?: 'grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3' }}">
             @forelse ($testimonials as $review)
-                <div class="box-brutal flex flex-col p-4 sm:p-6">
+                <div data-stagger style="--stagger-i: {{ $loop->index }}" class="box-brutal flex flex-col p-4 sm:p-6">
                     <div class="relative aspect-square overflow-hidden border-b-2 border-slate-950 select-none"
                          x-data="{ pos: 50, dragging: false }"
                          @mouseleave="dragging = false"

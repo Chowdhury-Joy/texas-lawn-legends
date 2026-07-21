@@ -2,14 +2,14 @@
     $layout = \App\Support\PageBlocks::layoutClasses($data['layout'] ?? []);
 @endphp
 {{-- CREATE SUITE --}}
-<section id="create-suite" class="border-t-4 border-slate-950 bg-emerald-900 px-6 py-20 text-white">
+<section id="create-suite" class="border-t-4 border-slate-950 bg-emerald-900 px-6 py-section text-white">
     <div class="mx-auto max-w-7xl">
         <span class="inline-block bg-yellow-400 px-3 py-1 text-xs font-black uppercase tracking-widest text-slate-950">The Create Suite</span>
         <h2 data-field="create_suite_heading" class="mt-5 text-3xl font-medium leading-tight tracking-tighter sm:text-4xl lg:text-5xl max-w-3xl">{{ $data['create_suite_heading'] ?? 'Premium Landscape Design & Structural Hardscaping' }}</h2>
         
         <div class="mt-10 {{ $layout ?: "grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3" }}">
             @foreach ($createServices as $service)
-                <div class="border-2 border-emerald-950 bg-emerald-800/40 p-4 sm:p-6 shadow-brutal-forest mr-[6px] sm:mr-0 flex flex-col justify-between">
+                <div data-stagger style="--stagger-i: {{ $loop->index }}" class="border-2 border-emerald-950 bg-emerald-800/40 p-4 sm:p-6 shadow-brutal-forest mr-[6px] sm:mr-0 flex flex-col justify-between">
                     <div>
                         @if (filled($service->image))
                             <img src="{{ public_url($service->image) }}" alt="{{ $service->title }}" class="h-10 w-10 object-cover border-2 border-slate-950 bg-slate-100 shadow-brutal-sm mb-3">
@@ -27,14 +27,14 @@
 </section>
 
 {{-- CARE SUITE --}}
-<section id="care-suite" class="border-t-4 border-slate-950 bg-white px-6 py-20 text-slate-900">
+<section id="care-suite" class="border-t-4 border-slate-950 bg-white px-6 py-section text-slate-900">
     <div class="mx-auto max-w-7xl">
         <span class="inline-block bg-yellow-400 px-3 py-1 text-xs font-black uppercase tracking-widest text-slate-950">The Care Suite</span>
         <h2 data-field="care_suite_heading" class="mt-5 text-3xl font-medium leading-tight tracking-tighter sm:text-4xl lg:text-5xl max-w-3xl text-slate-950">{{ $data['care_suite_heading'] ?? 'Comprehensive Property Preservation & Lawn Maintenance' }}</h2>
         
         <div class="mt-10 {{ $layout ?: "grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3" }}">
             @foreach ($careServices as $service)
-                <div class="border-2 border-slate-950 bg-white p-4 sm:p-6 shadow-brutal-forest mr-[6px] sm:mr-0 flex flex-col justify-between">
+                <div data-stagger style="--stagger-i: {{ $loop->index }}" class="border-2 border-slate-950 bg-white p-4 sm:p-6 shadow-brutal-forest mr-[6px] sm:mr-0 flex flex-col justify-between">
                     <div>
                         @if (filled($service->image))
                             <img src="{{ public_url($service->image) }}" alt="{{ $service->title }}" class="h-10 w-10 object-cover border-2 border-slate-950 bg-slate-100 shadow-brutal-sm mb-3">

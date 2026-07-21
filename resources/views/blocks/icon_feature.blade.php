@@ -3,8 +3,8 @@
     $layout = \App\Support\PageBlocks::layoutClasses($data['layout'] ?? []);
     
 @endphp
-<section class="border-t-4 border-slate-950 bg-white">
-    <div class="mx-auto max-w-7xl px-6 py-16">
+<section class="border-t-4 border-slate-950 bg-brand-paper">
+    <div class="mx-auto max-w-7xl px-6 py-section">
         @if (filled($data['eyebrow'] ?? null))
             <span data-field="eyebrow" class="inline-block w-fit bg-emerald-900 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-yellow-400">
                 {{ $data['eyebrow'] }}
@@ -19,7 +19,7 @@
         @if (! empty($features))
             <div class="mt-10 {{ $layout ?: 'grid grid-cols-1 gap-6 lg:grid-cols-3' }}">
                 @foreach ($features as $index => $feature)
-                    <div data-field="features.{{ $index }}" class="box-brutal p-4 sm:p-6">
+                    <div data-field="features.{{ $index }}" data-stagger style="--stagger-i: {{ $index }}" class="box-brutal p-4 sm:p-6">
                         @if (filled($feature['icon'] ?? null))
                             <x-svg-icon :name="$feature['icon']" class="h-8 w-8 text-emerald-900" />
                         @endif

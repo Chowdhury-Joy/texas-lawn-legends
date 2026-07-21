@@ -65,11 +65,11 @@
     $renderElements = array_merge($repeaterElements, $classicFallbacks);
 @endphp
 
-<section class="border-b-4 border-slate-950 bg-brand-paper">
-    <div class="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-4 md:px-8 pb-16 pt-4 lg:grid-cols-12 lg:items-center lg:py-16">
+<section class="border-b-4 border-slate-950 bg-brand-paper flex flex-col justify-center min-h-[calc(85vh_-_var(--header-h,57px))]">
+    <div class="mx-auto grid w-full max-w-7xl grid-cols-1 gap-8 px-4 md:px-8 py-10 lg:grid-cols-12 lg:items-center">
         <div class="lg:col-span-7">
             {{-- Micro-Social Proof Trust Badge (Static) --}}
-            <div class="mb-4 flex items-center gap-1.5 text-sm font-bold text-slate-700">
+            <div data-stagger style="--stagger-i: 0" class="mb-4 flex items-center gap-1.5 text-sm font-bold text-slate-700">
                 <span class="inline-flex items-center text-yellow-500 font-black">★★★★★</span>
                 <span>4.9/5 Rating (140+ Dallas Homeowners)</span>
             </div>
@@ -86,29 +86,29 @@
                 @endphp
 
                 @if ($type === 'eyebrow' && filled($text))
-                    <span data-field="eyebrow" class="mb-4 inline-block w-fit bg-emerald-900 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-yellow-400">
+                    <span data-field="eyebrow" data-stagger style="--stagger-i: {{ $loop->index + 1 }}" class="mb-4 inline-block w-fit bg-emerald-900 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-yellow-400">
                         {{ $text }}
                     </span>
 
                 @elseif ($type === 'heading')
-                    <h1 data-field="heading" class="text-4xl font-medium leading-[1.05] tracking-tighter text-slate-900 sm:text-5xl lg:text-6xl">
+                    <h1 data-field="heading" data-stagger style="--stagger-i: {{ $loop->index + 1 }}" class="text-4xl font-medium leading-[1.05] tracking-tighter text-slate-900 sm:text-5xl lg:text-6xl">
                         {{ filled($text) ? $text : 'Transform Your Dallas Yard Into An Outdoor Retreat.' }}
                     </h1>
 
                 @elseif ($type === 'subheading')
-                    <p class="mt-6 max-w-2xl text-lg leading-relaxed text-slate-600">
+                    <p data-stagger style="--stagger-i: {{ $loop->index + 1 }}" class="mt-6 max-w-2xl text-lg leading-relaxed text-slate-600">
                         <span data-field="subheading">{{ filled($text) ? $text : 'Professional design, precision hardscaping, and premier maintenance you can actually rely on.' }}</span>
                     </p>
 
                 @elseif ($type === 'primary_cta')
-                    <div class="mt-8">
+                    <div data-stagger style="--stagger-i: {{ $loop->index + 1 }}" class="mt-8">
                         <a href="{{ url('/estimate') }}" class="btn-brutal inline-flex items-center justify-center bg-yellow-400 px-6 py-3 text-sm font-black uppercase tracking-widest text-slate-950 sm:px-8 sm:py-4 sm:text-base">
                             {{ filled($text) ? $text : 'Get Free Estimate →' }}
                         </a>
                     </div>
 
                 @elseif ($type === 'secondary_cta')
-                    <div class="mt-4 flex flex-col items-start gap-4">
+                    <div data-stagger style="--stagger-i: {{ $loop->index + 1 }}" class="mt-4 flex flex-col items-start gap-4">
                         <a href="{{ $telHref }}" class="inline-flex items-center justify-center gap-2 border-2 border-slate-950 bg-white px-5 py-2.5 text-xs font-black uppercase tracking-wide text-slate-900 transition-colors hover:bg-slate-100">
                             <span data-field="cta_secondary_label">{{ filled($text) ? $text : 'Call or Text' }}</span>
                             <span>: {{ $phone }}</span>

@@ -14,7 +14,7 @@
         @endphp
         @if ($isValid)
             <div data-reveal>
-                @include('blocks.'.$blockType, ['data' => $block['data'] ?? []])
+                @include('blocks.'.$blockType, ['data' => array_merge($block['data'] ?? [], ['is_first_block' => $loop->first])])
             </div>
         @endif
     @endforeach

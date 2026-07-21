@@ -7,7 +7,7 @@
     $layout = \App\Support\PageBlocks::layoutClasses($data['layout'] ?? []);
 @endphp
 <section class="border-t-4 border-slate-950 bg-brand-paper">
-    <div class="mx-auto max-w-7xl px-6 py-20">
+    <div class="mx-auto max-w-7xl px-6 py-section">
         @if (filled($data['eyebrow'] ?? null))
             <span data-field="eyebrow" class="inline-block w-fit bg-emerald-900 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-yellow-400">
                 {{ $data['eyebrow'] }}
@@ -25,7 +25,7 @@
         @if ($reviews->isNotEmpty())
             <div class="mt-10 {{ $layout ?: 'grid grid-cols-1 gap-6 lg:grid-cols-3' }}">
                 @foreach ($reviews as $review)
-                    <figure class="box-brutal flex flex-col p-4 sm:p-6">
+                    <figure data-stagger style="--stagger-i: {{ $loop->index }}" class="box-brutal flex flex-col p-4 sm:p-6">
                         @php $stars = max(0, min(5, (int) $review->rating)); @endphp
                         <div class="text-yellow-500">{!! str_repeat('★', $stars) . str_repeat('☆', 5 - $stars) !!}</div>
                         <blockquote class="mt-3 flex-1 text-sm leading-relaxed text-slate-700">“{{ $review->review_text }}”</blockquote>

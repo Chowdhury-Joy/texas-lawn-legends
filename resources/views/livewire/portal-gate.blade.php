@@ -9,7 +9,7 @@
                 </div>
                 <h2 class="mt-6 text-xl font-black uppercase tracking-tight text-slate-900 sm:text-2xl">Members Only</h2>
                 <p class="mx-auto mt-3 max-w-md text-sm leading-relaxed text-slate-600">
-                    Enter your monthly access token to unlock the member portal and seasonal pricing tiers.
+                    Current Texas Lawn Legends clients get a fresh access token every month to unlock seasonal add-ons at member pricing. Enter yours below.
                 </p>
 
                 <form wire:submit="unlock" class="mt-8">
@@ -25,8 +25,14 @@
                     </button>
                 </form>
 
-                <p class="mt-5 text-xs text-slate-400">Tokens are issued monthly. Need one? Call {{ setting('primary_phone') }}.</p>
+                <p class="mt-5 text-xs text-slate-400">Already a client but missing your token? Call {{ setting('primary_phone') }}.</p>
             </div>
+
+            <p class="mt-6 text-center text-sm text-slate-600">
+                Not a member yet?
+                <a href="{{ url('/estimate') }}" class="font-bold text-emerald-900 underline hover:text-emerald-800">Get a free estimate</a>
+                to get started.
+            </p>
         </div>
     @else
         {{-- ================= STATE B: UNLOCKED ================= --}}

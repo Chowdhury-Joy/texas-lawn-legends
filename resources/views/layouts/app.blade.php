@@ -94,6 +94,7 @@
                         'Client Portal' => url('/portal'),
                         'About Us' => url('/about'),
                     ];
+                    $isActiveNavItem = fn (string $href): bool => $current === trim((string) parse_url($href, PHP_URL_PATH), '/');
                 @endphp
 
                 <nav class="hidden items-center gap-1 lg:flex">
@@ -101,8 +102,8 @@
                         <a href="{{ $href }}"
                            @class([
                                'px-2 py-1 text-sm font-bold uppercase tracking-wide transition-colors',
-                               'bg-yellow-400' => $current === ltrim($href, '/'),
-                               'text-slate-900 hover:bg-yellow-400' => $current !== ltrim($href, '/'),
+                               'bg-yellow-400' => $isActiveNavItem($href),
+                               'text-slate-900 hover:bg-yellow-400' => ! $isActiveNavItem($href),
                            ])>{{ $label }}</a>
                     @endforeach
                 </nav>
@@ -142,8 +143,8 @@
                         <a href="{{ $href }}" @click="mobileOpen = false"
                            @class([
                                'border-b border-slate-200 py-3 text-sm font-bold uppercase tracking-wide transition-colors',
-                               'bg-yellow-400' => $current === ltrim($href, '/'),
-                               'text-slate-900 hover:bg-yellow-400' => $current !== ltrim($href, '/'),
+                               'bg-yellow-400' => $isActiveNavItem($href),
+                               'text-slate-900 hover:bg-yellow-400' => ! $isActiveNavItem($href),
                            ])>{{ $label }}</a>
                     @endforeach
                     <a href="{{ $telHref }}" @click="mobileOpen = false" class="flex items-center gap-2 py-3 text-sm font-bold uppercase tracking-wide text-slate-900 transition-colors hover:bg-yellow-400">
@@ -205,24 +206,31 @@
             </div>
         </footer>
 
-        {{-- Themeable Mobile Sticky Action Rail --}}
-        <div class="fixed bottom-0 inset-x-0 z-40 border-t-4 border-slate-950 bg-brand-paper p-3 shadow-2xl lg:hidden">
-            <div class="mx-auto flex max-w-md items-center justify-between gap-3">
-                <a href="{{ url('/estimate') }}"  class="btn-brutal flex-1 bg-yellow-400 py-3 text-center text-xs font-black uppercase tracking-wider text-slate-950">
-                    ⚡ 2-Min Price Quote
-                </a>
-                <a href="{{ $telHref }}" class="flex items-center justify-center border-2 border-slate-950 bg-white px-4 py-3 text-xs font-black uppercase tracking-wider text-slate-900 transition-colors hover:bg-slate-100">
-                    📞 Call
-                </a>
+        @unless (request()->routeIs('estimate'))
+            {{-- Themeable Mobile Sticky Action Rail --}}
+            <div class="fixed bottom-0 inset-x-0 z-40 border-t-4 border-slate-950 bg-brand-paper p-3 shadow-2xl lg:hidden">
+                <div class="mx-auto flex max-w-md items-center justify-between gap-3">
+                    <a href="{{ url('/estimate') }}"  class="btn-brutal flex-1 bg-yellow-400 py-3 text-center text-xs font-black uppercase tracking-wider text-slate-950">
+                        ⚡ 2-Min Price Quote
+                    </a>
+                    <a href="{{ $telHref }}" class="flex items-center justify-center border-2 border-slate-950 bg-white px-4 py-3 text-xs font-black uppercase tracking-wider text-slate-900 transition-colors hover:bg-slate-100">
+                        📞 Call
+                    </a>
+                </div>
             </div>
-        </div>
 
-        {{-- Sticky Get-Estimate call to action (Desktop) --}}
-        <a href="{{ url('/estimate') }}"
-           
-           class="btn-brutal fixed bottom-6 right-6 z-30 hidden border-2 border-slate-950 bg-yellow-400 px-5 py-3 text-sm font-bold uppercase tracking-wide text-slate-950 shadow-lg lg:block">
-            Get Estimate
-        </a>
+            {{-- Sticky Get-Estimate call to action (Desktop) — appears once the visitor has
+                 scrolled past the hero's own CTA, so it never stacks on top of it or the
+                 header button, and doesn't cover fold-level content on shorter pages. --}}
+            <a href="{{ url('/estimate') }}"
+               x-data="{ show: false }"
+               x-init="window.addEventListener('scroll', () => { show = window.scrollY > 500 }, { passive: true })"
+               x-show="show"
+               x-cloak
+               class="btn-brutal fixed bottom-6 right-6 z-30 hidden border-2 border-slate-950 bg-yellow-400 px-5 py-3 text-sm font-bold uppercase tracking-wide text-slate-950 shadow-lg lg:block">
+                Get Estimate
+            </a>
+        @endunless
 
 
 

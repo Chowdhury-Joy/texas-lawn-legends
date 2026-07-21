@@ -2,8 +2,8 @@
     $image = filled($data['image'] ?? null) ? public_url($data['image']) : null;
     $reverse = (bool) ($data['reverse'] ?? false);
 @endphp
-<section class="border-t-4 border-slate-950 bg-white">
-    <div class="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-6 py-16 lg:grid-cols-2">
+<section class="border-t-4 border-slate-950 bg-brand-paper">
+    <div class="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-6 py-section lg:grid-cols-2">
         <div class="{{ $reverse ? 'lg:order-2' : '' }}">
             @if ($image)
                 <img src="{{ $image }}" alt="{{ $data['heading'] ?? '' }}" loading="lazy" decoding="async" class="box-brutal aspect-[4/3] w-full object-cover">

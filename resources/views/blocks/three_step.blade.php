@@ -27,7 +27,7 @@
     $renderElements = array_merge($repeaterElements, $classicFallbacks);
 @endphp
 <section class="border-t-4 border-slate-950 bg-white">
-    <div class="mx-auto max-w-7xl px-6 py-20 text-center">
+    <div class="mx-auto max-w-7xl px-6 py-section text-center">
         @foreach ($renderElements as $element)
             @php
                 if ($element['is_hidden'] ?? false) {
@@ -55,7 +55,7 @@
         @endforeach
         <div class="mt-14 text-left {{ $layout ?: 'grid grid-cols-1 gap-8 lg:grid-cols-3' }}">
             @foreach ($processSteps as $index => $step)
-                <div class="box-brutal p-5 sm:p-8 mr-[8px] lg:mr-0">
+                <div data-stagger style="--stagger-i: {{ $index }}" class="box-brutal p-5 sm:p-8 mr-[8px] lg:mr-0">
                     <span data-field="steps.{{ $index }}.number" class="block text-6xl font-black leading-none text-yellow-400" style="-webkit-text-stroke: 2px #0f172a;">
                         {{ filled($step['number'] ?? null) ? $step['number'] : '0' . ($index + 1) }}
                     </span>

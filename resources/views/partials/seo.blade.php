@@ -44,7 +44,7 @@
 {{-- Structured data: LocalBusiness --}}
 <script type="application/ld+json">
 {!! json_encode(array_filter([
-    '@context' => 'https://schema.org',
+    '@@context' => 'https://schema.org',
     '@type' => 'LandscapingBusiness',
     'name' => $siteName,
     'description' => $description ?: null,

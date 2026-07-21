@@ -3,7 +3,7 @@
     $avatar = filled($data['avatar'] ?? null) ? public_url($data['avatar']) : null;
 @endphp
 <section class="border-t-4 border-slate-950 bg-brand-paper">
-    <div class="mx-auto max-w-7xl px-6 py-20">
+    <div class="mx-auto max-w-7xl px-6 py-section">
         <figure class="{{ $layout ?: 'flex flex-col items-center gap-6 text-center' }}">
             @if (filled($data['eyebrow'] ?? null))
                 <span data-field="eyebrow" class="inline-block w-fit bg-emerald-900 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-yellow-400">
