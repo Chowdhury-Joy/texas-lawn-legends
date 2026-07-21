@@ -66,7 +66,7 @@
 @endphp
 
 <section class="border-b-4 border-slate-950 bg-brand-paper">
-    <div class="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-6 py-16 lg:grid-cols-12 lg:items-center">
+    <div class="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-6 pb-16 pt-4 lg:grid-cols-12 lg:items-center lg:py-16">
         <div class="lg:col-span-7">
             {{-- Micro-Social Proof Trust Badge (Static) --}}
             <div class="mb-4 flex items-center gap-1.5 text-sm font-bold text-slate-700">
