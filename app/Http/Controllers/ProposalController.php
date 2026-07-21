@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\ProposalStatus;
+use App\Events\ProposalAccepted;
 use App\Models\Proposal;
 
 class ProposalController extends Controller
@@ -32,10 +33,16 @@ class ProposalController extends Controller
             abort(410, 'This proposal has expired.');
         }
 
-        $proposal->update([
-            'status' => ProposalStatus::Accepted,
-            'accepted_at' => now(),
-        ]);
+        // Idempotency guard — a double-click or retried request shouldn't
+        // re-fire the operations alert for a proposal that's already accepted.
+        if ($proposal->status !== ProposalStatus::Accepted) {
+            $proposal->update([
+                'status' => ProposalStatus::Accepted,
+                'accepted_at' => now(),
+            ]);
+
+            ProposalAccepted::dispatch($proposal);
+        }
 
         return redirect()->back()->with('success', 'Proposal accepted successfully!');
     }
