@@ -70,6 +70,9 @@
         <div class="lg:col-span-7">
             @foreach ($renderElements as $element)
                 @php
+                    if ($element['is_hidden'] ?? false) {
+                        continue;
+                    }
                     $type = $element['type'] ?? '';
                     // Repeater entry text takes priority; for classic-field appended entries the
                     // text may be null — each branch handles its own default below.
@@ -109,13 +112,13 @@
                     </form>
 
                 @elseif ($type === 'secondary_cta')
-                    <div class="mt-4 flex flex-col items-start gap-3 sm:flex-row sm:items-center">
+                    <div class="mt-4 flex flex-col items-start gap-4">
                         <a href="{{ $telHref }}" class="inline-flex items-center justify-center gap-2 border-2 border-slate-950 bg-white px-5 py-2.5 text-xs font-black uppercase tracking-wide text-slate-900 transition-colors hover:bg-slate-100">
                             <span data-field="cta_secondary_label">{{ filled($text) ? $text : 'Call or Text' }}</span>
                             <span>: {{ $phone }}</span>
                         </a>
                         {{-- Micro-Social Proof Trust Badge --}}
-                        <div class="flex items-center gap-1.5 text-xs font-bold text-slate-700">
+                        <div class="flex items-center gap-1.5 text-sm font-bold text-slate-700">
                             <span class="inline-flex items-center text-yellow-500 font-black">★★★★★</span>
                             <span>4.9/5 Rating (140+ Dallas Homeowners)</span>
                         </div>

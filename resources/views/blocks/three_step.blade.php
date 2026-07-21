@@ -30,6 +30,9 @@
     <div class="mx-auto max-w-7xl px-6 py-20 text-center">
         @foreach ($renderElements as $element)
             @php
+                if ($element['is_hidden'] ?? false) {
+                    continue;
+                }
                 $type = $element['type'] ?? '';
                 $text = $element['text'] ?? null;
             @endphp

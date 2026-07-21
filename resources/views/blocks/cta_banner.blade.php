@@ -40,6 +40,9 @@
     <div class="mx-auto max-w-3xl">
         @foreach ($renderElements as $element)
             @php
+                if ($element['is_hidden'] ?? false) {
+                    continue;
+                }
                 $type = $element['type'] ?? '';
                 $text = $element['text'] ?? null;
                 $url  = filled($element['url'] ?? null) ? $element['url'] : $defaultButtonUrl;

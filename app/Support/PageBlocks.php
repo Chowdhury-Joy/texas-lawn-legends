@@ -605,6 +605,10 @@ class PageBlocks
                     ->label('Button URL (optional)')
                     ->placeholder('e.g. /estimate')
                     ->visible(fn (Get $get) => $get('type') === 'button'),
+                Toggle::make('is_hidden')
+                    ->label('Hide this subsection')
+                    ->default(false)
+                    ->columnSpanFull(),
             ])
             ->columns(2)
             ->reorderable()
