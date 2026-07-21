@@ -172,12 +172,27 @@ class EstimatorWizard extends Component
 
     public function book(string $date, string $time): void
     {
+        $parsedTime = Carbon::parse($date.' '.$time);
+
+        // Concurrency check: Ensure slot is still open
+        $isBooked = Lead::query()
+            ->where('status', LeadStatus::Booked)
+            ->where('scheduled_at', $parsedTime)
+            ->exists();
+
+        if ($isBooked) {
+            $this->addError('booking', 'Sorry, that time slot was just taken! Please select another time.');
+            unset($this->bookingSlots); // clear computed cache if applicable
+
+            return;
+        }
+
         $this->selectedDate = $date;
         $this->selectedTime = $time;
 
         if ($this->leadUuid) {
             Lead::query()->where('uuid', $this->leadUuid)->update([
-                'scheduled_at' => Carbon::parse($date.' '.$time),
+                'scheduled_at' => $parsedTime,
                 'status' => LeadStatus::Booked,
                 'step_reached' => 'booked',
             ]);
