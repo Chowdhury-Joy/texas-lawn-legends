@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\UserRole;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -18,7 +19,7 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'TLL Administrator',
                 'password' => Hash::make('pass'),
-                'role' => \App\Enums\UserRole::Admin,
+                'role' => UserRole::Admin,
             ],
         );
 
