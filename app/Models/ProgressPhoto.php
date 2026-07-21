@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Database\Factories\ProgressPhotoFactory;
+use App\Models\Traits\TriggersSiteReload;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -10,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class ProgressPhoto extends Model
 {
     /** @use HasFactory<ProgressPhotoFactory> */
-    use HasFactory;
+    use HasFactory, TriggersSiteReload;
 
     public $timestamps = false;
 

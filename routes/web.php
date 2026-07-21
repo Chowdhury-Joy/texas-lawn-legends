@@ -43,6 +43,16 @@ Route::get('/sitemap.xml', function () {
 
 /*
 |--------------------------------------------------------------------------
+| Admin Live Reloading
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/api/site-version', function () {
+    return response()->json(['version' => \Illuminate\Support\Facades\Cache::get('site_version', 1)]);
+})->name('api.site-version');
+
+/*
+|--------------------------------------------------------------------------
 | Placeholder routes — fleshed out in later phases
 |--------------------------------------------------------------------------
 | These keep site-wide navigation coherent while the Livewire estimator,

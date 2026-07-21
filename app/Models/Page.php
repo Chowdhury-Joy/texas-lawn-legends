@@ -4,9 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Traits\TriggersSiteReload;
 
 class Page extends Model
 {
+    use TriggersSiteReload;
+
     protected $fillable = [
         'title',
         'slug',

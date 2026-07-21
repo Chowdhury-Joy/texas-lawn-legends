@@ -6,11 +6,12 @@ use Database\Factories\TestimonialFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Traits\TriggersSiteReload;
 
 class Testimonial extends Model
 {
     /** @use HasFactory<TestimonialFactory> */
-    use HasFactory;
+    use HasFactory, TriggersSiteReload;
 
     protected $fillable = [
         'author',

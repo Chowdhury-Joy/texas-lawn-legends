@@ -305,5 +305,22 @@
     </div>
 
     @livewireScripts
+
+    @auth
+        <div x-data="{
+            version: '{{ \Illuminate\Support\Facades\Cache::get('site_version', 1) }}',
+            init() {
+                setInterval(() => {
+                    fetch('/api/site-version')
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.version != this.version) {
+                                window.location.reload();
+                            }
+                        });
+                }, 2000);
+            }
+        }"></div>
+    @endauth
 </body>
 </html>

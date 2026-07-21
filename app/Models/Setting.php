@@ -5,10 +5,13 @@ namespace App\Models;
 use Database\Factories\SettingFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Traits\TriggersSiteReload;
 use Illuminate\Support\Facades\Cache;
 
 class Setting extends Model
 {
+    use TriggersSiteReload;
+
     /** @use HasFactory<SettingFactory> */
     use HasFactory;
 
