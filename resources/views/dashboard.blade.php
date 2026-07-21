@@ -20,10 +20,8 @@
 
 @section('content')
     <section class="bg-brand-paper">
-        <div class="mx-auto max-w-5xl px-6 py-14">
-
-            {{-- ============== PROJECT HEADER ============== --}}
-            <div class="box-brutal p-6 sm:p-8">
+        <div class="mx-auto max-w-5xl px-6 py-14">            {{-- ============== PROJECT HEADER ============== --}}
+            <div data-reveal class="box-brutal p-6 sm:p-8">
                 <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                     <div>
                         <span class="inline-block bg-emerald-900 px-3 py-1 text-xs font-black uppercase tracking-widest text-yellow-400">Private Project Dashboard</span>
@@ -54,7 +52,7 @@
             </div>
 
             {{-- ============== CLIENT REFERRAL CARD ============== --}}
-            <div class="mt-8 box-brutal bg-slate-950 p-6 text-white" x-data="{ copied: false }">
+            <div data-reveal class="mt-8 box-brutal bg-slate-950 p-6 text-white" x-data="{ copied: false }">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
                         <span class="inline-block bg-yellow-400 px-2.5 py-1 text-[10px] font-black uppercase tracking-widest text-slate-950">🎁 Client Referral Reward</span>
@@ -73,7 +71,7 @@
             </div>
 
             {{-- ============== HORIZONTAL PROGRESS TRACK ============== --}}
-            <div class="mt-8 overflow-x-auto">
+            <div data-reveal class="mt-8 overflow-x-auto">
                 <div class="flex min-w-max items-start gap-0">
                     @foreach ($milestones as $i => $milestone)
                         @php $meta = $statusMeta[$milestone->status->value] ?? $statusMeta['pending']; @endphp
@@ -120,17 +118,17 @@
                          this.activeMilestone = milestone;
                          this.activeDate = date;
                          this.open = true;
-                     }
+                      }
                  }"
                  @keydown.escape.window="open = false">
-                <h2 class="text-2xl font-black uppercase tracking-tight text-slate-900">Build Timeline</h2>
+                <h2 data-reveal class="text-2xl font-black uppercase tracking-tight text-slate-900">Build Timeline</h2>
 
                 @foreach ($milestones as $milestone)
                     @php
                         $meta = $statusMeta[$milestone->status->value] ?? $statusMeta['pending'];
                         $stepPhotos = $photosByStep->get($milestone->title, collect());
                     @endphp
-                    <div class="box-brutal p-6">
+                    <div data-stagger style="--stagger-i: {{ $loop->index }}" class="box-brutal p-6">
                         <div class="flex flex-wrap items-center justify-between gap-3">
                             <div class="flex items-center gap-3">
                                 <span @class(['h-3 w-3 border border-slate-950', $meta['dot']])></span>

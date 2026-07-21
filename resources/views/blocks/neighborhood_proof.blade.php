@@ -3,9 +3,9 @@
 @endphp
 <section id="portfolio" class="border-t-4 border-slate-950 bg-brand-paper">
     <div class="mx-auto max-w-7xl px-6 py-section">
-        <h2 data-field="heading" class="text-center text-4xl font-medium tracking-tighter text-slate-900 sm:text-5xl">{{ $data['heading'] ?? 'Verified Local Proof' }}</h2>
+        <h2 data-field="heading" data-reveal class="text-center text-4xl font-medium tracking-tighter text-slate-900 sm:text-5xl">{{ $data['heading'] ?? 'Verified Local Proof' }}</h2>
         @if ($proofSub = $data['subheading'] ?? null)
-            <p data-field="subheading" class="mx-auto mt-3 max-w-2xl text-center text-slate-600">{{ $proofSub }}</p>
+            <p data-field="subheading" data-reveal class="mx-auto mt-3 max-w-2xl text-center text-slate-600">{{ $proofSub }}</p>
         @endif
 
         <div class="mt-10 {{ $layout ?: 'grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3' }}">

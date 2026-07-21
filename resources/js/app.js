@@ -9,14 +9,13 @@
 // element as it individually enters the viewport — each element is observed
 // on its own, so staggered cards only start their fade once they themselves
 // are visible, not as soon as the (possibly much taller) section they live
-// in first pokes into view. Re-scans after Livewire navigations/updates.
+// in first pokes into view. Handles dynamically added content via MutationObserver.
 document.addEventListener('DOMContentLoaded', () => {
     const revealSelector = '[data-reveal], [data-stagger]';
-    const reveals = document.querySelectorAll(revealSelector);
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     if (reduce || ! ('IntersectionObserver' in window)) {
-        reveals.forEach((el) => el.classList.add('is-visible'));
+        document.querySelectorAll(revealSelector).forEach((el) => el.classList.add('is-visible'));
         return;
     }
 
@@ -27,12 +26,33 @@ document.addEventListener('DOMContentLoaded', () => {
                 observer.unobserve(entry.target);
             }
         });
-    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
 
-    reveals.forEach((el) => observer.observe(el));
+    const observeElements = (root = document) => {
+        const elements = root.querySelectorAll ? root.querySelectorAll(`${revealSelector}:not(.is-visible)`) : [];
+        elements.forEach((el) => observer.observe(el));
+        if (root.matches && root.matches(`${revealSelector}:not(.is-visible)`)) {
+            observer.observe(root);
+        }
+    };
 
-    // Re-scan after Livewire swaps content (estimator/portal steps, etc.).
-    document.addEventListener('livewire:navigated', () => {
-        document.querySelectorAll(`${revealSelector}:not(.is-visible)`).forEach((el) => observer.observe(el));
+    observeElements();
+
+    // Re-scan whenever DOM mutations add new content (Livewire steps, Alpine state changes, etc.)
+    const mutationObserver = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            mutation.addedNodes.forEach((node) => {
+                if (node.nodeType === 1) {
+                    observeElements(node);
+                }
+            });
+        });
     });
+
+    mutationObserver.observe(document.body, { childList: true, subtree: true });
+
+    // Re-scan after Livewire swaps content
+    document.addEventListener('livewire:navigated', () => observeElements());
+    document.addEventListener('livewire:initialized', () => observeElements());
 });
+

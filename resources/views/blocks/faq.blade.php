@@ -2,7 +2,7 @@
 <section class="border-t-4 border-slate-950 bg-brand-paper">
     <div class="mx-auto max-w-3xl px-6 py-section">
         @if (! array_key_exists('heading', $data) || filled($data['heading'] ?? null))
-            <h2 data-field="heading" class="mb-10 text-center text-3xl font-medium tracking-tighter text-slate-900 sm:text-4xl">
+            <h2 data-field="heading" data-reveal class="mb-10 text-center text-3xl font-medium tracking-tighter text-slate-900 sm:text-4xl">
                 {{ filled($data['heading'] ?? null) ? $data['heading'] : 'Frequently Asked Questions' }}
             </h2>
         @endif

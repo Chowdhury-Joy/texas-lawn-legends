@@ -9,17 +9,17 @@
 <section class="border-t-4 border-slate-950 bg-brand-paper">
     <div class="mx-auto max-w-7xl px-6 py-section">
         @if (filled($data['eyebrow'] ?? null))
-            <span data-field="eyebrow" class="inline-block w-fit bg-emerald-900 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-yellow-400">
+            <span data-field="eyebrow" data-reveal class="inline-block w-fit bg-emerald-900 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-yellow-400">
                 {{ $data['eyebrow'] }}
             </span>
         @endif
         @if (filled($data['heading'] ?? null))
-            <h2 data-field="heading" class="mt-4 text-3xl font-medium tracking-tighter text-slate-900 sm:text-4xl">
+            <h2 data-field="heading" data-reveal class="mt-4 text-3xl font-medium tracking-tighter text-slate-900 sm:text-4xl">
                 {{ $data['heading'] }}
             </h2>
         @endif
         @if (filled($data['subheading'] ?? null))
-            <p data-field="subheading" class="mt-3 max-w-2xl text-slate-600">{{ $data['subheading'] }}</p>
+            <p data-field="subheading" data-reveal class="mt-3 max-w-2xl text-slate-600">{{ $data['subheading'] }}</p>
         @endif
 
         @if ($reviews->isNotEmpty())

@@ -6,7 +6,7 @@
 @endphp
 <section id="about" class="border-t-4 border-slate-950 bg-brand-paper">
     <div class="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-6 py-section lg:grid-cols-2 lg:items-center">
-        <div class="{{ $data['reverse'] ?? false ? 'lg:order-2' : '' }}">
+        <div data-reveal class="{{ $data['reverse'] ?? false ? 'lg:order-2' : '' }}">
             @if ($image)
                 <img src="{{ $image }}" alt="{{ $data['heading'] ?? 'About Texas Lawn Legends' }}" loading="lazy" decoding="async" class="box-brutal aspect-[4/3] w-full object-cover">
             @endif
@@ -14,19 +14,19 @@
 
         <div class="flex flex-col justify-center {{ $data['reverse'] ?? false ? 'lg:order-1' : '' }}">
             @if (filled($data['eyebrow'] ?? null))
-                <span data-field="eyebrow" class="inline-block w-fit bg-emerald-900 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-yellow-400">
+                <span data-field="eyebrow" data-reveal class="inline-block w-fit bg-emerald-900 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-yellow-400">
                     {{ $data['eyebrow'] }}
                 </span>
             @endif
 
             @if (! array_key_exists('heading', $data) || filled($data['heading'] ?? null))
-                <h2 data-field="heading" class="mt-4 text-3xl font-medium tracking-tighter text-slate-900 sm:text-4xl">
+                <h2 data-field="heading" data-reveal class="mt-4 text-3xl font-medium tracking-tighter text-slate-900 sm:text-4xl">
                     {{ filled($data['heading'] ?? null) ? $data['heading'] : 'About Texas Lawn Legends' }}
                 </h2>
             @endif
 
             @if (filled($data['body'] ?? null))
-                <p data-field="body" class="mt-5 text-base leading-snug tracking-tight text-slate-600">
+                <p data-field="body" data-reveal class="mt-5 text-base leading-snug tracking-tight text-slate-600">
                     {{ $data['body'] }}
                 </p>
             @endif

@@ -13,9 +13,7 @@
             $isValid = $blockType && in_array($blockType, \App\Support\PageBlocks::all(), true) && view()->exists('blocks.'.$blockType);
         @endphp
         @if ($isValid)
-            <div data-reveal>
-                @include('blocks.'.$blockType, ['data' => array_merge($block['data'] ?? [], ['is_first_block' => $loop->first])])
-            </div>
+            @include('blocks.'.$blockType, ['data' => array_merge($block['data'] ?? [], ['is_first_block' => $loop->first])])
         @endif
     @endforeach
 @endsection

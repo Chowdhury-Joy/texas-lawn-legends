@@ -38,17 +38,17 @@
             @endphp
 
             @if ($type === 'eyebrow' && filled($text))
-                <span data-field="eyebrow" class="mx-auto mb-3 inline-block w-fit bg-emerald-900 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-yellow-400">
+                <span data-field="eyebrow" data-stagger style="--stagger-i: {{ $loop->index }}" class="mx-auto mb-3 inline-block w-fit bg-emerald-900 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-yellow-400">
                     {{ $text }}
                 </span>
 
             @elseif ($type === 'heading')
-                <h2 data-field="heading" class="mx-auto max-w-3xl text-4xl font-medium leading-tight tracking-tighter text-slate-900 sm:text-5xl">
+                <h2 data-field="heading" data-stagger style="--stagger-i: {{ $loop->index }}" class="mx-auto max-w-3xl text-4xl font-medium leading-tight tracking-tighter text-slate-900 sm:text-5xl">
                     {{ filled($text) ? $text : 'Our 3-Step Process — Deliver The Wow' }}
                 </h2>
 
             @elseif ($type === 'subheading' && filled($text))
-                <p data-field="subheading" class="mx-auto mt-4 max-w-2xl text-base text-slate-600">
+                <p data-field="subheading" data-stagger style="--stagger-i: {{ $loop->index }}" class="mx-auto mt-4 max-w-2xl text-base text-slate-600">
                     {{ $text }}
                 </p>
             @endif

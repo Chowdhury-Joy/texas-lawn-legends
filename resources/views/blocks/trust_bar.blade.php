@@ -1,6 +1,6 @@
 @php $trustBadges = (array) ($data['badges'] ?? []); @endphp
 @if (! empty($trustBadges))
-    <section class="border-y-4 border-slate-950 bg-slate-950 text-slate-100">
+    <section data-reveal class="border-y-4 border-slate-950 bg-slate-950 text-slate-100">
         <div class="relative overflow-hidden py-4">
             <div class="marquee-track flex w-max items-center gap-10 px-5 will-change-transform">
                 @foreach ($trustBadges as $badge)

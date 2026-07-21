@@ -120,7 +120,7 @@
 
         {{-- Right media box --}}
         <div class="lg:col-span-5 mr-[8px] lg:mr-0">
-            <div class="box-brutal relative overflow-hidden">
+            <div data-stagger style="--stagger-i: 6" class="box-brutal relative overflow-hidden">
                 <picture>
                     <source srcset="{{ $heroImageMobile }}" media="(max-width: 631px)">
                     <img src="{{ $heroImage }}" alt="{{ $data['media_title'] ?? 'Texas Lawn Legends Residential Landscaping' }}" loading="lazy" decoding="async" class="aspect-square w-full object-cover">

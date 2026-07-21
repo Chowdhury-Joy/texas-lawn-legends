@@ -71,7 +71,7 @@
             @endif
         @endforeach
 
-        <div class="mt-4 flex flex-wrap items-center justify-center gap-2 text-xs font-bold text-slate-900">
+        <div data-reveal class="mt-4 flex flex-wrap items-center justify-center gap-2 text-xs font-bold text-slate-900">
             <span>⭐ Verified 5-Star Local Service</span>
             <span>·</span>
             <span>No-Obligation 30-Min Consultation</span>

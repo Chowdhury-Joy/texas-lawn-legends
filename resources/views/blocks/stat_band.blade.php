@@ -6,13 +6,13 @@
 <section class="border-y-4 border-slate-950 bg-emerald-900 px-6 py-section text-white">
     <div class="mx-auto max-w-7xl">
         @if (filled($data['eyebrow'] ?? null))
-            <span data-field="eyebrow" class="inline-block w-fit bg-slate-950 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-yellow-400">
+            <span data-field="eyebrow" data-reveal class="inline-block w-fit bg-slate-950 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-yellow-400">
                 {{ $data['eyebrow'] }}
             </span>
         @endif
 
         @if (filled($data['heading'] ?? null))
-            <h2 data-field="heading" class="mt-4 max-w-2xl text-3xl font-medium tracking-tighter text-white sm:text-4xl">
+            <h2 data-field="heading" data-reveal class="mt-4 max-w-2xl text-3xl font-medium tracking-tighter text-white sm:text-4xl">
                 {{ $data['heading'] }}
             </h2>
         @endif
