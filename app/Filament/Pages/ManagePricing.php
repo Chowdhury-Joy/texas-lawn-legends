@@ -4,6 +4,7 @@ namespace App\Filament\Pages;
 
 use BackedEnum;
 use Filament\Forms\Components\KeyValue;
+use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
@@ -29,6 +30,7 @@ class ManagePricing extends BaseSettingsPage
     protected function settingsMap(): array
     {
         return [
+            'estimator_mode' => 'string',
             'price_per_sqft_modifier' => 'decimal',
             'estimate_high_multiplier' => 'decimal',
             'estimate_min_sqft' => 'integer',
@@ -44,6 +46,19 @@ class ManagePricing extends BaseSettingsPage
     protected function formComponents(): array
     {
         return [
+            Section::make('Estimator Mode')
+                ->description('Controls how customers select services in the public estimate wizard.')
+                ->schema([
+                    Radio::make('estimator_mode')
+                        ->label('Wizard Mode')
+                        ->options([
+                            'quick' => 'Quick Quote — single service, instant advance (recommended for most businesses)',
+                            'full'  => 'Full Estimate — multi-service cart, customer selects multiple services at once',
+                        ])
+                        ->default('quick')
+                        ->required()
+                        ->columnSpanFull(),
+                ]),
             Section::make('Base Pricing Engine')
                 ->description('Low = base rate/sqft × service multiplier × sqft × neighborhood modifier × complexity modifier. High = Low × the high multiplier.')
                 ->columns(3)

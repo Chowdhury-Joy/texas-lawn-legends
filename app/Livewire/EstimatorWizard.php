@@ -35,7 +35,11 @@ class EstimatorWizard extends Component
     public string $neighborhood = '';
 
     // Step 2 — service scope
+    // Quick Quote mode: single service
     public ?int $service_id = null;
+
+    // Full Estimate mode: multi-service cart
+    public array $service_ids = [];
 
     // Step 3 — dimensions + complexity
     public int $sqft = 500;
@@ -64,23 +68,38 @@ class EstimatorWizard extends Component
     }
 
     /**
+     * Returns the active estimator mode: 'quick' or 'full'.
+     */
+    #[Computed]
+    public function estimatorMode(): string
+    {
+        return (string) setting('estimator_mode', 'quick');
+    }
+
+    /**
      * @return array<string, mixed>
      */
     protected function rulesForStep(int $step): array
     {
         return match ($step) {
-            1 => [
-                'service_id' => ['required', 'integer', Rule::exists('services', 'id')->where('is_active', true)],
-                'neighborhood' => ['required', 'string', Rule::in((array) setting('service_areas', []))],
-            ],
+            1 => $this->estimatorMode === 'full'
+                ? [
+                    'service_ids'   => ['required', 'array', 'min:1'],
+                    'service_ids.*' => ['integer', Rule::exists('services', 'id')->where('is_active', true)],
+                    'neighborhood'  => ['required', 'string', Rule::in((array) setting('service_areas', []))],
+                ]
+                : [
+                    'service_id'   => ['required', 'integer', Rule::exists('services', 'id')->where('is_active', true)],
+                    'neighborhood' => ['required', 'string', Rule::in((array) setting('service_areas', []))],
+                ],
             2 => [
-                'sqft' => ['required', 'integer', 'min:'.(int) setting('estimate_min_sqft', 100), 'max:'.(int) setting('estimate_max_sqft', 10000)],
+                'sqft'       => ['required', 'integer', 'min:'.(int) setting('estimate_min_sqft', 100), 'max:'.(int) setting('estimate_max_sqft', 10000)],
                 'complexity' => ['required', Rule::in(array_keys((array) setting('complexity_modifiers', ['simple' => 0, 'standard' => 0, 'complex' => 0])))],
             ],
             3 => [
-                'name' => ['required', 'string', 'max:255'],
-                'email' => ['required', 'email', 'max:255'],
-                'phone' => ['required', 'regex:/^[\d\s\-\(\)\+\.]{7,20}$/'],
+                'name'    => ['required', 'string', 'max:255'],
+                'email'   => ['required', 'email', 'max:255'],
+                'phone'   => ['required', 'regex:/^[\d\s\-\(\)\+\.]{7,20}$/'],
                 'address' => ['nullable', 'string', 'max:255'],
             ],
             default => [],
@@ -93,8 +112,10 @@ class EstimatorWizard extends Component
     protected function messages(): array
     {
         return [
-            'phone.regex' => 'Please enter a valid phone number.',
-            'neighborhood.in' => 'We are not yet servicing that neighborhood — call us and we will see what we can do.',
+            'phone.regex'            => 'Please enter a valid phone number.',
+            'neighborhood.in'        => 'We are not yet servicing that neighborhood — call us and we will see what we can do.',
+            'service_ids.required'   => 'Please select at least one service to continue.',
+            'service_ids.min'        => 'Please select at least one service to continue.',
         ];
     }
 
@@ -118,27 +139,44 @@ class EstimatorWizard extends Component
 
     public function selectService(int $id): void
     {
-        $this->service_id = $id;
+        if ($this->estimatorMode === 'full') {
+            // Toggle: add if not present, remove if already selected
+            if (in_array($id, $this->service_ids, true)) {
+                $this->service_ids = array_values(array_filter($this->service_ids, fn ($s) => $s !== $id));
+            } else {
+                $this->service_ids[] = $id;
+            }
+        } else {
+            // Quick Quote: single select
+            $this->service_id = $id;
+        }
     }
 
     protected function computeEstimate(): void
     {
-        $service = Service::find($this->service_id);
+        $engine = app(EstimatePricingEngine::class);
 
-        if (! $service) {
-            return;
+        if ($this->estimatorMode === 'full') {
+            $services = Service::query()->findMany($this->service_ids);
+
+            if ($services->isEmpty()) {
+                return;
+            }
+
+            $result = $engine->calculateMany($services, $this->sqft, $this->neighborhood, $this->complexity);
+        } else {
+            $service = Service::find($this->service_id);
+
+            if (! $service) {
+                return;
+            }
+
+            $result = $engine->calculate($service, $this->sqft, $this->neighborhood, $this->complexity);
         }
 
-        $result = app(EstimatePricingEngine::class)->calculate(
-            $service,
-            $this->sqft,
-            $this->neighborhood,
-            $this->complexity,
-        );
-
-        $this->estimateLow = $result['low'];
+        $this->estimateLow  = $result['low'];
         $this->estimateHigh = $result['high'];
-        $this->isCustom = $result['is_custom'];
+        $this->isCustom     = $result['is_custom'];
     }
 
     /**
@@ -146,21 +184,28 @@ class EstimatorWizard extends Component
      */
     protected function persistLead(): void
     {
-        $service = $this->service_id ? Service::find($this->service_id) : null;
+        if ($this->estimatorMode === 'full') {
+            $serviceLabel = Service::query()
+                ->findMany($this->service_ids)
+                ->pluck('title')
+                ->join(', ');
+        } else {
+            $serviceLabel = $this->service_id ? optional(Service::find($this->service_id))->title : null;
+        }
 
         $data = [
-            'name' => $this->name ?: null,
-            'email' => $this->email ?: null,
-            'phone' => $this->phone ?: null,
-            'address' => $this->address ?: null,
-            'neighborhood' => $this->neighborhood ?: null,
-            'estimated_sqft' => $this->sqft,
-            'service_type' => $service?->title,
-            'calculated_estimate_low' => $this->estimateLow,
+            'name'                     => $this->name ?: null,
+            'email'                    => $this->email ?: null,
+            'phone'                    => $this->phone ?: null,
+            'address'                  => $this->address ?: null,
+            'neighborhood'             => $this->neighborhood ?: null,
+            'estimated_sqft'           => $this->sqft,
+            'service_type'             => $serviceLabel,
+            'calculated_estimate_low'  => $this->estimateLow,
             'calculated_estimate_high' => $this->estimateHigh,
-            'step_reached' => 'step_'.$this->step,
-            'status' => $this->estimateLow !== null ? LeadStatus::Qualified : LeadStatus::Partial,
-            'referred_by_code' => $this->referred_by_code,
+            'step_reached'             => 'step_'.$this->step,
+            'status'                   => $this->estimateLow !== null ? LeadStatus::Qualified : LeadStatus::Partial,
+            'referred_by_code'         => $this->referred_by_code,
         ];
 
         if ($this->leadUuid) {
@@ -238,13 +283,30 @@ class EstimatorWizard extends Component
     }
 
     /**
-     * Live estimated range calculation preview for Step 3 interaction.
+     * Live estimated range calculation preview for Step 2 interaction.
      *
      * @return array{low: float, high: float, is_custom: bool}|null
      */
     #[Computed]
     public function liveEstimatePreview(): ?array
     {
+        $engine = app(EstimatePricingEngine::class);
+        $fallbackNeighborhood = $this->neighborhood ?: (string) collect($this->neighborhoods)->first();
+
+        if ($this->estimatorMode === 'full') {
+            if (empty($this->service_ids)) {
+                return null;
+            }
+
+            $services = Service::query()->findMany($this->service_ids);
+
+            if ($services->isEmpty()) {
+                return null;
+            }
+
+            return $engine->calculateMany($services, $this->sqft, $fallbackNeighborhood, $this->complexity);
+        }
+
         if (! $this->service_id) {
             return null;
         }
@@ -255,12 +317,7 @@ class EstimatorWizard extends Component
             return null;
         }
 
-        return app(EstimatePricingEngine::class)->calculate(
-            $service,
-            $this->sqft,
-            $this->neighborhood ?: (string) collect($this->neighborhoods)->first(),
-            $this->complexity,
-        );
+        return $engine->calculate($service, $this->sqft, $fallbackNeighborhood, $this->complexity);
     }
 
     public function render()

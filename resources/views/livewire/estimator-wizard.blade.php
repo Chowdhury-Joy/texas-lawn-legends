@@ -52,23 +52,65 @@
                 @error('neighborhood') <p class="mt-1 text-xs font-bold text-red-600">{{ $message }}</p> @enderror
             </div>
 
-            <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
-                @foreach ($this->services as $service)
-                    <button type="button" wire:click="selectService({{ $service->id }})"
-                            @class([
-                                'flex items-start gap-3 border-2 border-slate-950 p-4 text-left transition-all',
-                                'bg-yellow-400' => $service_id === $service->id,
-                                'bg-white hover:bg-slate-50' => $service_id !== $service->id,
-                            ])>
-                        <x-svg-icon :name="$service->icon" class="h-7 w-7 shrink-0 text-slate-900" />
-                        <span>
-                            <span class="block text-sm font-black uppercase tracking-tight text-slate-900">{{ $service->title }}</span>
-                            <span class="mt-1 block text-xs leading-snug text-slate-600">{{ $service->short_description }}</span>
-                        </span>
-                    </button>
-                @endforeach
+            <div class="mt-6">
+                @if ($this->estimatorMode === 'full')
+                    <div class="mb-4 flex items-center justify-between">
+                        <span class="text-xs font-black uppercase tracking-widest text-slate-700">Select all services you need</span>
+                        @if (count($service_ids) > 0)
+                            <span class="inline-flex items-center gap-1.5 rounded-sm bg-slate-950 px-2.5 py-1 text-[11px] font-black uppercase tracking-widest text-yellow-400">
+                                {{ count($service_ids) }} selected
+                            </span>
+                        @endif
+                    </div>
+                @endif
+
+                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    @foreach ($this->services as $service)
+                        @if ($this->estimatorMode === 'full')
+                            @php $isSelected = in_array($service->id, $service_ids, true); @endphp
+                            <button type="button" wire:click="selectService({{ $service->id }})"
+                                    @class([
+                                        'relative flex items-start gap-3 border-2 border-slate-950 p-4 text-left transition-all',
+                                        'bg-yellow-400' => $isSelected,
+                                        'bg-white hover:bg-slate-50' => ! $isSelected,
+                                    ])>
+                                @if ($isSelected)
+                                    <span class="absolute right-2 top-2 flex h-5 w-5 items-center justify-center border-2 border-slate-950 bg-slate-950">
+                                        <svg class="h-3 w-3 text-yellow-400" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg>
+                                    </span>
+                                @else
+                                    <span class="absolute right-2 top-2 h-5 w-5 border-2 border-slate-300 bg-white"></span>
+                                @endif
+                                <x-svg-icon :name="$service->icon" class="h-7 w-7 shrink-0 text-slate-900" />
+                                <span>
+                                    <span class="block text-sm font-black uppercase tracking-tight text-slate-900">{{ $service->title }}</span>
+                                    <span class="mt-1 block text-xs leading-snug text-slate-600">{{ $service->short_description }}</span>
+                                </span>
+                            </button>
+                        @else
+                            <button type="button" wire:click="selectService({{ $service->id }})"
+                                    @class([
+                                        'flex items-start gap-3 border-2 border-slate-950 p-4 text-left transition-all',
+                                        'bg-yellow-400' => $service_id === $service->id,
+                                        'bg-white hover:bg-slate-50' => $service_id !== $service->id,
+                                    ])>
+                                <x-svg-icon :name="$service->icon" class="h-7 w-7 shrink-0 text-slate-900" />
+                                <span>
+                                    <span class="block text-sm font-black uppercase tracking-tight text-slate-900">{{ $service->title }}</span>
+                                    <span class="mt-1 block text-xs leading-snug text-slate-600">{{ $service->short_description }}</span>
+                                </span>
+                            </button>
+                        @endif
+                    @endforeach
+                </div>
+
+                @if ($this->estimatorMode === 'full')
+                    @error('service_ids') <p class="mt-3 text-xs font-bold text-red-600">{{ $message }}</p> @enderror
+                @else
+                    @error('service_id') <p class="mt-3 text-xs font-bold text-red-600">{{ $message }}</p> @enderror
+                @endif
             </div>
-            @error('service_id') <p class="mt-3 text-xs font-bold text-red-600">{{ $message }}</p> @enderror
+
         @endif
 
         {{-- ================= STEP 2: Dimensions + Complexity ================= --}}
@@ -218,7 +260,13 @@
                         $<span x-text="currentLow.toLocaleString()"></span> <span class="text-slate-400">–</span> $<span x-text="currentHigh.toLocaleString()"></span>
                     </h2>
                     <p class="mx-auto mt-3 max-w-lg text-slate-600">
-                        Based on {{ number_format($sqft) }} sq ft of {{ optional($this->services->firstWhere('id', $service_id))->title }} in {{ $neighborhood }}.
+                        Based on {{ number_format($sqft) }} sq ft
+                        @if ($this->estimatorMode === 'full')
+                            across {{ $this->services->whereIn('id', $service_ids)->pluck('title')->join(', ', ' & ') }}
+                        @else
+                            of {{ optional($this->services->firstWhere('id', $service_id))->title }}
+                        @endif
+                        in {{ $neighborhood }}.
                         Lock in a free 30-minute site visit below to confirm your exact scope — your details are already saved.
                     </p>
                 </div>

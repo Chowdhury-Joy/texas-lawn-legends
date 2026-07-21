@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Service;
+use Illuminate\Support\Collection;
 
 /**
  * Algebraic estimate engine.
@@ -40,6 +41,35 @@ class EstimatePricingEngine
             'low' => round($low, 2),
             'high' => round($high, 2),
             'is_custom' => $isCustom,
+        ];
+    }
+
+    /**
+     * Calculate a combined estimate across multiple services (Full Estimate mode).
+     * Sqft, neighborhood, and complexity are shared across all services.
+     *
+     * @param  Collection<int, Service>  $services
+     * @return array{low: float, high: float, is_custom: bool}
+     */
+    public function calculateMany(Collection $services, int $sqft, string $neighborhood, string $complexity): array
+    {
+        $totalLow = 0.0;
+        $totalHigh = 0.0;
+        $anyCustom = false;
+
+        foreach ($services as $service) {
+            $result = $this->calculate($service, $sqft, $neighborhood, $complexity);
+            $totalLow  += $result['low'];
+            $totalHigh += $result['high'];
+            if ($result['is_custom']) {
+                $anyCustom = true;
+            }
+        }
+
+        return [
+            'low'       => round($totalLow, 2),
+            'high'      => round($totalHigh, 2),
+            'is_custom' => $anyCustom,
         ];
     }
 }
