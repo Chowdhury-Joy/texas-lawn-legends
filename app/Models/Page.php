@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
+use App\Models\Traits\TriggersSiteReload;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Traits\TriggersSiteReload;
 
 class Page extends Model
 {

@@ -3,10 +3,10 @@
 namespace App\Models;
 
 use App\Enums\ProjectStatus;
+use App\Models\Traits\TriggersSiteReload;
 use Database\Factories\ProjectFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Traits\TriggersSiteReload;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -17,7 +17,7 @@ use Spatie\Activitylog\Support\LogOptions;
 class Project extends Model
 {
     /** @use HasFactory<ProjectFactory> */
-    use HasFactory, SoftDeletes, TriggersSiteReload, LogsActivity;
+    use HasFactory, LogsActivity, SoftDeletes, TriggersSiteReload;
 
     public function getActivitylogOptions(): LogOptions
     {

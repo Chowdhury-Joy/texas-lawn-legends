@@ -3,11 +3,11 @@
 namespace App\Models;
 
 use App\Enums\ServiceCategory;
+use App\Models\Traits\TriggersSiteReload;
 use Database\Factories\ServiceFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Traits\TriggersSiteReload;
 
 class Service extends Model
 {
