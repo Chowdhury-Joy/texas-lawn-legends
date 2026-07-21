@@ -94,13 +94,27 @@
             <div class="mt-8">
                 <label class="block text-xs font-black uppercase tracking-widest text-slate-700">Complexity</label>
                 <div class="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-3">
-                    @foreach (['simple' => 'Simple', 'standard' => 'Standard', 'complex' => 'Complex'] as $value => $label)
+                    @php
+                        $complexities = [
+                            'simple' => ['label' => 'Simple', 'desc' => 'Open area, easy access, flat ground.'],
+                            'standard' => ['label' => 'Standard', 'desc' => 'Typical yard, minor slopes or obstacles.'],
+                            'complex' => ['label' => 'Complex', 'desc' => 'Tight access, steep hills, or heavy overgrowth.']
+                        ];
+                    @endphp
+                    @foreach ($complexities as $value => $data)
                         <button type="button" wire:click="$set('complexity', '{{ $value }}')"
                                 @class([
-                                    'border-2 border-slate-950 px-4 py-3 text-sm font-black uppercase tracking-wide transition-all',
+                                    'border-2 border-slate-950 px-4 py-3 text-left transition-all',
                                     'bg-slate-950 text-yellow-400' => $complexity === $value,
                                     'bg-white text-slate-900 hover:bg-slate-50' => $complexity !== $value,
-                                ])>{{ $label }}</button>
+                                ])>
+                            <span class="block text-sm font-black uppercase tracking-wide">{{ $data['label'] }}</span>
+                            <span @class([
+                                'mt-1 block text-[10px] leading-snug',
+                                'text-slate-400' => $complexity === $value,
+                                'text-slate-500' => $complexity !== $value,
+                            ])>{{ $data['desc'] }}</span>
+                        </button>
                     @endforeach
                 </div>
                 @error('complexity') <p class="mt-1 text-xs font-bold text-red-600">{{ $message }}</p> @enderror
