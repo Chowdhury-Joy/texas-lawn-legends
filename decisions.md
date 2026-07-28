@@ -30,3 +30,10 @@
  <action>Override Filament’s logo Blade view to show the current page heading (e.g. "Edit About Us"). A Livewire render hook captures the heading from the active Filament page before the layout renders the topbar. Login/simple pages still show the site name. Browser tab title still ends with the site brand via brandName().</action>
  <reason>Matches how people scan admin tools (page name in the chrome), without changing document titles or the public site brand.</reason>
 </decision>
+
+<decision>
+ <category>UI/UX</category>
+ <context>During a sales call, switching packs is easy, but resetting back to a clean demo state was too easy to miss unless you remember to use the admin page.</context>
+ <action>Add a public “Reset current pack” action to the `/demo` hub (`POST /demo/reset`) so you can restore the model-home starter content without leaving the pitch flow.</action>
+ <reason>Reduces demo friction and prevents the next meeting from starting with a prospect-edited/dirty model home.</reason>
+</decision>

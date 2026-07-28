@@ -13,6 +13,7 @@ Route::get('/', [PageController::class, 'home'])->name('home');
 
 Route::get('/demo', [DemoHubController::class, 'index'])->name('demo.hub');
 Route::post('/demo/load', [DemoHubController::class, 'load'])->name('demo.load');
+Route::post('/demo/reset', [DemoHubController::class, 'reset'])->name('demo.reset');
 
 /*
 |--------------------------------------------------------------------------

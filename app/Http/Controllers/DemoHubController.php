@@ -35,6 +35,16 @@ class DemoHubController extends Controller
             ->with('status', 'Loaded demo: '.$pack->label());
     }
 
+    public function reset(NicheLoader $loader): RedirectResponse
+    {
+        $this->ensureHubEnabled();
+
+        $pack = $loader->reset();
+
+        return redirect('/')
+            ->with('status', 'Reset demo: '.$pack->label());
+    }
+
     private function ensureHubEnabled(): void
     {
         if (! NicheResolver::demoHubEnabled()) {

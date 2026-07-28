@@ -35,6 +35,17 @@
         <p class="mt-10 text-center text-xs text-slate-500">
             Hub is gated by <code class="text-slate-400">APP_DEMO_HUB</code>. Not for production client sites.
         </p>
+
+        @if (\App\Support\Niche\NicheResolver::demoMode())
+            <div class="mt-6 flex justify-center">
+                <form method="POST" action="{{ route('demo.reset') }}">
+                    @csrf
+                    <button type="submit" class="border-2 border-white/20 bg-slate-900 px-5 py-3 text-xs font-black uppercase tracking-wider text-white hover:border-yellow-400">
+                        Reset current pack
+                    </button>
+                </form>
+            </div>
+        @endif
     </div>
 </body>
 </html>

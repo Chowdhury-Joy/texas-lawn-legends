@@ -66,6 +66,26 @@ class DemoHubTest extends TestCase
         $this->assertSame('RoofingContractor', niche()->schemaOrgType());
     }
 
+    public function test_demo_reset_route_resets_current_pack(): void
+    {
+        config(['niche.demo_hub' => true]);
+
+        app(NicheLoader::class)->load('cleaning', demoMode: true);
+        NicheResolver::flush();
+
+        $this->post('/demo/reset')->assertRedirect('/');
+
+        NicheResolver::flush();
+
+        $this->assertSame('cleaning', NicheResolver::activeId());
+        $this->assertSame('BrightSide Cleaning', setting('site_name'));
+
+        $home = $this->get('/');
+        $home->assertOk();
+        $home->assertSee('Demo — Home cleaning example');
+        $home->assertSee('BrightSide Cleaning');
+    }
+
     public function test_admin_industry_packs_page_is_reachable(): void
     {
         $admin = User::factory()->create([
