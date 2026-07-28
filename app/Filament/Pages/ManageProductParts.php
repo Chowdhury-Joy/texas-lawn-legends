@@ -48,6 +48,15 @@ class ManageProductParts extends BaseSettingsPage
         ];
     }
 
+    public function save(): void
+    {
+        parent::save();
+
+        // Product part gates which sidebar items/resources appear. Livewire
+        // only re-renders this page after save, so reload the admin shell.
+        $this->redirect(static::getUrl());
+    }
+
     protected function formComponents(): array
     {
         return [

@@ -4,10 +4,12 @@ namespace Tests\Feature;
 
 use App\Enums\ProductPart;
 use App\Enums\UserRole;
+use App\Filament\Pages\ManageProductParts;
 use App\Models\Setting;
 use App\Models\User;
 use App\Support\ProductFeatures;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class ProductPartGatingTest extends TestCase
@@ -59,6 +61,23 @@ class ProductPartGatingTest extends TestCase
         $this->actingAs($admin)
             ->get('/admin/manage-product-parts')
             ->assertOk();
+    }
+
+    public function test_saving_product_part_redirects_so_admin_nav_refreshes(): void
+    {
+        $admin = User::factory()->create(['role' => UserRole::Admin]);
+
+        $this->actingAs($admin);
+
+        Livewire::test(ManageProductParts::class)
+            ->fillForm([
+                'product_part' => ProductPart::Website->value,
+            ])
+            ->call('save')
+            ->assertRedirect(ManageProductParts::getUrl());
+
+        $this->assertSame(ProductPart::Website, product_part());
+        $this->assertFalse(ProductFeatures::allows('resource.leads'));
     }
 
     public function test_part_one_hides_ops_admin_resources_from_admins(): void

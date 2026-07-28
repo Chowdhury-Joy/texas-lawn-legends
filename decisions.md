@@ -44,3 +44,10 @@
  <action>Remove the “Theme Preview” section from the Filament “Branding & Theme” settings page and delete its backing Blade view.</action>
  <reason>Reduces admin panel clutter and removes an unused preview surface from the settings flow.</reason>
 </decision>
+
+<decision>
+ <category>UI/UX</category>
+ <context>After saving a new Product Part, the admin sidebar still showed Booking/Ops items until a hard refresh.</context>
+ <action>On ManageProductParts save, persist the setting then full-page redirect back to the Product Parts URL so Filament rebuilds navigation from the new product_part.</action>
+ <reason>Livewire form saves don’t re-evaluate sidebar canAccess(); a redirect is the smallest fix that matches how people expect “Save” to apply packaging changes.</reason>
+</decision>
