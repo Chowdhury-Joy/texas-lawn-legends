@@ -103,6 +103,11 @@ final class AccessPermissions
             ],
 
             // ---------------- Settings pages ----------------
+            'settings.product_parts' => [
+                'label' => 'Product Parts',
+                'group' => 'Site Settings',
+                'roles' => [UserRole::Admin],
+            ],
             'settings.homepage' => [
                 'label' => 'Homepage Content',
                 'group' => 'Site Settings',

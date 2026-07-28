@@ -3,6 +3,7 @@
 namespace App\Filament\Concerns;
 
 use App\Models\User;
+use App\Support\ProductFeatures;
 
 /**
  * Gates a dashboard widget on an access key, so widgets can't leak data from
@@ -16,7 +17,9 @@ trait RestrictedWidget
         /** @var User|null $user */
         $user = auth()->user();
 
-        return $user?->canAccessKey(static::widgetPermissionKey()) ?? false;
+        $key = static::widgetPermissionKey();
+
+        return ($user?->canAccessKey($key) ?? false) && ProductFeatures::allows($key);
     }
 
     protected static function widgetPermissionKey(): string

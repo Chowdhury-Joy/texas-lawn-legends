@@ -4,6 +4,7 @@ namespace App\Filament\Pages;
 
 use App\Models\Setting;
 use App\Models\User;
+use App\Support\ProductFeatures;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
@@ -28,8 +29,9 @@ abstract class BaseSettingsPage extends Page
     {
         /** @var User|null $user */
         $user = auth()->user();
+        $key = static::permissionKey();
 
-        return $user?->canAccessKey(static::permissionKey()) ?? false;
+        return ($user?->canAccessKey($key) ?? false) && ProductFeatures::allows($key);
     }
 
     /**

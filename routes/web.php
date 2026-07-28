@@ -29,9 +29,15 @@ Route::get('/robots.txt', function () {
 Route::get('/sitemap.xml', function () {
     $urls = [
         ['loc' => url('/'), 'priority' => '1.0', 'changefreq' => 'weekly'],
-        ['loc' => url('/estimate'), 'priority' => '0.9', 'changefreq' => 'monthly'],
-        ['loc' => url('/portal'), 'priority' => '0.5', 'changefreq' => 'monthly'],
     ];
+
+    if (product_part_at_least(2)) {
+        $urls[] = ['loc' => url('/estimate'), 'priority' => '0.9', 'changefreq' => 'monthly'];
+    }
+
+    if (product_part_at_least(3)) {
+        $urls[] = ['loc' => url('/portal'), 'priority' => '0.5', 'changefreq' => 'monthly'];
+    }
 
     foreach (Page::query()->published()->whereNotNull('slug')->get() as $page) {
         $urls[] = ['loc' => url($page->slug), 'priority' => '0.5', 'changefreq' => 'monthly'];
@@ -54,30 +60,34 @@ Route::get('/api/site-version', function () {
 
 /*
 |--------------------------------------------------------------------------
-| Placeholder routes — fleshed out in later phases
+| Product Part–gated public flows
 |--------------------------------------------------------------------------
-| These keep site-wide navigation coherent while the Livewire estimator,
-| member portal, and client dashboard are built out.
+| Part 2 unlocks booking/estimate. Part 3 unlocks portal, dashboard,
+| proposals, and invoices. CMS pages stay available at Part 1.
 */
 
-Route::view('/estimate', 'estimate')->name('estimate');
+Route::view('/estimate', 'estimate')
+    ->middleware('product.part:2')
+    ->name('estimate');
 
-Route::view('/portal', 'portal')->name('portal');
+Route::view('/portal', 'portal')
+    ->middleware('product.part:3')
+    ->name('portal');
 
 Route::get('/invoices/{invoice:unique_access_token}', [InvoiceController::class, 'show'])
-    ->middleware('throttle:60,1')
+    ->middleware(['product.part:3', 'throttle:60,1'])
     ->name('invoices.show');
 Route::get('/dashboard/{project:unique_dashboard_hash}', [DashboardController::class, 'show'])
-    ->middleware('throttle:60,1')
+    ->middleware(['product.part:3', 'throttle:60,1'])
     ->name('dashboard');
 Route::get('/proposals/{token}', [ProposalController::class, 'show'])
-    ->middleware('throttle:60,1')
+    ->middleware(['product.part:3', 'throttle:60,1'])
     ->name('proposals.show');
 Route::post('/proposals/{token}/accept', [ProposalController::class, 'accept'])
-    ->middleware('throttle:60,1')
+    ->middleware(['product.part:3', 'throttle:60,1'])
     ->name('proposals.accept');
 Route::post('/proposals/{token}/decline', [ProposalController::class, 'decline'])
-    ->middleware('throttle:60,1')
+    ->middleware(['product.part:3', 'throttle:60,1'])
     ->name('proposals.decline');
 
 /*

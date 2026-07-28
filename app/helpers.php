@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\ProductPart;
 use App\Models\Setting;
 use Illuminate\Support\Facades\Storage;
 
@@ -10,6 +11,32 @@ if (! function_exists('setting')) {
     function setting(string $key, mixed $default = null): mixed
     {
         return Setting::get($key, $default);
+    }
+}
+
+if (! function_exists('product_part')) {
+    /**
+     * Active product package level (1 = Website+CMS, 2 = +Booking, 3 = +Ops).
+     */
+    function product_part(): ProductPart
+    {
+        $value = (int) setting('product_part', ProductPart::Ops->value);
+
+        return ProductPart::tryFrom($value) ?? ProductPart::Ops;
+    }
+}
+
+if (! function_exists('product_part_at_least')) {
+    /**
+     * Whether the install's product part is at or above the given level.
+     */
+    function product_part_at_least(ProductPart|int $minimum): bool
+    {
+        $required = $minimum instanceof ProductPart
+            ? $minimum
+            : (ProductPart::tryFrom($minimum) ?? ProductPart::Ops);
+
+        return product_part()->atLeast($required);
     }
 }
 

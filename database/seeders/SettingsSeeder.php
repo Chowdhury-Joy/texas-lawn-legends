@@ -25,6 +25,10 @@ class SettingsSeeder extends Seeder
     protected function settings(): array
     {
         return [
+            // ---------------- Product packaging ----------------
+            // 1 = Website+CMS, 2 = +Booking, 3 = +Ops (full product; default for TLL)
+            ['product_part', '3', 'integer', 'product'],
+
             // ---------------- Contact / General ----------------
             ['site_name', 'Texas Lawn Legends', 'string', 'general'],
             ['primary_phone', '(214) 617-7725', 'string', 'contact'],

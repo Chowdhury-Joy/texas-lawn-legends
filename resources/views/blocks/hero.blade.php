@@ -102,9 +102,15 @@
 
                 @elseif ($type === 'primary_cta')
                     <div data-stagger style="--stagger-i: {{ $loop->index + 1 }}" class="mt-8">
-                        <a href="{{ url('/estimate') }}" class="btn-brutal inline-flex items-center justify-center bg-yellow-400 px-6 py-3 text-sm font-black uppercase tracking-widest text-slate-950 sm:px-8 sm:py-4 sm:text-base">
-                            {{ filled($text) ? $text : 'Get Free Estimate →' }}
-                        </a>
+                        @if (product_part_at_least(2))
+                            <a href="{{ url('/estimate') }}" class="btn-brutal inline-flex items-center justify-center bg-yellow-400 px-6 py-3 text-sm font-black uppercase tracking-widest text-slate-950 sm:px-8 sm:py-4 sm:text-base">
+                                {{ filled($text) ? $text : 'Get Free Estimate →' }}
+                            </a>
+                        @else
+                            <a href="{{ $telHref }}" class="btn-brutal inline-flex items-center justify-center bg-yellow-400 px-6 py-3 text-sm font-black uppercase tracking-widest text-slate-950 sm:px-8 sm:py-4 sm:text-base">
+                                {{ filled($text) ? $text : 'Call or Text' }}
+                            </a>
+                        @endif
                     </div>
 
                 @elseif ($type === 'secondary_cta')

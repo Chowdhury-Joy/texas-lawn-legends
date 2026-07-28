@@ -3,6 +3,7 @@
 namespace App\Filament\Concerns;
 
 use App\Models\User;
+use App\Support\ProductFeatures;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
@@ -26,7 +27,9 @@ trait RoleRestricted
             return false;
         }
 
-        return $user->canAccessKey(static::permissionKey());
+        $key = static::permissionKey();
+
+        return $user->canAccessKey($key) && ProductFeatures::allows($key);
     }
 
     /**

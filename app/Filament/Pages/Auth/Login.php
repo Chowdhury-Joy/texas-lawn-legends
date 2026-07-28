@@ -11,7 +11,8 @@ class Login extends BaseAuth
     protected function getEmailFormComponent(): Component
     {
         return TextInput::make('email')
-            ->label('Username')
+            ->label('Email Address')
+            ->email()
             ->required()
             ->autocomplete()
             ->autofocus();

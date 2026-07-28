@@ -6,6 +6,7 @@ use App\Enums\ProjectStatus;
 use App\Models\Crew;
 use App\Models\Project;
 use App\Models\User;
+use App\Support\ProductFeatures;
 use BackedEnum;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
@@ -32,7 +33,8 @@ class ManageSchedule extends Page
         /** @var User|null $user */
         $user = auth()->user();
 
-        return $user?->canAccessKey('resource.crews') ?? false;
+        return ($user?->canAccessKey('resource.crews') ?? false)
+            && ProductFeatures::allows('resource.crews');
     }
 
     public function assignCrew(int $projectId, $crewId = null): void

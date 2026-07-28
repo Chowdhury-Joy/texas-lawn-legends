@@ -91,10 +91,19 @@
                     $navItems = [
                         'Our Services' => url('/services'),
                         'Portfolio' => url('/portfolio'),
-                        'Client Portal' => url('/portal'),
                         'About Us' => url('/about'),
                     ];
+                    if (product_part_at_least(3)) {
+                        // Keep portal next to primary marketing links when Ops is on.
+                        $navItems = [
+                            'Our Services' => url('/services'),
+                            'Portfolio' => url('/portfolio'),
+                            'Client Portal' => url('/portal'),
+                            'About Us' => url('/about'),
+                        ];
+                    }
                     $isActiveNavItem = fn (string $href): bool => $current === trim((string) parse_url($href, PHP_URL_PATH), '/');
+                    $showEstimateCta = product_part_at_least(2);
                 @endphp
 
                 <nav class="hidden items-center gap-1 lg:flex">
@@ -109,9 +118,11 @@
                 </nav>
 
                 <div class="flex items-center gap-3">
-                    <a href="{{ url('/estimate') }}" class="btn-brutal hidden items-center justify-center bg-yellow-400 px-5 py-2 text-xs font-black uppercase tracking-wider text-slate-950 lg:inline-flex">
-                        Get Free Estimate
-                    </a>
+                    @if ($showEstimateCta)
+                        <a href="{{ url('/estimate') }}" class="btn-brutal hidden items-center justify-center bg-yellow-400 px-5 py-2 text-xs font-black uppercase tracking-wider text-slate-950 lg:inline-flex">
+                            Get Free Estimate
+                        </a>
+                    @endif
 
                     {{-- Mobile hamburger --}}
                     <button type="button"
@@ -198,7 +209,9 @@
                 <div>
                     <h3 class="mb-4 text-xs font-black uppercase tracking-widest text-yellow-400">Core Hub</h3>
                     <ul class="space-y-2 text-sm">
-                        <li><a href="{{ url('/portal') }}" class="text-slate-300 transition-colors hover:text-white">Client Portal Login</a></li>
+                        @if (product_part_at_least(3))
+                            <li><a href="{{ url('/portal') }}" class="text-slate-300 transition-colors hover:text-white">Client Portal Login</a></li>
+                        @endif
                         <li><a href="{{ url('/privacy') }}" class="text-slate-300 transition-colors hover:text-white">Privacy Compliance Terms</a></li>
                         <li><a href="{{ url('/admin') }}" class="text-slate-300 transition-colors hover:text-white">Administrative CMS Control Panel</a></li>
                     </ul>
@@ -206,31 +219,33 @@
             </div>
         </footer>
 
-        @unless (request()->routeIs('estimate'))
-            {{-- Themeable Mobile Sticky Action Rail --}}
-            <div class="fixed bottom-0 inset-x-0 z-40 border-t-4 border-slate-950 bg-brand-paper p-3 shadow-2xl lg:hidden">
-                <div class="mx-auto flex max-w-md items-center justify-between gap-3">
-                    <a href="{{ url('/estimate') }}"  class="btn-brutal flex-1 bg-yellow-400 py-3 text-center text-xs font-black uppercase tracking-wider text-slate-950">
-                        ⚡ 2-Min Price Quote
-                    </a>
-                    <a href="{{ $telHref }}" class="flex items-center justify-center border-2 border-slate-950 bg-white px-4 py-3 text-xs font-black uppercase tracking-wider text-slate-900 transition-colors hover:bg-slate-100">
-                        📞 Call
-                    </a>
+        @if (product_part_at_least(2))
+            @unless (request()->routeIs('estimate'))
+                {{-- Themeable Mobile Sticky Action Rail --}}
+                <div class="fixed bottom-0 inset-x-0 z-40 border-t-4 border-slate-950 bg-brand-paper p-3 shadow-2xl lg:hidden">
+                    <div class="mx-auto flex max-w-md items-center justify-between gap-3">
+                        <a href="{{ url('/estimate') }}"  class="btn-brutal flex-1 bg-yellow-400 py-3 text-center text-xs font-black uppercase tracking-wider text-slate-950">
+                            ⚡ 2-Min Price Quote
+                        </a>
+                        <a href="{{ $telHref }}" class="flex items-center justify-center border-2 border-slate-950 bg-white px-4 py-3 text-xs font-black uppercase tracking-wider text-slate-900 transition-colors hover:bg-slate-100">
+                            📞 Call
+                        </a>
+                    </div>
                 </div>
-            </div>
 
-            {{-- Sticky Get-Estimate call to action (Desktop) — appears once the visitor has
-                 scrolled past the hero's own CTA, so it never stacks on top of it or the
-                 header button, and doesn't cover fold-level content on shorter pages. --}}
-            <a href="{{ url('/estimate') }}"
-               x-data="{ show: false }"
-               x-init="window.addEventListener('scroll', () => { show = window.scrollY > 500 }, { passive: true })"
-               x-show="show"
-               x-cloak
-               class="btn-brutal fixed bottom-6 right-6 z-30 hidden border-2 border-slate-950 bg-yellow-400 px-5 py-3 text-sm font-bold uppercase tracking-wide text-slate-950 shadow-lg lg:block">
-                Get Estimate
-            </a>
-        @endunless
+                {{-- Sticky Get-Estimate call to action (Desktop) — appears once the visitor has
+                     scrolled past the hero's own CTA, so it never stacks on top of it or the
+                     header button, and doesn't cover fold-level content on shorter pages. --}}
+                <a href="{{ url('/estimate') }}"
+                   x-data="{ show: false }"
+                   x-init="window.addEventListener('scroll', () => { show = window.scrollY > 500 }, { passive: true })"
+                   x-show="show"
+                   x-cloak
+                   class="btn-brutal fixed bottom-6 right-6 z-30 hidden border-2 border-slate-950 bg-yellow-400 px-5 py-3 text-sm font-bold uppercase tracking-wide text-slate-950 shadow-lg lg:block">
+                    Get Estimate
+                </a>
+            @endunless
+        @endif
 
 
 
