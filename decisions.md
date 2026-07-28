@@ -1,5 +1,21 @@
 # Decisions
 
+## 2026-07-29
+
+<decision>
+ <category>Business_Logic</category>
+ <context>Getwebfield pricing needed one internal master, a minimal public price list, and a separate upsells page — US/UK/CA/AU in USD only; Bangladesh is a separate venture.</context>
+ <action>docs/pricing-master.md holds full terms (20/40/40 Track A milestones, unlimited content updates, chargeback immediate suspend, code handover at month 2, 25% escalator every 3 clients internal-only, email upsell $397/mo, no priority support, no SEO+email bundle). docs/pricing-public.md and docs/pricing-upsells-public.md are website-ready. Industry packs remain internal demo tooling only.</action>
+ <reason>Public pricing stays simple and unqualified; operational and pricing mechanics stay out of client view; one master avoids drift between proposal copies.</reason>
+</decision>
+
+<decision>
+ <category>Business_Logic</category>
+ <context>Need two sales tracks alongside demos: clients who want to buy the build vs. clients who want low upfront cost on our hosting, without building SaaS or auto-billing yet.</context>
+ <action>Track A (Own it): founding setup $987 / $1,777 / $4,798 + monthly $50 / $125 / $250, first month free after launch, tiers 1–3. Track B (Rent it): $200 bank setup + monthly $117 / $227 pay-first, tiers 1–2 only, our hosting, no trial/free month, suspend after 3 days non-payment, buy-out anytime at full Track A setup ($987 / $1,777) with no credit for $200; hosting after buy-out client’s choice, $50 / $125 if they stay. Redesign and upsells (SEO, ads, email) always separate. Client-facing copy in docs/pricing-proposal.md; ops notes in docs/pricing-internal.md.</action>
+ <reason>Lower-friction entry ($200 + month 1) without undermining Tier 3 ops sales or training the market on unsustainably cheap monthly; manual billing until client 5+ and SaaS phase.</reason>
+</decision>
+
 ## 2026-07-28
 
 <decision>
@@ -78,4 +94,11 @@
  <context>Token media queries initially used Figma frame widths (744 / 1440), so laptop widths never hit “desktop” type/spacing and the Care Suite still mixed Tailwind gaps.</context>
  <action>Device tiers are 0 / 640 / 1200 everywhere: type scale and spacing vars in design-tokens.css, plain-CSS grids (.grid-services 1→2→3, .grid-steps 1→3, .grid-hero stacked→12-col), and the page-builder layout picker (tab: 640px, new desk: 1200px replacing lg: in PageBlocks::layoutClasses). Section/card rhythm comes from .space-section / .space-card / .stack-* instead of ad-hoc Tailwind py/mt/gap.</action>
  <reason>One tier system means type, spacing, and column counts flip at the same widths on real phones/tablets/laptops. Tailwind's own sm/md/lg stay available for one-off chrome (e.g. the header nav still swaps to the hamburger at lg, since that depends on whether the links fit, not on the type scale).</reason>
+</decision>
+
+<decision>
+ <category>UI/UX</category>
+ <context>Only hero / three_step / service_matrix / cta_banner were moved onto Figma type+spacing tokens; the other pre-made blocks still used Tailwind text-* / py-* / gap-* so About, FAQ, proof, stats, etc. looked like a different design system.</context>
+ <action>Wire every public block (about, faq, gallery, image_text_split, rich_text, icon_feature, logo_cloud, neighborhood_proof, review_spotlight, stat_band, testimonial_grid, testimonial_quote, trust_bar) to .type-* / .space-section / .space-card / .stack-* / .grid-split|services|stats using the same Heading / Body / Tagline role map.</action>
+ <reason>Pre-made blocks are the product’s “model home rooms” — they must share one type and spacing language or demos look half-finished.</reason>
 </decision>
