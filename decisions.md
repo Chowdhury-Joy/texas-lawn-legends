@@ -37,3 +37,10 @@
  <action>Add a public “Reset current pack” action to the `/demo` hub (`POST /demo/reset`) so you can restore the model-home starter content without leaving the pitch flow.</action>
  <reason>Reduces demo friction and prevents the next meeting from starting with a prospect-edited/dirty model home.</reason>
 </decision>
+
+<decision>
+ <category>UI/UX</category>
+ <context>Admin users don’t need the “Theme Preview” live iframe block while editing branding settings.</context>
+ <action>Remove the “Theme Preview” section from the Filament “Branding & Theme” settings page and delete its backing Blade view.</action>
+ <reason>Reduces admin panel clutter and removes an unused preview surface from the settings flow.</reason>
+</decision>
