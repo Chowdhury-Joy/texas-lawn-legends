@@ -55,6 +55,13 @@
 <decision>
  <category>UI/UX</category>
  <context>Admin Accent/Primary backgrounds could be set dark while button and badge labels stayed hardcoded near-black, and nested section/card layers had no paired ink tokens.</context>
- <action>Publish on-primary, on-primary-light, on-accent, and accent-ink CSS vars (auto near-black #1a1a1a or near-white #f2f2f2 from luminance). Primary CTAs use .btn-primary; accent chips use .chip-accent; CTA banner inverse uses .chip-on-accent swap. Text colors stay out of Branding admin.</action>
- <reason>Background-only admin controls stay simple while stacked surfaces (section → card → badge/button) remain readable when brand paints change.</reason>
+ <action>Publish on-primary, on-primary-light, on-accent, and on-accent-inverse CSS vars (auto near-black #1a1a1a or near-white #f2f2f2 from luminance). Backgrounds stay CMS colors; labels on those fills never use accent-as-text. Primary CTAs use accent fill + on-accent label; primary badges use primary fill + on-primary label.</action>
+ <reason>Background-only admin controls stay simple while stacked surfaces stay readable — colorful paints, B/W type only.</reason>
+</decision>
+
+<decision>
+ <category>UI/UX</category>
+ <context>3-step process numbers used yellow fill + black text-stroke and sometimes showed a decorative star inside “02”.</context>
+ <action>Render step numbers as plain near-black type with no stroke/fill color, and strip non-alphanumeric characters from the number field.</action>
+ <reason>Step indices are structure, not accent highlights — colorful outlined numerals compete with real CTAs.</reason>
 </decision>

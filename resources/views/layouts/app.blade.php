@@ -38,6 +38,7 @@
         $onPrimary = contrast_ink($colorPrimary);
         $onPrimaryLight = contrast_ink($colorPrimaryLight);
         $onAccent = contrast_ink($colorAccent);
+        $onAccentInverse = contrast_ink($onAccent); // ink sitting on an on-accent fill (CTA inverse buttons)
         $accentInk = accent_ink($colorAccent, $colorPrimaryLight);
     @endphp
     <style>
@@ -52,6 +53,7 @@
             --color-on-primary: {{ $onPrimary }};
             --color-on-primary-light: {{ $onPrimaryLight }};
             --color-on-accent: {{ $onAccent }};
+            --color-on-accent-inverse: {{ $onAccentInverse }};
             --color-accent-ink: {{ $accentInk }};
             --color-brand-accent: {{ $colorAccent }};
             --color-brand-on-accent: {{ $onAccent }};
@@ -125,7 +127,7 @@
                     @else
                         <span class="text-lg font-black uppercase tracking-tight text-slate-900 sm:text-xl">{{ $logoText }}</span>
                         @if ($logoBadge)
-                            <span class="mt-1 inline-block w-fit bg-emerald-900 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-yellow-400">{{ $logoBadge }}</span>
+                            <span class="mt-1 inline-block w-fit bg-emerald-900 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-on-primary">{{ $logoBadge }}</span>
                         @endif
                     @endif
                 </a>
@@ -162,7 +164,7 @@
 
                 <div class="flex items-center gap-3">
                     @if ($showEstimateCta)
-                        <a href="{{ url('/estimate') }}" @click.prevent="$dispatch('open-estimate-modal')" class="btn-brutal btn-primary hidden items-center justify-center px-5 py-2 text-xs font-black uppercase tracking-wider lg:inline-flex">
+                        <a href="{{ url('/estimate') }}" @click.prevent="$dispatch('open-estimate-modal')" class="btn-brutal btn-primary bg-yellow-400 hidden items-center justify-center px-5 py-2 text-xs font-black uppercase tracking-wider lg:inline-flex">
                             Get Free Estimate
                         </a>
                     @endif
@@ -219,7 +221,7 @@
                 <div>
                     <span class="text-lg font-black uppercase tracking-tight text-white">{{ $logoText }}</span>
                     @if ($logoBadge)
-                        <span class="mt-2 inline-block w-fit bg-emerald-900 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-yellow-400">{{ $logoBadge }}</span>
+                        <span class="mt-2 inline-block w-fit bg-emerald-900 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-on-primary">{{ $logoBadge }}</span>
                     @endif
                     <div class="mt-5 space-y-1.5 text-sm">
                         <p><a href="{{ $telHref }}" class="font-bold text-white hover:text-yellow-400">{{ $phone }}</a></p>
@@ -267,7 +269,7 @@
                 {{-- Themeable Mobile Sticky Action Rail --}}
                 <div class="fixed bottom-0 inset-x-0 z-40 border-t-4 border-slate-950 bg-brand-paper p-3 shadow-2xl lg:hidden">
                     <div class="mx-auto flex max-w-md items-center justify-between gap-3">
-                        <a href="{{ url('/estimate') }}" @click.prevent="$dispatch('open-estimate-modal')" class="btn-brutal btn-primary flex-1 py-3 text-center text-xs font-black uppercase tracking-wider">
+                        <a href="{{ url('/estimate') }}" @click.prevent="$dispatch('open-estimate-modal')" class="btn-brutal btn-primary bg-yellow-400 flex-1 py-3 text-center text-xs font-black uppercase tracking-wider">
                             ⚡ 2-Min Price Quote
                         </a>
                         <a href="{{ $telHref }}" class="flex items-center justify-center border-2 border-slate-950 bg-white px-4 py-3 text-xs font-black uppercase tracking-wider text-slate-900 transition-colors hover:bg-slate-100">
@@ -285,7 +287,7 @@
                    x-init="window.addEventListener('scroll', () => { show = window.scrollY > 500 }, { passive: true })"
                    x-show="show"
                    x-cloak
-                   class="btn-brutal btn-primary fixed bottom-6 right-6 z-30 hidden border-2 border-slate-950 px-5 py-3 text-sm font-bold uppercase tracking-wide shadow-lg lg:block">
+                   class="btn-brutal btn-primary bg-yellow-400 fixed bottom-6 right-6 z-30 hidden border-2 border-slate-950 px-5 py-3 text-sm font-bold uppercase tracking-wide shadow-lg lg:block">
                     Get Estimate
                 </a>
             @endunless
@@ -310,7 +312,7 @@
                      }">
                     <div class="flex items-start justify-between gap-4 border-b-2 border-slate-950 pb-4">
                         <div>
-                            <span class="chip-accent inline-block px-2.5 py-1 text-[10px] font-black uppercase tracking-widest">⚡ Instant Valuation</span>
+                            <span class="chip-accent bg-yellow-400 inline-block px-2.5 py-1 text-[10px] font-black uppercase tracking-widest">⚡ Instant Valuation</span>
                             <h3 class="mt-2 text-2xl font-black uppercase tracking-tight text-slate-900 sm:text-3xl">Property Estimate Preview</h3>
                         </div>
                         <button type="button" @click="estimateModalOpen = false" class="border-2 border-slate-950 bg-white px-2.5 py-1 text-xs font-black uppercase tracking-widest text-slate-900 hover:bg-yellow-400 hover:text-on-accent">✕ Close (Esc)</button>
@@ -348,15 +350,15 @@
 
                         <div class="box-brutal bg-slate-950 p-4 text-center text-white">
                             <span class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Real-Time Valuation Preview</span>
-                            <p class="mt-1 text-3xl font-black text-accent-ink">
-                                $<span x-text="low().toLocaleString()"></span> <span class="text-slate-400">–</span> $<span x-text="high().toLocaleString()"></span>
+                            <p class="mt-1 text-3xl font-black text-[#f2f2f2]">
+                                $<span x-text="low().toLocaleString()"></span> <span class="text-white/50">–</span> $<span x-text="high().toLocaleString()"></span>
                             </p>
                         </div>
                     </div>
 
                     <div class="mt-6 flex flex-col gap-3 sm:flex-row">
                         <a :href="'{{ url('/estimate') }}?neighborhood=' + encodeURIComponent(modalLocation) + '&sqft=' + sqft"
-                           class="btn-brutal btn-primary flex-1 px-6 py-3.5 text-center text-xs font-black uppercase tracking-wider">
+                           class="btn-brutal btn-primary bg-yellow-400 flex-1 px-6 py-3.5 text-center text-xs font-black uppercase tracking-wider">
                             Lock In Free Site Visit →
                         </a>
                     </div>

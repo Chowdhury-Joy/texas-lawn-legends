@@ -92,7 +92,7 @@
                 @endphp
 
                 @if ($type === 'eyebrow' && filled($text))
-                    <span data-field="eyebrow" data-stagger style="--stagger-i: {{ $loop->index + 1 }}" class="mb-4 inline-block w-fit bg-emerald-900 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-accent-ink">
+                    <span data-field="eyebrow" data-stagger style="--stagger-i: {{ $loop->index + 1 }}" class="mb-4 inline-block w-fit bg-emerald-900 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-on-primary">
                         {{ $text }}
                     </span>
 
@@ -118,13 +118,13 @@
                                            x-model="location"
                                            placeholder="Enter ZIP code or {{ strtolower(niche_label('area_field')) }}..."
                                            class="w-full border-4 border-slate-950 bg-white px-4 py-3 text-sm font-bold placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-yellow-400 sm:py-4">
-                                    <button type="submit" class="btn-brutal btn-primary flex shrink-0 items-center justify-center px-6 py-3 text-sm sm:px-8 sm:py-4 sm:text-base">
+                                    <button type="submit" class="btn-brutal btn-primary bg-yellow-400 flex shrink-0 items-center justify-center px-6 py-3 text-sm sm:px-8 sm:py-4 sm:text-base">
                                         {{ filled($text) ? $text : 'View Instant Pricing →' }}
                                     </button>
                                 </div>
                             </form>
                         @else
-                            <a href="{{ $telHref }}" class="btn-brutal btn-primary inline-flex items-center justify-center px-6 py-3 text-sm font-black uppercase tracking-widest sm:px-8 sm:py-4 sm:text-base">
+                            <a href="{{ $telHref }}" class="btn-brutal btn-primary bg-yellow-400 inline-flex items-center justify-center px-6 py-3 text-sm font-black uppercase tracking-widest sm:px-8 sm:py-4 sm:text-base">
                                 {{ filled($text) ? $text : 'Call or Text' }}
                             </a>
                         @endif
@@ -153,12 +153,12 @@
                 <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-slate-950/40 flex flex-col justify-between p-6">
                     <div class="flex items-center justify-between">
                         @if (filled($data['media_badge'] ?? null) || ! array_key_exists('media_badge', $data))
-                            <span data-field="media_badge" class="chip-accent px-2 py-1 text-[10px] font-black uppercase tracking-widest">
+                            <span data-field="media_badge" class="chip-accent bg-yellow-400 px-2 py-1 text-[10px] font-black uppercase tracking-widest">
                                 {{ filled($data['media_badge'] ?? null) ? $data['media_badge'] : 'Featured Build' }}
                             </span>
                         @endif
                         @if (filled($data['media_neighborhood'] ?? null) || ! array_key_exists('media_neighborhood', $data))
-                            <span data-field="media_neighborhood" class="text-[10px] font-bold uppercase tracking-widest text-yellow-400 bg-slate-950/60 px-2 py-1">
+                            <span data-field="media_neighborhood" class="text-[10px] font-bold uppercase tracking-widest text-on-primary bg-slate-950/60 px-2 py-1">
                                 {{ filled($data['media_neighborhood'] ?? null) ? $data['media_neighborhood'] : 'Kessler Park' }}
                             </span>
                         @endif

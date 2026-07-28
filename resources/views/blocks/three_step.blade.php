@@ -55,9 +55,14 @@
         @endforeach
         <div class="mt-14 text-left {{ $layout ?: 'grid grid-cols-1 gap-8 lg:grid-cols-3' }}">
             @foreach ($processSteps as $index => $step)
+                @php
+                    $rawNumber = filled($step['number'] ?? null) ? (string) $step['number'] : '0'.($index + 1);
+                    // Keep digits only — drop decorative stars/emoji that sometimes land in CMS numbers.
+                    $stepNumber = preg_replace('/[^\dA-Za-z]/u', '', $rawNumber) ?: '0'.($index + 1);
+                @endphp
                 <div data-stagger style="--stagger-i: {{ $index }}" class="box-brutal p-5 sm:p-8 mr-[8px] lg:mr-0">
-                    <span data-field="steps.{{ $index }}.number" class="block text-6xl font-black leading-none text-yellow-400" style="-webkit-text-stroke: 2px #0f172a;">
-                        {{ filled($step['number'] ?? null) ? $step['number'] : '0' . ($index + 1) }}
+                    <span data-field="steps.{{ $index }}.number" class="block text-6xl font-black leading-none text-[#1a1a1a]">
+                        {{ $stepNumber }}
                     </span>
                     @if (filled($step['title'] ?? null))
                         <h3 data-field="steps.{{ $index }}.title" class="mt-4 text-2xl font-medium tracking-tighter text-slate-900">
