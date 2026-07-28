@@ -43,3 +43,10 @@
  <root_cause>The field used Tagline Large (18px IBM Plex Mono, uppercase); monospace is much wider per character than the old sans placeholder, so the text overflowed the max-w-xl input.</root_cause>
  <prevention_rule>Any mono/Tagline text inside a fixed-width control must be checked at the desktop token size — drop to .type-tagline and widen the field rather than letting a conversion field truncate its prompt.</prevention_rule>
 </bug>
+
+<bug>
+ <category>UI/UX</category>
+ <symptom>Homepage sections below the hero (About, FAQ, proof, stats, testimonials) still looked like the old Tailwind kit after the typography system shipped.</symptom>
+ <root_cause>Token wiring stopped at four blocks; the remaining pre-made Blade blocks kept text-3xl / tracking-* / px-6 py-section as their type and spacing source of truth.</root_cause>
+ <prevention_rule>When shipping a public design-token system, update every resources/views/blocks/*.blade.php in the same pass — never leave a subset of pre-made blocks on Tailwind type/spacing.</prevention_rule>
+</bug>

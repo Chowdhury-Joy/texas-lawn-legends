@@ -2,47 +2,47 @@
     $image = filled($data['image'] ?? null) ? public_url($data['image']) : null;
     $stats = (array) ($data['stats'] ?? []);
     $layout = \App\Support\PageBlocks::layoutClasses($data['layout'] ?? []);
-    
+    $reversed = (bool) ($data['reverse'] ?? false);
 @endphp
 <section id="about" class="border-t-4 border-slate-950 bg-brand-paper">
-    <div class="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-6 py-section lg:grid-cols-2 lg:items-center">
-        <div data-reveal class="{{ $data['reverse'] ?? false ? 'lg:order-2' : '' }}">
+    <div @class(['grid-split mx-auto max-w-7xl space-section', 'is-reversed' => $reversed])>
+        <div data-reveal>
             @if ($image)
                 <img src="{{ $image }}" alt="{{ $data['heading'] ?? ('About '.(setting('site_name') ?: 'Us')) }}" loading="lazy" decoding="async" class="box-brutal aspect-[4/3] w-full object-cover">
             @endif
         </div>
 
-        <div class="flex flex-col justify-center {{ $data['reverse'] ?? false ? 'lg:order-1' : '' }}">
+        <div class="stack-copy justify-center">
             @if (filled($data['eyebrow'] ?? null))
-                <span data-field="eyebrow" data-reveal class="inline-block w-fit bg-emerald-900 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-yellow-400">
+                <span data-field="eyebrow" data-reveal class="inline-block w-fit bg-emerald-900 px-2 py-0.5 type-tagline text-yellow-400">
                     {{ $data['eyebrow'] }}
                 </span>
             @endif
 
             @if (! array_key_exists('heading', $data) || filled($data['heading'] ?? null))
-                <h2 data-field="heading" data-reveal class="mt-4 text-3xl font-medium tracking-tighter text-slate-900 sm:text-4xl">
+                <h2 data-field="heading" data-reveal class="type-h2 text-slate-900">
                     {{ filled($data['heading'] ?? null) ? $data['heading'] : ('About '.(setting('site_name') ?: 'Us')) }}
                 </h2>
             @endif
 
             @if (filled($data['body'] ?? null))
-                <p data-field="body" data-reveal class="mt-5 text-base leading-snug tracking-tight text-slate-600">
+                <p data-field="body" data-reveal class="type-body-lg text-slate-600">
                     {{ $data['body'] }}
                 </p>
             @endif
 
             @if (! empty($stats))
-                <div class="mt-8 {{ $layout ?: 'grid grid-cols-2 gap-4 sm:grid-cols-3' }}">
+                <div class="stack-after-header {{ $layout ?: 'grid-stats-sm' }}">
                     @foreach ($stats as $index => $stat)
                         @if (filled($stat['value'] ?? null) || filled($stat['label'] ?? null))
-                            <div data-field="stats.{{ $index }}" data-stagger style="--stagger-i: {{ $index }}" class="box-brutal p-3 sm:p-4">
+                            <div data-field="stats.{{ $index }}" data-stagger style="--stagger-i: {{ $index }}" class="box-brutal space-card">
                                 @if (filled($stat['value'] ?? null))
-                                    <h3 data-field="stats.{{ $index }}.value" class="block text-4xl font-medium leading-none tracking-tighter text-emerald-900">
+                                    <h3 data-field="stats.{{ $index }}.value" class="type-h3 text-emerald-900">
                                         {{ $stat['value'] }}
                                     </h3>
                                 @endif
                                 @if (filled($stat['label'] ?? null))
-                                    <span data-field="stats.{{ $index }}.label" class="mt-1 block text-xs font-bold uppercase tracking-wide text-slate-500">
+                                    <span data-field="stats.{{ $index }}.label" class="type-tagline mt-1 block text-slate-500">
                                         {{ $stat['label'] }}
                                     </span>
                                 @endif
