@@ -3,6 +3,13 @@
 ## 2026-07-28
 
 <decision>
+ <category>CRO</category>
+ <context>Sales demos need to flip between lawn / cleaning / roofing without editing branding live or hosting three apps.</context>
+ <action>Ship public /demo hub (APP_DEMO_HUB) plus admin Industry Packs page. NicheLoader sets active_niche + demo_mode, wipes showcase content, reseeds pack. Demo banner on public site; ops webhooks muted and new estimator leads tagged is_demo while demo_mode is on. Showcase brands: BrightSide Cleaning, Summit Roof Co.</action>
+ <reason>Model-home pitch (hub → quote → admin → reset) is faster and safer than rearranging one site mid-call.</reason>
+</decision>
+
+<decision>
  <category>Business_Logic</category>
  <context>Need to reuse one codebase across home-service industries without baking Dallas landscaping into the product shell.</context>
  <action>Introduce APP_NICHE + NicheResolver + LawnPack (vocabulary, SEO schema type, settings defaults, content seeders under database/seeders/Niches/Lawn). Public/admin UI reads labels via niche_label(); empty brand settings use neutral fallbacks, never hardcoded Texas Lawn Legends/Dallas. Product Parts remain the feature tier; packs are the industry skin.</action>

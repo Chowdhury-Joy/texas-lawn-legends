@@ -45,4 +45,12 @@ class NichePackTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('"@type": "LandscapingBusiness"', false);
     }
+
+    public function test_all_registered_packs_expose_hub_blurbs(): void
+    {
+        $cards = \App\Support\Niche\NicheLoader::hubCards();
+
+        $this->assertCount(3, $cards);
+        $this->assertSame(['lawn', 'cleaning', 'roofing'], array_column($cards, 'id'));
+    }
 }

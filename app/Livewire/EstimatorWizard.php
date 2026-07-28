@@ -206,6 +206,7 @@ class EstimatorWizard extends Component
             'step_reached'             => 'step_'.$this->step,
             'status'                   => $this->estimateLow !== null ? LeadStatus::Qualified : LeadStatus::Partial,
             'referred_by_code'         => $this->referred_by_code,
+            'is_demo'                  => \App\Support\Niche\NicheResolver::demoMode(),
         ];
 
         if ($this->leadUuid) {

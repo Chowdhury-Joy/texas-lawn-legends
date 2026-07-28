@@ -2,6 +2,7 @@
 
 namespace App\Support\Niche;
 
+use App\Models\Setting;
 use App\Support\Niche\Packs\LawnPack;
 use InvalidArgumentException;
 
@@ -15,7 +16,7 @@ final class NicheResolver
             return self::$resolved;
         }
 
-        $id = (string) config('niche.active', 'lawn');
+        $id = self::activeId();
         $packs = config('niche.packs', []);
 
         if (! isset($packs[$id]) || ! is_string($packs[$id])) {
@@ -30,6 +31,30 @@ final class NicheResolver
         }
 
         return self::$resolved = $pack;
+    }
+
+    /**
+     * Setting override (demo loads) wins over APP_NICHE / config.
+     */
+    public static function activeId(): string
+    {
+        $fromSetting = setting('active_niche');
+
+        if (filled($fromSetting)) {
+            return (string) $fromSetting;
+        }
+
+        return (string) config('niche.active', 'lawn');
+    }
+
+    public static function demoMode(): bool
+    {
+        return filter_var(setting('demo_mode', false), FILTER_VALIDATE_BOOLEAN);
+    }
+
+    public static function demoHubEnabled(): bool
+    {
+        return (bool) config('niche.demo_hub', false);
     }
 
     /**

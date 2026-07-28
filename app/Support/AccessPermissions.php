@@ -108,6 +108,11 @@ final class AccessPermissions
                 'group' => 'Site Settings',
                 'roles' => [UserRole::Admin],
             ],
+            'settings.industry_packs' => [
+                'label' => 'Industry Packs / Demo',
+                'group' => 'Site Settings',
+                'roles' => [UserRole::Admin],
+            ],
             'settings.homepage' => [
                 'label' => 'Homepage Content',
                 'group' => 'Site Settings',

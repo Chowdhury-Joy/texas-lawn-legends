@@ -45,6 +45,7 @@ class Lead extends Model
         'scheduled_at',
         'escalated_at',
         'external_booking_id',
+        'is_demo',
     ];
 
     protected function casts(): array
@@ -56,6 +57,7 @@ class Lead extends Model
             'status' => LeadStatus::class,
             'scheduled_at' => 'datetime',
             'escalated_at' => 'datetime',
+            'is_demo' => 'boolean',
         ];
     }
 

@@ -49,6 +49,15 @@
     <body class="min-h-screen bg-white font-sans text-slate-900 antialiased overflow-x-hidden">
         <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[60] focus:border-2 focus:border-slate-950 focus:bg-yellow-400 focus:px-4 focus:py-2 focus:text-sm focus:font-bold focus:uppercase focus:tracking-wide">Skip to content</a>
 
+        @if (\App\Support\Niche\NicheResolver::demoMode())
+            <div class="relative z-[60] border-b-2 border-slate-950 bg-yellow-400 px-4 py-2 text-center text-xs font-black uppercase tracking-wider text-slate-950">
+                Demo — {{ niche()->label() }} example
+                @if (\App\Support\Niche\NicheResolver::demoHubEnabled())
+                    · <a href="{{ route('demo.hub') }}" class="underline">Back to demo hub</a>
+                @endif
+            </div>
+        @endif
+
         {{-- Combined Sticky Header Region --}}
         <header class="sticky top-0 z-50 w-full"
                 x-data="{ mobileOpen: false }"

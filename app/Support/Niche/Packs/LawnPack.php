@@ -126,4 +126,9 @@ final class LawnPack implements NichePack
             PagesSeeder::class,
         ];
     }
+
+    public function hubBlurb(): string
+    {
+        return 'Premium landscaping & lawn care — full demo with quote funnel and ops.';
+    }
 }

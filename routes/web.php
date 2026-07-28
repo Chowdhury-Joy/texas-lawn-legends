@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DemoHubController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\ProposalController;
@@ -9,6 +10,9 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [PageController::class, 'home'])->name('home');
+
+Route::get('/demo', [DemoHubController::class, 'index'])->name('demo.hub');
+Route::post('/demo/load', [DemoHubController::class, 'load'])->name('demo.load');
 
 /*
 |--------------------------------------------------------------------------

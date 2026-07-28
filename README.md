@@ -143,11 +143,27 @@ One install = one industry. Set in `.env`:
 
 ```bash
 APP_NICHE=lawn
+APP_DEMO_HUB=true
 ```
 
-Today only the **lawn** pack ships (Texas Lawn Legends starter content + labels like Create/Care, sq ft, Neighborhood). Product Parts (Website / Booking / Ops) control *which features* are on; the niche pack controls *industry words and starter content*.
+**Packs shipping today**
 
-To add another industry later: register a pack class in `config/niche.php`, add labels/settings defaults, and drop seeders under `database/seeders/Niches/{Name}/`.
+| Pack | Brand (demo) | Switch |
+|---|---|---|
+| `lawn` | Texas Lawn Legends | richest demo |
+| `cleaning` | BrightSide Cleaning | thin showcase |
+| `roofing` | Summit Roof Co | thin showcase |
+
+**How to pitch (60–90 seconds)**
+
+1. Open `/demo` (requires `APP_DEMO_HUB=true` or local env)
+2. Click an industry card → site reloads as that model home
+3. Walk hero → `/estimate` → admin edit a page
+4. After the call: Admin → **Site Settings → Industry Packs** → **Reset current pack**
+
+Or from CLI: `php artisan niche:load cleaning` / `php artisan niche:load --reset`
+
+Product Parts (Website / Booking / Ops) still control *which features* are on; packs control *industry words and starter content*.
 
 ---
 

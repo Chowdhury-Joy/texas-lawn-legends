@@ -45,4 +45,9 @@ interface NichePack
      * @return list<class-string<\Illuminate\Database\Seeder>>
      */
     public function contentSeeders(): array;
+
+    /**
+     * One-line pitch for the public demo hub card.
+     */
+    public function hubBlurb(): string;
 }

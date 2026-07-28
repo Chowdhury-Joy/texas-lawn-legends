@@ -29,6 +29,7 @@ class SampleProjectSeeder extends Seeder
                 'step_reached' => 'booked',
                 'status' => LeadStatus::Booked,
                 'scheduled_at' => now()->addDays(3)->setTime(10, 0),
+                'is_demo' => true,
             ],
         );
 
