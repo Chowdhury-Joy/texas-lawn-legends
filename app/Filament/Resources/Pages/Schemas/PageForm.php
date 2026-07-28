@@ -41,7 +41,19 @@ class PageForm
                             ->default(true)
                             ->columnSpanFull(),
                     ]),
+                Section::make('SEO')
+                    ->columns(2)
+                    ->collapsed()
+                    ->schema([
+                        TextInput::make('seo_title')->label('Meta title')->maxLength(255),
+                        TextInput::make('seo_description')->label('Meta description')->maxLength(255),
+                        FileUpload::make('seo_image')
+                            ->label('Social share image')
+                            ->image()->directory('pages')->disk('public')->visibility('public')
+                            ->columnSpanFull(),
+                    ]),
                 Section::make('Page Content')
+                    ->columnSpanFull()
                     ->schema([
                         Builder::make('blocks')
                             ->label('Page Sections')
@@ -52,17 +64,6 @@ class PageForm
                             ->expandAllAction(fn (Action $action) => $action->button()->color('gray'))
                             ->cloneable()
                             ->blockNumbers(false)
-                            ->columnSpanFull(),
-                    ]),
-                Section::make('SEO')
-                    ->columns(2)
-                    ->collapsed()
-                    ->schema([
-                        TextInput::make('seo_title')->label('Meta title')->maxLength(255),
-                        TextInput::make('seo_description')->label('Meta description')->maxLength(255),
-                        FileUpload::make('seo_image')
-                            ->label('Social share image')
-                            ->image()->directory('pages')->disk('public')->visibility('public')
                             ->columnSpanFull(),
                     ]),
             ]);
