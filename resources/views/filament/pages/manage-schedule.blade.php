@@ -5,7 +5,7 @@
         <div class="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900">
             <div>
                 <h2 class="text-base font-bold text-gray-900 dark:text-white">Schedule Overview</h2>
-                <p class="text-xs text-gray-500 dark:text-gray-400">View and manage crew job allocations across Dallas project sites.</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400">View and manage crew job allocations across project sites.</p>
             </div>
             <div class="flex items-center gap-2">
                 @foreach ([

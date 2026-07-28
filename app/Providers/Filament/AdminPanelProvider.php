@@ -34,7 +34,7 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
-            ->brandName(fn () => setting('site_name', 'Texas Lawn Legends'))
+            ->brandName(fn () => setting('site_name') ?: config('app.name'))
             ->login(Login::class)
             ->databaseNotifications()
             ->sidebarCollapsibleOnDesktop()

@@ -137,7 +137,7 @@ class InvoiceForm
                     ->schema([
                         Textarea::make('notes')
                             ->label('Invoice Notes / Payment Instructions')
-                            ->placeholder('Payment due within 14 days. Make checks payable to Texas Lawn Legends LLC or pay via Zelle/wire.')
+                            ->placeholder('Payment due within 14 days. Make checks payable to the business name on file or pay via Zelle/wire.')
                             ->rows(4)
                             ->columnSpan(2),
                     ]),

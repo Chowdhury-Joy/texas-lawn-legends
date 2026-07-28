@@ -57,7 +57,7 @@
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                         <div>
                             <span class="inline-block bg-yellow-400 px-2.5 py-1 text-[10px] font-black uppercase tracking-widest text-slate-950">🎁 Client Referral Reward</span>
-                            <h3 class="mt-2 text-xl font-black uppercase tracking-tight text-white">Refer a Dallas Neighbor & Get $100 Credit</h3>
+                            <h3 class="mt-2 text-xl font-black uppercase tracking-tight text-white">Refer a Neighbor & Get $100 Credit</h3>
                             <p class="mt-1 text-xs text-slate-300">Share your custom referral link with a neighbor. When they request an estimate, you both receive a $100 project credit.</p>
                         </div>
                         <div class="shrink-0">

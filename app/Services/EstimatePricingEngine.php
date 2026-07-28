@@ -8,8 +8,12 @@ use Illuminate\Support\Collection;
 /**
  * Algebraic estimate engine.
  *
+ * Lawn strategy (sqft_neighborhood):
  * Low  = base_rate_per_sqft × service_multiplier × sqft × neighborhood_modifier × complexity_modifier
  * High = Low × high_multiplier
+ *
+ * Strategy key comes from niche()->pricingStrategy() so future packs can swap formulas
+ * without rewriting the estimator wizard steps.
  */
 class EstimatePricingEngine
 {
@@ -18,6 +22,7 @@ class EstimatePricingEngine
      */
     public function calculate(Service $service, int $sqft, string $neighborhood, string $complexity): array
     {
+        // Currently only sqft_neighborhood is implemented; other strategies can branch here later.
         $baseRate = (float) setting('price_per_sqft_modifier', 3.25);
         $serviceMultiplier = (float) $service->base_price_multiplier;
 

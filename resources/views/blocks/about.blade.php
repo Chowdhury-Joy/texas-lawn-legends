@@ -8,7 +8,7 @@
     <div class="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-6 py-section lg:grid-cols-2 lg:items-center">
         <div data-reveal class="{{ $data['reverse'] ?? false ? 'lg:order-2' : '' }}">
             @if ($image)
-                <img src="{{ $image }}" alt="{{ $data['heading'] ?? 'About Texas Lawn Legends' }}" loading="lazy" decoding="async" class="box-brutal aspect-[4/3] w-full object-cover">
+                <img src="{{ $image }}" alt="{{ $data['heading'] ?? ('About '.(setting('site_name') ?: 'Us')) }}" loading="lazy" decoding="async" class="box-brutal aspect-[4/3] w-full object-cover">
             @endif
         </div>
 
@@ -21,7 +21,7 @@
 
             @if (! array_key_exists('heading', $data) || filled($data['heading'] ?? null))
                 <h2 data-field="heading" data-reveal class="mt-4 text-3xl font-medium tracking-tighter text-slate-900 sm:text-4xl">
-                    {{ filled($data['heading'] ?? null) ? $data['heading'] : 'About Texas Lawn Legends' }}
+                    {{ filled($data['heading'] ?? null) ? $data['heading'] : ('About '.(setting('site_name') ?: 'Us')) }}
                 </h2>
             @endif
 

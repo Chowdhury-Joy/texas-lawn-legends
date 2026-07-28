@@ -12,8 +12,8 @@ enum ServiceCategory: string implements HasLabel
     public function getLabel(): string
     {
         return match ($this) {
-            self::Create => 'The Create Suite',
-            self::Care => 'The Care Suite',
+            self::Create => niche_label('suite_create', 'The Create Suite'),
+            self::Care => niche_label('suite_care', 'The Care Suite'),
         };
     }
 }

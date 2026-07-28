@@ -4,6 +4,8 @@ namespace Database\Seeders;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Support\Niche\NicheResolver;
+use Database\Seeders\Niches\Lawn\LawnNicheSeeder;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -25,12 +27,16 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             SettingsSeeder::class,
-            ServicesSeeder::class,
-            TestimonialsSeeder::class,
-            AddonsSeeder::class,
+        ]);
+
+        // Industry starter kit for the active APP_NICHE pack.
+        $nicheId = NicheResolver::active()->id();
+        if ($nicheId === 'lawn') {
+            $this->call([LawnNicheSeeder::class]);
+        }
+
+        $this->call([
             AccessCodesSeeder::class,
-            SampleProjectSeeder::class,
-            PagesSeeder::class,
         ]);
     }
 }

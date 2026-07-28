@@ -9,7 +9,7 @@
                 </div>
                 <h2 class="mt-6 text-xl font-black uppercase tracking-tight text-slate-900 sm:text-2xl">Members Only</h2>
                 <p class="mx-auto mt-3 max-w-md text-sm leading-relaxed text-slate-600">
-                    Current Texas Lawn Legends clients get a fresh access token every month to unlock seasonal add-ons at member pricing. Enter yours below.
+                    Current {{ setting('site_name') ?: 'member' }} clients get a fresh access token every month to unlock seasonal add-ons at member pricing. Enter yours below.
                 </p>
 
                 <form wire:submit="unlock" class="mt-8">

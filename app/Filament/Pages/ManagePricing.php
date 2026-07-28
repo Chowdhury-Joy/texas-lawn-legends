@@ -60,11 +60,11 @@ class ManagePricing extends BaseSettingsPage
                         ->columnSpanFull(),
                 ]),
             Section::make('Base Pricing Engine')
-                ->description('Low = base rate/sqft × service multiplier × sqft × neighborhood modifier × complexity modifier. High = Low × the high multiplier.')
+                ->description('Low = base rate × service multiplier × size × area modifier × complexity modifier. High = Low × the high multiplier.')
                 ->columns(3)
                 ->schema([
                     TextInput::make('price_per_sqft_modifier')
-                        ->label('Base rate per sqft ($)')
+                        ->label(fn () => 'Base rate per '.niche_label('size_unit').' ($)')
                         ->numeric()->prefix('$')->step(0.01)->required(),
                     TextInput::make('estimate_high_multiplier')
                         ->label('High-estimate multiplier')
@@ -74,19 +74,19 @@ class ManagePricing extends BaseSettingsPage
                         ->numeric()->prefix('$')->step(1)
                         ->helperText('Estimates above this trigger the "unique project" consultation path.'),
                     TextInput::make('estimate_min_sqft')
-                        ->label('Minimum sqft')
-                        ->numeric()->suffix('sq ft')->required(),
+                        ->label(fn () => 'Minimum '.niche_label('size_unit'))
+                        ->numeric()->suffix(fn () => niche_label('size_unit'))->required(),
                     TextInput::make('estimate_max_sqft')
-                        ->label('Maximum sqft (slider cap)')
-                        ->numeric()->suffix('sq ft')->required(),
+                        ->label(fn () => 'Maximum '.niche_label('size_unit').' (slider cap)')
+                        ->numeric()->suffix(fn () => niche_label('size_unit'))->required(),
                 ]),
-            Section::make('Neighborhood Modifiers')
-                ->description('Per-neighborhood price multipliers applied to the estimate.')
+            Section::make(fn () => niche_label('area_field').' Modifiers')
+                ->description(fn () => 'Per-'.strtolower(niche_label('area_field')).' price multipliers applied to the estimate.')
                 ->schema([
                     KeyValue::make('neighborhood_modifiers')
-                        ->keyLabel('Neighborhood')
+                        ->keyLabel(fn () => niche_label('area_field'))
                         ->valueLabel('Multiplier')
-                        ->addActionLabel('Add neighborhood'),
+                        ->addActionLabel(fn () => 'Add '.strtolower(niche_label('area_field'))),
                 ]),
             Section::make('Complexity Modifiers')
                 ->description('Multipliers for the project complexity selected in step 3.')

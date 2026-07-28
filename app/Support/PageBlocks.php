@@ -87,7 +87,7 @@ class PageBlocks
                         ['number' => '02', 'title' => 'Custom 3D Design', 'body' => 'Tailored landscape plans for your home.'],
                         ['number' => '03', 'title' => 'Precision Build', 'body' => 'Professional execution on time.'],
                     ]]],
-                    ['type' => 'service_matrix', 'data' => ['create_suite_heading' => 'The Create Suite', 'care_suite_heading' => 'The Care Suite']],
+                    ['type' => 'service_matrix', 'data' => ['create_suite_heading' => niche_label('suite_create'), 'care_suite_heading' => niche_label('suite_care')]],
                     ['type' => 'testimonial_grid', 'data' => ['heading' => 'Verified Neighborhood Reviews', 'featured_only' => true]],
                     ['type' => 'cta_banner', 'data' => ['heading' => 'Ready to Start Your Project?', 'subheading' => 'Get a verified local price range in under 2 minutes.', 'button_label' => 'Start Your Free Estimate']],
                 ],

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Invoice {{ $invoice->invoice_number }} — {{ setting('site_name', 'Texas Lawn Legends') }}</title>
+    <title>Invoice {{ $invoice->invoice_number }} — {{ setting('site_name') ?: 'Invoice' }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         @media print {
@@ -32,7 +32,7 @@
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b-4 border-slate-950 pb-6 mb-8 gap-4">
             <div>
                 <span class="inline-block bg-slate-950 px-3 py-1 text-xs font-black uppercase tracking-widest text-yellow-400 mb-2">
-                    {{ setting('site_name', 'Texas Lawn Legends') }}
+                    {{ setting('site_name') ?: 'Invoice' }}
                 </span>
                 <h1 class="text-3xl font-black tracking-tight text-slate-950">INVOICE</h1>
                 <p class="text-sm font-mono text-slate-600 mt-1">#{{ $invoice->invoice_number }}</p>
@@ -129,8 +129,8 @@
 
         <!-- Footer -->
         <div class="mt-12 border-t border-slate-200 pt-6 text-center text-xs text-slate-500">
-            <p class="font-bold text-slate-800">{{ setting('site_name', 'Texas Lawn Legends LLC') }} · Premier Landscape Design & Operations</p>
-            <p class="mt-1">Dallas, TX · {{ setting('primary_phone', '(214) 617-7725') }}</p>
+            <p class="font-bold text-slate-800">{{ setting('site_name') ?: 'Business' }}@if (setting('header_tagline')) · {{ setting('header_tagline') }}@endif</p>
+            <p class="mt-1">@if (setting('header_location') || setting('business_city')){{ setting('header_location') ?: setting('business_city') }} · @endif{{ setting('primary_phone') }}</p>
         </div>
 
     </div>

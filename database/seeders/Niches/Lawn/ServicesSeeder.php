@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Seeders;
+namespace Database\Seeders\Niches\Lawn;
 
 use App\Enums\ServiceCategory;
 use App\Models\Service;

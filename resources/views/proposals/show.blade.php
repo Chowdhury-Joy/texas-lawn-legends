@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Proposal - {{ $proposal->lead?->name ?? setting('site_name', 'Texas Lawn Legends') }}</title>
+    <title>Proposal - {{ $proposal->lead?->name ?? (setting('site_name') ?: 'Proposal') }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-slate-100 font-sans text-slate-900 antialiased min-h-screen py-10 px-4 sm:px-6">
@@ -11,10 +11,10 @@
         <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b-4 border-slate-950 pb-6 mb-8 gap-4">
             <div>
                 <span class="inline-block bg-slate-950 px-3 py-1 text-xs font-black uppercase tracking-widest text-yellow-400 mb-2">
-                    {{ setting('site_name', 'Texas Lawn Legends') }}
+                    {{ setting('site_name') ?: 'Proposal' }}
                 </span>
                 <h1 class="text-3xl font-black tracking-tight text-slate-950">PROPOSAL</h1>
-                <p class="text-sm text-slate-600 mt-1">Dallas' Premier Landscaping Service</p>
+                <p class="text-sm text-slate-600 mt-1">{{ setting('header_tagline') ?: niche_label('tagline_fallback') }}</p>
             </div>
             <div class="text-right sm:text-right">
                 @php
@@ -90,7 +90,7 @@
         </div>
 
         <div class="mt-12 flex justify-between items-center border-t-2 border-slate-950 pt-8">
-            <p class="text-sm text-slate-500">Thank you for considering {{ setting('site_name', 'Texas Lawn Legends') }}.</p>
+            <p class="text-sm text-slate-500">Thank you for considering {{ setting('site_name') ?: 'us' }}.</p>
             <div class="text-right">
                 <p class="text-xs font-black uppercase tracking-widest text-slate-400">Total Investment</p>
                 <p class="text-4xl font-black text-slate-950 mt-1">${{ number_format($proposal->total_amount, 2) }}</p>

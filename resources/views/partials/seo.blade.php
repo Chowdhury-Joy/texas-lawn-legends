@@ -1,5 +1,5 @@
 @php
-    $siteName = setting('site_name', 'Texas Lawn Legends');
+    $siteName = setting('site_name') ?: config('app.name', 'Local Services');
     $title = ($seoTitle ?? null) ?: setting('meta_title', $siteName);
     $description = ($seoDescription ?? null) ?: setting('meta_description', '');
     $keywords = setting('meta_keywords');
@@ -9,6 +9,8 @@
     $phone = setting('primary_phone');
     $email = setting('primary_email');
     $address = setting('business_address');
+    $city = setting('business_city');
+    $region = setting('business_region');
     $areas = (array) setting('service_areas', []);
     $favicon = setting_image('favicon');
 @endphp
@@ -45,20 +47,20 @@
 <script type="application/ld+json">
 {!! json_encode(array_filter([
     '@@context' => 'https://schema.org',
-    '@type' => 'LandscapingBusiness',
+    '@type' => niche()->schemaOrgType(),
     'name' => $siteName,
     'description' => $description ?: null,
     'url' => url('/'),
     'telephone' => $phone ?: null,
     'email' => $email ?: null,
     'image' => $ogImage ?: null,
-    'address' => $address ? [
+    'address' => $address ? array_filter([
         '@type' => 'PostalAddress',
         'streetAddress' => $address,
-        'addressLocality' => 'Dallas',
-        'addressRegion' => 'TX',
+        'addressLocality' => $city ?: null,
+        'addressRegion' => $region ?: null,
         'addressCountry' => 'US',
-    ] : null,
+    ]) : null,
     'areaServed' => ! empty($areas) ? array_values(array_map(fn ($a) => [
         '@type' => 'Place',
         'name' => $a,

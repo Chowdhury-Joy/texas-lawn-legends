@@ -28,7 +28,7 @@ class LeadForm
                     ->columns(2)
                     ->schema([
                         TextInput::make('service_type')->maxLength(255),
-                        TextInput::make('estimated_sqft')->numeric()->suffix('sq ft'),
+                        TextInput::make('estimated_sqft')->numeric()->suffix(fn () => niche_label('size_unit')),
                         TextInput::make('calculated_estimate_low')
                             ->numeric()->prefix('$')->step(0.01),
                         TextInput::make('calculated_estimate_high')

@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Seeders;
+namespace Database\Seeders\Niches\Lawn;
 
 use App\Models\Page;
 use App\Models\Setting;

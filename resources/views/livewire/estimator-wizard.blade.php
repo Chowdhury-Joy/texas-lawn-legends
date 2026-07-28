@@ -42,7 +42,7 @@
             <p class="mt-2 text-slate-600">Pick the primary scope for your project and tell us where you're located.</p>
 
             <div class="mt-8">
-                <label class="block text-xs font-black uppercase tracking-widest text-slate-700">Neighborhood</label>
+                <label class="block text-xs font-black uppercase tracking-widest text-slate-700">{{ niche_label('area_field') }}</label>
                 <select wire:model="neighborhood" class="mt-2 w-full border-2 border-slate-950 bg-white px-3 py-3 focus:outline-none focus:ring-2 focus:ring-yellow-400">
                     <option value="">Select your neighborhood…</option>
                     @foreach ($this->neighborhoods as $area)
@@ -120,8 +120,8 @@
 
             <div class="mt-8" x-data="{ v: @entangle('sqft').live }">
                 <div class="flex items-baseline justify-between">
-                    <label class="text-xs font-black uppercase tracking-widest text-slate-700">Approx. area</label>
-                    <span class="text-3xl font-black text-slate-900"><span x-text="Number(v).toLocaleString()"></span> <span class="text-base text-slate-500">sq ft</span></span>
+                    <label class="text-xs font-black uppercase tracking-widest text-slate-700">{{ niche_label('size_field') }}</label>
+                    <span class="text-3xl font-black text-slate-900"><span x-text="Number(v).toLocaleString()"></span> <span class="text-base text-slate-500">{{ niche_label('size_unit') }}</span></span>
                 </div>
                 <input type="range" min="{{ $this->sqftBounds['min'] }}" max="{{ $this->sqftBounds['max'] }}" step="50"
                        x-model.number="v"
@@ -205,7 +205,7 @@
                 </div>
                 <div>
                     <label class="block text-xs font-black uppercase tracking-widest text-slate-700">Property address <span class="text-slate-400">(optional)</span></label>
-                    <input type="text" wire:model="address" class="mt-2 w-full border-2 border-slate-950 px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-yellow-400" placeholder="1420 Kessler Pkwy, Dallas, TX">
+                    <input type="text" wire:model="address" class="mt-2 w-full border-2 border-slate-950 px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-yellow-400" placeholder="Street address">
                     @error('address') <p class="mt-1 text-xs font-bold text-red-600">{{ $message }}</p> @enderror
                 </div>
             </div>
@@ -260,7 +260,7 @@
                         $<span x-text="currentLow.toLocaleString()"></span> <span class="text-slate-400">–</span> $<span x-text="currentHigh.toLocaleString()"></span>
                     </h2>
                     <p class="mx-auto mt-3 max-w-lg text-slate-600">
-                        Based on {{ number_format($sqft) }} sq ft
+                        Based on {{ number_format($sqft) }} {{ niche_label('size_unit') }}
                         @if ($this->estimatorMode === 'full')
                             across {{ $this->services->whereIn('id', $service_ids)->pluck('title')->join(', ', ' & ') }}
                         @else

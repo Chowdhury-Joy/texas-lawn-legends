@@ -4,10 +4,18 @@
 
 <decision>
  <category>Business_Logic</category>
+ <context>Need to reuse one codebase across home-service industries without baking Dallas landscaping into the product shell.</context>
+ <action>Introduce APP_NICHE + NicheResolver + LawnPack (vocabulary, SEO schema type, settings defaults, content seeders under database/seeders/Niches/Lawn). Public/admin UI reads labels via niche_label(); empty brand settings use neutral fallbacks, never hardcoded Texas Lawn Legends/Dallas. Product Parts remain the feature tier; packs are the industry skin.</action>
+ <reason>Separates “what features are on” from “what industry am I” so Phase 3 can add showcase packs without rewriting the funnel.</reason>
+</decision>
+
+<decision>
+ <category>Business_Logic</category>
  <context>Need to sell and demo the same codebase as Website+CMS only, +Booking, or full Ops — without rebuilding per client.</context>
  <action>Introduce product_part setting (1/2/3) with ProductFeatures map, admin page “Product Parts”, route middleware, and admin/nav gating. Default remains Part 3 so Texas Lawn Legends behavior is unchanged.</action>
  <reason>Clear packaging for sales (three product levels) while keeping industry packs as a separate skin/content layer next.</reason>
 </decision>
+
 
 <decision>
  <category>UI/UX</category>

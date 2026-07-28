@@ -137,6 +137,18 @@ Seeded admin login: `admin@admin.com` / `pass` at `/admin`.
 
 Seeded member-portal codes (current month only — regenerate via `AccessCodesSeeder` if testing in a later month): `LEGENDS-<ymd>`, `MEMBER-<MON>`.
 
+### Industry packs (`APP_NICHE`)
+
+One install = one industry. Set in `.env`:
+
+```bash
+APP_NICHE=lawn
+```
+
+Today only the **lawn** pack ships (Texas Lawn Legends starter content + labels like Create/Care, sq ft, Neighborhood). Product Parts (Website / Booking / Ops) control *which features* are on; the niche pack controls *industry words and starter content*.
+
+To add another industry later: register a pack class in `config/niche.php`, add labels/settings defaults, and drop seeders under `database/seeders/Niches/{Name}/`.
+
 ---
 
 ## What's built vs. what's left

@@ -1,6 +1,6 @@
 @php
-    $phone = setting('primary_phone', '(214) 617-7725');
-    $telHref = 'tel:+1' . preg_replace('/\D/', '', (string) $phone);
+    $phone = setting('primary_phone');
+    $telHref = $phone ? 'tel:+1' . preg_replace('/\D/', '', (string) $phone) : '#';
 
     $heroImage = filled($data['media_image'] ?? null)
         ? public_url($data['media_image'])
@@ -11,6 +11,12 @@
         : (filled($data['media_image'] ?? null)
             ? public_url($data['media_image'])
             : asset('images/hero_mobile.jpg'));
+
+    $trustRatingLabel = setting('hero_trust_rating') ?: '4.9/5 Rating';
+    $defaultHeading = setting('hero_heading') ?: 'Transform Your Outdoor Space.';
+    $defaultMediaAlt = setting('site_name')
+        ? setting('site_name').' project photo'
+        : 'Project photo';
 
     /*
      * Merge strategy — safe against partial repeater population:
@@ -71,7 +77,7 @@
             {{-- Micro-Social Proof Trust Badge (Static) --}}
             <div data-stagger style="--stagger-i: 0" class="mb-4 flex items-center gap-1.5 text-sm font-bold text-slate-700">
                 <span class="inline-flex items-center text-yellow-500 font-black">★★★★★</span>
-                <span>4.9/5 Rating (140+ Dallas Homeowners)</span>
+                <span>{{ $trustRatingLabel }}</span>
             </div>
 
             @foreach ($renderElements as $element)
@@ -92,7 +98,7 @@
 
                 @elseif ($type === 'heading')
                     <h1 data-field="heading" data-stagger style="--stagger-i: {{ $loop->index + 1 }}" class="text-4xl font-medium leading-[1.05] tracking-tighter text-slate-900 sm:text-5xl lg:text-6xl">
-                        {{ filled($text) ? $text : 'Transform Your Dallas Yard Into An Outdoor Retreat.' }}
+                        {{ filled($text) ? $text : $defaultHeading }}
                     </h1>
 
                 @elseif ($type === 'subheading')
@@ -129,7 +135,7 @@
             <div data-stagger style="--stagger-i: 6" class="box-brutal relative overflow-hidden">
                 <picture>
                     <source srcset="{{ $heroImageMobile }}" media="(max-width: 631px)">
-                    <img src="{{ $heroImage }}" alt="{{ $data['media_title'] ?? 'Texas Lawn Legends Residential Landscaping' }}" loading="lazy" decoding="async" class="aspect-square w-full object-cover">
+                    <img src="{{ $heroImage }}" alt="{{ $data['media_title'] ?? $defaultMediaAlt }}" loading="lazy" decoding="async" class="aspect-square w-full object-cover">
                 </picture>
 
                 <!-- Gradient overlay for text readability -->

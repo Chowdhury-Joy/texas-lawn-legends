@@ -2,6 +2,8 @@
 
 use App\Enums\ProductPart;
 use App\Models\Setting;
+use App\Support\Niche\NichePack;
+use App\Support\Niche\NicheResolver;
 use Illuminate\Support\Facades\Storage;
 
 if (! function_exists('setting')) {
@@ -37,6 +39,26 @@ if (! function_exists('product_part_at_least')) {
             : (ProductPart::tryFrom($minimum) ?? ProductPart::Ops);
 
         return product_part()->atLeast($required);
+    }
+}
+
+if (! function_exists('niche')) {
+    /**
+     * Active industry pack for this install.
+     */
+    function niche(): NichePack
+    {
+        return NicheResolver::active();
+    }
+}
+
+if (! function_exists('niche_label')) {
+    /**
+     * Vocabulary string from the active niche pack.
+     */
+    function niche_label(string $key, ?string $fallback = null): string
+    {
+        return NicheResolver::label($key, $fallback);
     }
 }
 
