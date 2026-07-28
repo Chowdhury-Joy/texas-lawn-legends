@@ -104,14 +104,18 @@ class ManageBranding extends BaseSettingsPage
                         ->helperText('Non-default fonts load from the Bunny Fonts CDN at runtime.'),
                 ]),
             Section::make('Color Tokens')
+                ->description('These are background colors only. Text on top is chosen automatically as near-black or near-white for contrast.')
                 ->columns(2)
                 ->schema([
                     ColorPicker::make('color_primary')
-                        ->label('Primary (forest green)'),
+                        ->label('Primary (forest green)')
+                        ->helperText('Dark section bands (e.g. Projects).'),
                     ColorPicker::make('color_primary_light')
-                        ->label('Primary light'),
+                        ->label('Primary light')
+                        ->helperText('Cards and raised panels on primary sections.'),
                     ColorPicker::make('color_accent')
-                        ->label('Accent (safety yellow)'),
+                        ->label('Accent (safety yellow)')
+                        ->helperText('Primary button / highlight fill. Label text flips automatically to near-black or near-white.'),
                     ColorPicker::make('color_slate')
                         ->label('Structural slate'),
                 ]),

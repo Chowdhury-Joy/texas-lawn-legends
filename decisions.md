@@ -51,3 +51,10 @@
  <action>On ManageProductParts save, persist the setting then full-page redirect back to the Product Parts URL so Filament rebuilds navigation from the new product_part.</action>
  <reason>Livewire form saves don’t re-evaluate sidebar canAccess(); a redirect is the smallest fix that matches how people expect “Save” to apply packaging changes.</reason>
 </decision>
+
+<decision>
+ <category>UI/UX</category>
+ <context>Admin Accent/Primary backgrounds could be set dark while button and badge labels stayed hardcoded near-black, and nested section/card layers had no paired ink tokens.</context>
+ <action>Publish on-primary, on-primary-light, on-accent, and accent-ink CSS vars (auto near-black #1a1a1a or near-white #f2f2f2 from luminance). Primary CTAs use .btn-primary; accent chips use .chip-accent; CTA banner inverse uses .chip-on-accent swap. Text colors stay out of Branding admin.</action>
+ <reason>Background-only admin controls stay simple while stacked surfaces (section → card → badge/button) remain readable when brand paints change.</reason>
+</decision>

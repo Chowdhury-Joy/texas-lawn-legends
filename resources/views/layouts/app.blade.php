@@ -29,16 +29,34 @@
         <link rel="stylesheet" href="https://fonts.bunny.net/css?family={{ strtolower(str_replace(' ', '-', $brandFont)) }}:400,500,600,700,800,900&display=swap">
     @endif
 
-    {{-- Brand tokens: remap the palette shades the design uses to CMS colors --}}
+    {{-- Brand tokens: remap palette shades + auto B/W ink for each surface --}}
+    @php
+        $colorPrimary = setting('color_primary', '#1b4332');
+        $colorPrimaryLight = setting('color_primary_light', '#2d6a4f');
+        $colorAccent = setting('color_accent', '#facc15');
+        $colorSlate = setting('color_slate', '#334155');
+        $onPrimary = contrast_ink($colorPrimary);
+        $onPrimaryLight = contrast_ink($colorPrimaryLight);
+        $onAccent = contrast_ink($colorAccent);
+        $accentInk = accent_ink($colorAccent, $colorPrimaryLight);
+    @endphp
     <style>
         :root {
             @if ($brandFont && $brandFont !== 'Montserrat')
             --font-sans: '{{ $brandFont }}', ui-sans-serif, system-ui, sans-serif;
             @endif
-            --color-emerald-900: {{ setting('color_primary', '#1b4332') }};
-            --color-emerald-800: {{ setting('color_primary_light', '#2d6a4f') }};
-            --color-yellow-400: {{ setting('color_accent', '#facc15') }};
-            --color-slate-800: {{ setting('color_slate', '#334155') }};
+            --color-emerald-900: {{ $colorPrimary }};
+            --color-emerald-800: {{ $colorPrimaryLight }};
+            --color-yellow-400: {{ $colorAccent }};
+            --color-slate-800: {{ $colorSlate }};
+            --color-on-primary: {{ $onPrimary }};
+            --color-on-primary-light: {{ $onPrimaryLight }};
+            --color-on-accent: {{ $onAccent }};
+            --color-accent-ink: {{ $accentInk }};
+            --color-brand-accent: {{ $colorAccent }};
+            --color-brand-on-accent: {{ $onAccent }};
+            --color-brand-on-primary: {{ $onPrimary }};
+            --color-brand-on-primary-light: {{ $onPrimaryLight }};
         }
     </style>
 
@@ -47,15 +65,21 @@
     @stack('head')
 </head>
     <body class="min-h-screen bg-white font-sans text-slate-900 antialiased overflow-x-hidden">
-        <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[60] focus:border-2 focus:border-slate-950 focus:bg-yellow-400 focus:px-4 focus:py-2 focus:text-sm focus:font-bold focus:uppercase focus:tracking-wide">Skip to content</a>
+        <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[60] focus:border-2 focus:border-slate-950 focus:bg-yellow-400 focus:px-4 focus:py-2 focus:text-sm focus:font-bold focus:uppercase focus:tracking-wide focus:text-on-accent">Skip to content</a>
 
         @if (\App\Support\Niche\NicheResolver::demoMode())
-            <div class="relative z-[60] border-b-2 border-slate-950 bg-yellow-400 px-4 py-2 text-center text-xs font-black uppercase tracking-wider text-slate-950">
+            <div class="relative z-[60] border-b-2 border-slate-950 bg-yellow-400 px-4 py-2 text-center text-xs font-black uppercase tracking-wider text-on-accent">
                 Demo — {{ niche()->label() }} example
                 @if (\App\Support\Niche\NicheResolver::demoHubEnabled())
                     · <a href="{{ route('demo.hub') }}" class="underline">Back to demo hub</a>
                 @endif
             </div>
+        @endif
+
+        @if (product_part_at_least(2))
+        <div x-data="{ estimateModalOpen: false, modalLocation: '' }"
+             @open-estimate-modal.window="estimateModalOpen = true; if ($event.detail && $event.detail.location) modalLocation = $event.detail.location;"
+             @keydown.escape.window="estimateModalOpen = false">
         @endif
 
         {{-- Combined Sticky Header Region --}}
@@ -130,22 +154,22 @@
                         <a href="{{ $href }}"
                            @class([
                                'px-2 py-1 text-sm font-bold uppercase tracking-wide transition-colors',
-                               'bg-yellow-400' => $isActiveNavItem($href),
-                               'text-slate-900 hover:bg-yellow-400' => ! $isActiveNavItem($href),
+                               'bg-yellow-400 text-on-accent' => $isActiveNavItem($href),
+                               'text-slate-900 hover:bg-yellow-400 hover:text-on-accent' => ! $isActiveNavItem($href),
                            ])>{{ $label }}</a>
                     @endforeach
                 </nav>
 
                 <div class="flex items-center gap-3">
                     @if ($showEstimateCta)
-                        <a href="{{ url('/estimate') }}" class="btn-brutal hidden items-center justify-center bg-yellow-400 px-5 py-2 text-xs font-black uppercase tracking-wider text-slate-950 lg:inline-flex">
+                        <a href="{{ url('/estimate') }}" @click.prevent="$dispatch('open-estimate-modal')" class="btn-brutal btn-primary hidden items-center justify-center px-5 py-2 text-xs font-black uppercase tracking-wider lg:inline-flex">
                             Get Free Estimate
                         </a>
                     @endif
 
                     {{-- Mobile hamburger --}}
                     <button type="button"
-                            class="inline-flex h-11 w-11 items-center justify-center border-2 border-slate-950 bg-yellow-400 text-slate-950 transition-colors hover:bg-yellow-300 lg:hidden"
+                            class="inline-flex h-11 w-11 items-center justify-center border-2 border-slate-950 bg-yellow-400 text-on-accent transition-colors lg:hidden"
                             @click="mobileOpen = !mobileOpen"
                             :class="mobileOpen ? 'bg-slate-950 text-yellow-400' : ''"
                             :aria-expanded="mobileOpen"
@@ -173,11 +197,11 @@
                         <a href="{{ $href }}" @click="mobileOpen = false"
                            @class([
                                'border-b border-slate-200 py-3 text-sm font-bold uppercase tracking-wide transition-colors',
-                               'bg-yellow-400' => $isActiveNavItem($href),
-                               'text-slate-900 hover:bg-yellow-400' => ! $isActiveNavItem($href),
+                               'bg-yellow-400 text-on-accent' => $isActiveNavItem($href),
+                               'text-slate-900 hover:bg-yellow-400 hover:text-on-accent' => ! $isActiveNavItem($href),
                            ])>{{ $label }}</a>
                     @endforeach
-                    <a href="{{ $telHref }}" @click="mobileOpen = false" class="flex items-center gap-2 py-3 text-sm font-bold uppercase tracking-wide text-slate-900 transition-colors hover:bg-yellow-400">
+                    <a href="{{ $telHref }}" @click="mobileOpen = false" class="flex items-center gap-2 py-3 text-sm font-bold uppercase tracking-wide text-slate-900 transition-colors hover:bg-yellow-400 hover:text-on-accent">
                         <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z"/></svg>
                         {{ $phone }}
                     </a>
@@ -243,7 +267,7 @@
                 {{-- Themeable Mobile Sticky Action Rail --}}
                 <div class="fixed bottom-0 inset-x-0 z-40 border-t-4 border-slate-950 bg-brand-paper p-3 shadow-2xl lg:hidden">
                     <div class="mx-auto flex max-w-md items-center justify-between gap-3">
-                        <a href="{{ url('/estimate') }}"  class="btn-brutal flex-1 bg-yellow-400 py-3 text-center text-xs font-black uppercase tracking-wider text-slate-950">
+                        <a href="{{ url('/estimate') }}" @click.prevent="$dispatch('open-estimate-modal')" class="btn-brutal btn-primary flex-1 py-3 text-center text-xs font-black uppercase tracking-wider">
                             ⚡ 2-Min Price Quote
                         </a>
                         <a href="{{ $telHref }}" class="flex items-center justify-center border-2 border-slate-950 bg-white px-4 py-3 text-xs font-black uppercase tracking-wider text-slate-900 transition-colors hover:bg-slate-100">
@@ -256,14 +280,89 @@
                      scrolled past the hero's own CTA, so it never stacks on top of it or the
                      header button, and doesn't cover fold-level content on shorter pages. --}}
                 <a href="{{ url('/estimate') }}"
+                   @click.prevent="$dispatch('open-estimate-modal')"
                    x-data="{ show: false }"
                    x-init="window.addEventListener('scroll', () => { show = window.scrollY > 500 }, { passive: true })"
                    x-show="show"
                    x-cloak
-                   class="btn-brutal fixed bottom-6 right-6 z-30 hidden border-2 border-slate-950 bg-yellow-400 px-5 py-3 text-sm font-bold uppercase tracking-wide text-slate-950 shadow-lg lg:block">
+                   class="btn-brutal btn-primary fixed bottom-6 right-6 z-30 hidden border-2 border-slate-950 px-5 py-3 text-sm font-bold uppercase tracking-wide shadow-lg lg:block">
                     Get Estimate
                 </a>
             @endunless
+
+            {{-- Instant Property Valuation Popup Modal --}}
+            <div x-show="estimateModalOpen" x-cloak
+                 class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 p-4 backdrop-blur-sm sm:p-6"
+                 x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0"
+                 x-transition:enter-end="opacity-100"
+                 x-transition:leave="transition ease-in duration-200"
+                 x-transition:leave-start="opacity-100"
+                 x-transition:leave-end="opacity-0"
+                 @click.self="estimateModalOpen = false">
+
+                <div class="box-brutal w-full max-w-xl overflow-hidden bg-white p-6 sm:p-8" @click.stop
+                     x-data="{
+                         sqft: 1200,
+                         serviceScope: 'design_build',
+                         low() { return Math.round(this.sqft * 0.85); },
+                         high() { return Math.round(this.sqft * 1.45); }
+                     }">
+                    <div class="flex items-start justify-between gap-4 border-b-2 border-slate-950 pb-4">
+                        <div>
+                            <span class="chip-accent inline-block px-2.5 py-1 text-[10px] font-black uppercase tracking-widest">⚡ Instant Valuation</span>
+                            <h3 class="mt-2 text-2xl font-black uppercase tracking-tight text-slate-900 sm:text-3xl">Property Estimate Preview</h3>
+                        </div>
+                        <button type="button" @click="estimateModalOpen = false" class="border-2 border-slate-950 bg-white px-2.5 py-1 text-xs font-black uppercase tracking-widest text-slate-900 hover:bg-yellow-400 hover:text-on-accent">✕ Close (Esc)</button>
+                    </div>
+
+                    <div class="mt-6 space-y-5">
+                        <div>
+                            <label class="block text-xs font-black uppercase tracking-widest text-slate-700">1. {{ niche_label('area_field') }} / Location</label>
+                            <input type="text" x-model="modalLocation" placeholder="Enter ZIP code or {{ strtolower(niche_label('area_field')) }}..." class="mt-1.5 w-full border-2 border-slate-950 px-3.5 py-2.5 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-yellow-400">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-black uppercase tracking-widest text-slate-700">2. Primary Service Scope</label>
+                            <div class="mt-2 grid grid-cols-2 gap-2 text-xs font-bold">
+                                <button type="button" @click="serviceScope = 'design_build'"
+                                        :class="serviceScope === 'design_build' ? 'bg-slate-950 text-yellow-400 border-slate-950' : 'bg-white text-slate-900 border-slate-950 hover:bg-slate-50'"
+                                        class="border-2 p-2.5 text-left uppercase tracking-tight transition-colors">
+                                    {{ niche_label('suite_create') }}
+                                </button>
+                                <button type="button" @click="serviceScope = 'maintenance'"
+                                        :class="serviceScope === 'maintenance' ? 'bg-slate-950 text-yellow-400 border-slate-950' : 'bg-white text-slate-900 border-slate-950 hover:bg-slate-50'"
+                                        class="border-2 p-2.5 text-left uppercase tracking-tight transition-colors">
+                                    {{ niche_label('suite_care') }}
+                                </button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-xs font-black uppercase tracking-widest text-slate-700">
+                                <span>3. {{ niche_label('size_field') }}</span>
+                                <span class="font-mono text-slate-900"><span x-text="Number(sqft).toLocaleString()"></span> {{ niche_label('size_unit') }}</span>
+                            </div>
+                            <input type="range" min="300" max="5000" step="100" x-model.number="sqft" class="mt-2 h-3 w-full cursor-pointer appearance-none border-2 border-slate-950 bg-slate-100 accent-yellow-400">
+                        </div>
+
+                        <div class="box-brutal bg-slate-950 p-4 text-center text-white">
+                            <span class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Real-Time Valuation Preview</span>
+                            <p class="mt-1 text-3xl font-black text-accent-ink">
+                                $<span x-text="low().toLocaleString()"></span> <span class="text-slate-400">–</span> $<span x-text="high().toLocaleString()"></span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 flex flex-col gap-3 sm:flex-row">
+                        <a :href="'{{ url('/estimate') }}?neighborhood=' + encodeURIComponent(modalLocation) + '&sqft=' + sqft"
+                           class="btn-brutal btn-primary flex-1 px-6 py-3.5 text-center text-xs font-black uppercase tracking-wider">
+                            Lock In Free Site Visit →
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
         @endif
 
 

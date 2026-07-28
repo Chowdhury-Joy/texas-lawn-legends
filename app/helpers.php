@@ -2,6 +2,7 @@
 
 use App\Enums\ProductPart;
 use App\Models\Setting;
+use App\Support\ColorContrast;
 use App\Support\Niche\NichePack;
 use App\Support\Niche\NicheResolver;
 use Illuminate\Support\Facades\Storage;
@@ -13,6 +14,26 @@ if (! function_exists('setting')) {
     function setting(string $key, mixed $default = null): mixed
     {
         return Setting::get($key, $default);
+    }
+}
+
+if (! function_exists('contrast_ink')) {
+    /**
+     * Near-black or near-white ink for text sitting on the given background hex.
+     */
+    function contrast_ink(string $backgroundHex): string
+    {
+        return ColorContrast::inkOn($backgroundHex);
+    }
+}
+
+if (! function_exists('accent_ink')) {
+    /**
+     * Accent color when readable on a surface; otherwise the surface's auto ink.
+     */
+    function accent_ink(string $accentHex, string $surfaceHex): string
+    {
+        return ColorContrast::accentInk($accentHex, $surfaceHex);
     }
 }
 

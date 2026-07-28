@@ -40,6 +40,16 @@
     --color-brand-orange: #ea580c;
     --color-brand-paper: #f8fafc;
 
+    /* Auto ink pairs (overridden inline from CMS backgrounds in the layout) */
+    --color-on-primary: #f2f2f2;
+    --color-on-primary-light: #f2f2f2;
+    --color-on-accent: #1a1a1a;
+    --color-accent-ink: #facc15;
+    --color-brand-accent: #facc15;
+    --color-brand-on-accent: #1a1a1a;
+    --color-brand-on-primary: #f2f2f2;
+    --color-brand-on-primary-light: #f2f2f2;
+
     /* Section rhythm token — apply via `py-section` for consistent vertical spacing */
     --spacing-section: 5rem; /* 80px */
 
@@ -176,6 +186,14 @@ html:not(.theme-bold) [data-stagger]:not(.is-visible) {
     .btn-brutal {
         @apply inline-flex items-center justify-center gap-2 font-medium uppercase tracking-wide transition-all;
     }
+    /* Primary CTA: accent fill + auto near-black/near-white label */
+    .btn-primary {
+        background-color: var(--color-yellow-400);
+        color: var(--color-on-accent);
+    }
+    .btn-primary:hover {
+        filter: brightness(0.95);
+    }
     .theme-bold .btn-brutal {
         @apply border-2 border-slate-950;
         box-shadow: 4px 4px 0px 0px rgba(15, 23, 42, 1);
@@ -183,6 +201,18 @@ html:not(.theme-bold) [data-stagger]:not(.is-visible) {
     .theme-bold .btn-brutal:hover {
         transform: translate(2px, 2px);
         box-shadow: 2px 2px 0px 0px rgba(15, 23, 42, 1);
+    }
+
+    /* Accent chip / badge sitting on any section */
+    .chip-accent {
+        background-color: var(--color-yellow-400);
+        color: var(--color-on-accent);
+    }
+
+    /* Inverse chip/button on an accent band: swap fill + accent label */
+    .chip-on-accent {
+        background-color: var(--color-on-accent);
+        color: var(--color-yellow-400);
     }
 
     /* Structural container: thick border + hard unblurred drop shadow */
