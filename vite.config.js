@@ -12,8 +12,11 @@ export default defineConfig({
             ],
             refresh: true,
             fonts: [
-                bunny('Montserrat', {
-                    weights: [400, 500, 600, 700, 800, 900],
+                bunny('Hanken Grotesk', {
+                    weights: [400, 500],
+                }),
+                bunny('IBM Plex Mono', {
+                    weights: [400],
                 }),
             ],
         }),

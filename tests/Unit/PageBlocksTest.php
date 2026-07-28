@@ -14,10 +14,17 @@ class PageBlocksTest extends TestCase
         $this->assertIsArray($themes);
         $this->assertArrayHasKey('clean', $themes);
         $this->assertArrayHasKey('minimal', $themes);
-        $this->assertArrayHasKey('editorial', $themes);
+        $this->assertArrayNotHasKey('editorial', $themes);
         $this->assertArrayHasKey('rounded', $themes);
         $this->assertArrayHasKey('retro', $themes);
         $this->assertArrayHasKey('bold', $themes);
+    }
+
+    public function test_resolve_theme_falls_back_from_removed_editorial(): void
+    {
+        $this->assertSame('clean', PageBlocks::resolveTheme('editorial'));
+        $this->assertSame('clean', PageBlocks::resolveTheme(null));
+        $this->assertSame('bold', PageBlocks::resolveTheme('bold'));
     }
 
     public function test_layout_classes_builds_correct_tailwind_string(): void
@@ -59,12 +66,12 @@ class PageBlocksTest extends TestCase
         $this->assertStringContainsString('tab:grid-cols-2', $classes);
         $this->assertStringContainsString('tab:gap-6', $classes);
 
-        // Desktop assertions (lg: prefix)
-        $this->assertStringContainsString('lg:flex', $classes);
-        $this->assertStringContainsString('lg:flex-row', $classes);
-        $this->assertStringContainsString('lg:gap-8', $classes);
-        $this->assertStringContainsString('lg:justify-between', $classes);
-        $this->assertStringContainsString('lg:items-end', $classes);
+        // Desktop assertions (desk: prefix — 1200px device tier)
+        $this->assertStringContainsString('desk:flex', $classes);
+        $this->assertStringContainsString('desk:flex-row', $classes);
+        $this->assertStringContainsString('desk:gap-8', $classes);
+        $this->assertStringContainsString('desk:justify-between', $classes);
+        $this->assertStringContainsString('desk:items-end', $classes);
     }
 
     public function test_layout_classes_returns_empty_string_when_layout_is_null_or_empty(): void
@@ -89,7 +96,7 @@ class PageBlocksTest extends TestCase
         $absentColumns = PageBlocks::layoutClasses([
             'desktop' => ['display' => 'grid', 'gap' => '6'],
         ]);
-        $this->assertStringContainsString('lg:grid-cols-[repeat(auto-fit,minmax(200px,1fr))]', $absentColumns);
+        $this->assertStringContainsString('desk:grid-cols-[repeat(auto-fit,minmax(200px,1fr))]', $absentColumns);
     }
 
     public function test_layout_classes_still_supports_an_explicit_fixed_column_count(): void

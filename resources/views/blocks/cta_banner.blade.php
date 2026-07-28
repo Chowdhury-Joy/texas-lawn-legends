@@ -36,7 +36,7 @@
     $defaultButtonUrl = filled($data['button_url'] ?? null) ? $data['button_url'] : url('/estimate');
 @endphp
 
-<section class="cta-banner bg-yellow-400 px-6 py-section text-center text-on-accent">
+<section class="cta-banner bg-yellow-400 space-section text-center text-on-accent">
     <div class="mx-auto max-w-3xl">
         @foreach ($renderElements as $element)
             @php
@@ -49,30 +49,30 @@
             @endphp
 
             @if ($type === 'eyebrow' && filled($text))
-                <span data-field="eyebrow" data-stagger style="--stagger-i: {{ $loop->index }}" class="chip-on-accent mb-3 inline-block w-fit px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest">
+                <span data-field="eyebrow" data-stagger style="--stagger-i: {{ $loop->index }}" class="chip-on-accent type-tagline mb-3 inline-block w-fit px-2.5 py-1">
                     {{ $text }}
                 </span>
 
             @elseif ($type === 'heading')
-                <h2 data-field="heading" data-stagger style="--stagger-i: {{ $loop->index }}" class="text-3xl font-medium leading-tight tracking-tighter text-on-accent sm:text-4xl">
+                <h2 data-field="heading" data-stagger style="--stagger-i: {{ $loop->index }}" class="type-h2 text-on-accent">
                     {{ filled($text) ? $text : 'Ready To Systematize Your Property Transformation?' }}
                 </h2>
 
             @elseif ($type === 'subheading' && filled($text))
-                <p data-field="subheading" data-stagger style="--stagger-i: {{ $loop->index }}" class="mx-auto mt-4 max-w-xl text-base font-medium text-on-accent/80">{{ $text }}</p>
+                <p data-field="subheading" data-stagger style="--stagger-i: {{ $loop->index }}" class="type-body-md mx-auto mt-4 max-w-xl text-on-accent/80">{{ $text }}</p>
 
             @elseif (($type === 'button' || $type === 'primary_cta') && filled($text))
                 <a href="{{ $url }}"
                    @if (product_part_at_least(2)) @click.prevent="$dispatch('open-estimate-modal')" @endif
                    data-field="button_label"
                    data-stagger style="--stagger-i: {{ $loop->index }}"
-                   class="chip-on-accent mt-8 inline-block px-12 py-5 text-xl font-medium uppercase tracking-wider transition-colors shadow-brutal-forest">
+                   class="chip-on-accent type-btn mt-8 inline-block px-12 py-5 transition-colors shadow-brutal-forest">
                     {{ $text }}
                 </a>
             @endif
         @endforeach
 
-        <div data-reveal class="mt-4 flex flex-wrap items-center justify-center gap-2 text-xs font-bold text-on-accent">
+        <div data-reveal class="type-tagline mt-4 flex flex-wrap items-center justify-center gap-2 text-on-accent">
             <span>⭐ Verified 5-Star Local Service</span>
             <span>·</span>
             <span>No-Obligation 30-Min Consultation</span>

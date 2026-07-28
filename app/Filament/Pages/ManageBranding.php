@@ -35,7 +35,6 @@ class ManageBranding extends BaseSettingsPage
             'logo_text' => 'string',
             'logo_badge' => 'string',
             'favicon' => 'string',
-            'brand_font' => 'string',
             'color_primary' => 'string',
             'color_primary_light' => 'string',
             'color_accent' => 'string',
@@ -85,23 +84,6 @@ class ManageBranding extends BaseSettingsPage
                         ->visibility('public')
                         ->helperText('Square PNG/ICO shown in the browser tab.')
                         ->columnSpanFull(),
-                ]),
-            Section::make('Typography')
-                ->schema([
-                    Select::make('brand_font')
-                        ->label('Brand font')
-                        ->native(false)
-                        ->options([
-                            'Montserrat' => 'Montserrat (default)',
-                            'Inter' => 'Inter',
-                            'Poppins' => 'Poppins',
-                            'Oswald' => 'Oswald',
-                            'Roboto' => 'Roboto',
-                            'Work Sans' => 'Work Sans',
-                            'Archivo' => 'Archivo',
-                            'Barlow' => 'Barlow',
-                        ])
-                        ->helperText('Non-default fonts load from the Bunny Fonts CDN at runtime.'),
                 ]),
             Section::make('Color Tokens')
                 ->description('These are background colors only. Text on top is chosen automatically as near-black or near-white for contrast.')

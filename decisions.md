@@ -65,3 +65,17 @@
  <action>Render step numbers as plain near-black type with no stroke/fill color, and strip non-alphanumeric characters from the number field.</action>
  <reason>Step indices are structure, not accent highlights — colorful outlined numerals compete with real CTAs.</reason>
 </decision>
+
+<decision>
+ <category>UI/UX</category>
+ <context>Site typography and section spacing drifted from the Figma token tables; admin still offered a single brand font and an Editorial serif theme that conflicted with the fixed Heading/Body/Tagline system.</context>
+ <action>Lock fonts to Hanken Grotesk (Heading Medium / Body Regular) and IBM Plex Mono (Tagline Regular). Encode Figma type scale and device spacing as plain CSS classes in design-tokens.css (letter-spacing as % of font-size). Remove brand_font admin control and Editorial theme (legacy editorial → clean). Wire hero, three_step, service_matrix, cta_banner, and layout chrome to those roles.</action>
+ <reason>One global CSS source of truth matches Figma; proportional tracking survives breakpoint size changes; no admin font picker means demos can’t accidentally break the brand type system.</reason>
+</decision>
+
+<decision>
+ <category>UI/UX</category>
+ <context>Token media queries initially used Figma frame widths (744 / 1440), so laptop widths never hit “desktop” type/spacing and the Care Suite still mixed Tailwind gaps.</context>
+ <action>Device tiers are 0 / 640 / 1200 everywhere: type scale and spacing vars in design-tokens.css, plain-CSS grids (.grid-services 1→2→3, .grid-steps 1→3, .grid-hero stacked→12-col), and the page-builder layout picker (tab: 640px, new desk: 1200px replacing lg: in PageBlocks::layoutClasses). Section/card rhythm comes from .space-section / .space-card / .stack-* instead of ad-hoc Tailwind py/mt/gap.</action>
+ <reason>One tier system means type, spacing, and column counts flip at the same widths on real phones/tablets/laptops. Tailwind's own sm/md/lg stay available for one-off chrome (e.g. the header nav still swaps to the hamburger at lg, since that depends on whether the links fit, not on the type scale).</reason>
+</decision>

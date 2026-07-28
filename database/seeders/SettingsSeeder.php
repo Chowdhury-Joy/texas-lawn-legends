@@ -69,7 +69,6 @@ class SettingsSeeder extends Seeder
             ['logo_text', null, 'string', 'branding'],
             ['logo_badge', null, 'string', 'branding'],
             ['favicon', null, 'string', 'branding'],
-            ['brand_font', 'Montserrat', 'string', 'branding'],
             ['color_primary', '#1b4332', 'string', 'branding'],
             ['color_primary_light', '#2d6a4f', 'string', 'branding'],
             ['color_accent', '#facc15', 'string', 'branding'],

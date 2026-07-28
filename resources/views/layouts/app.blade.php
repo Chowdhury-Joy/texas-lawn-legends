@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="overflow-x-hidden theme-{{ request('preview_theme', setting('theme', 'clean')) }}" lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html class="overflow-x-hidden theme-{{ \App\Support\PageBlocks::resolveTheme(request('preview_theme', setting('theme', 'clean'))) }}" lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,7 +11,6 @@
         $phone = setting('primary_phone');
         $email = setting('primary_email');
         $telHref = $phone ? 'tel:+1' . preg_replace('/\D/', '', (string) $phone) : '#';
-        $brandFont = setting('brand_font', 'Montserrat');
         $areas = (array) setting('service_areas', []);
         $current = request()->path();
         $headerLocation = setting('header_location') ?: setting('business_city');
@@ -22,12 +21,6 @@
     @include('partials.analytics')
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-
-    {{-- Brand font (non-default fonts load from Bunny Fonts CDN) --}}
-    @if ($brandFont && $brandFont !== 'Montserrat')
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link rel="stylesheet" href="https://fonts.bunny.net/css?family={{ strtolower(str_replace(' ', '-', $brandFont)) }}:400,500,600,700,800,900&display=swap">
-    @endif
 
     {{-- Brand tokens: remap palette shades + auto B/W ink for each surface --}}
     @php
@@ -43,9 +36,9 @@
     @endphp
     <style>
         :root {
-            @if ($brandFont && $brandFont !== 'Montserrat')
-            --font-sans: '{{ $brandFont }}', ui-sans-serif, system-ui, sans-serif;
-            @endif
+            --font-sans: 'Hanken Grotesk', ui-sans-serif, system-ui, sans-serif;
+            --font-display: 'Hanken Grotesk', ui-sans-serif, system-ui, sans-serif;
+            --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
             --color-emerald-900: {{ $colorPrimary }};
             --color-emerald-800: {{ $colorPrimaryLight }};
             --color-yellow-400: {{ $colorAccent }};
@@ -66,11 +59,11 @@
 
     @stack('head')
 </head>
-    <body class="min-h-screen bg-white font-sans text-slate-900 antialiased overflow-x-hidden">
+    <body class="min-h-screen bg-white font-body type-body-md text-slate-900 antialiased overflow-x-hidden">
         <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[60] focus:border-2 focus:border-slate-950 focus:bg-yellow-400 focus:px-4 focus:py-2 focus:text-sm focus:font-bold focus:uppercase focus:tracking-wide focus:text-on-accent">Skip to content</a>
 
         @if (\App\Support\Niche\NicheResolver::demoMode())
-            <div class="relative z-[60] border-b-2 border-slate-950 bg-yellow-400 px-4 py-2 text-center text-xs font-black uppercase tracking-wider text-on-accent">
+            <div class="relative z-[60] border-b-2 border-slate-950 bg-yellow-400 px-4 py-2 text-center type-tagline text-on-accent">
                 Demo — {{ niche()->label() }} example
                 @if (\App\Support\Niche\NicheResolver::demoHubEnabled())
                     · <a href="{{ route('demo.hub') }}" class="underline">Back to demo hub</a>
@@ -94,9 +87,9 @@
                 @keydown.escape.window="mobileOpen = false">
 
             {{-- Top Info & Phone Banner --}}
-            <div class="border-b-2 border-slate-950 bg-slate-950 px-4 md:px-8 py-2 text-xs text-white">
+            <div class="border-b-2 border-slate-950 bg-slate-950 space-inline py-2 type-tagline text-white">
                 <div class="mx-auto flex max-w-7xl items-center justify-between gap-4">
-                    <div class="flex items-center gap-2 font-bold uppercase tracking-widest text-yellow-400">
+                    <div class="flex items-center gap-2 text-yellow-400">
                         @if (filled($headerLocation))
                             <span>📍 {{ $headerLocation }}</span>
                         @endif
@@ -109,7 +102,7 @@
                     </div>
                     <div class="flex items-center gap-4">
                         @if (filled($phone))
-                            <a href="{{ $telHref }}" class="flex items-center gap-1.5 font-bold uppercase tracking-wider text-white transition-colors hover:text-yellow-400">
+                            <a href="{{ $telHref }}" class="flex items-center gap-1.5 text-white transition-colors hover:text-yellow-400">
                                 <svg class="h-3.5 w-3.5 text-yellow-400" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z"/></svg>
                                 <span>Call or Text: {{ $phone }}</span>
                             </a>
@@ -120,14 +113,14 @@
 
             {{-- Main Navigation Bar --}}
             <div class="w-full border-b-4 border-slate-950 bg-white">
-                <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 md:px-8 py-3">
+                <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 space-inline py-3">
                 <a href="{{ url('/') }}" class="flex flex-col leading-none">
                     @if ($logoImage)
                         <img src="{{ $logoImage }}" alt="{{ $logoText }}" class="h-10 w-auto max-w-[220px] object-contain">
                     @else
-                        <span class="text-lg font-black uppercase tracking-tight text-slate-900 sm:text-xl">{{ $logoText }}</span>
+                        <span class="type-h4 text-slate-900">{{ $logoText }}</span>
                         @if ($logoBadge)
-                            <span class="mt-1 inline-block w-fit bg-emerald-900 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-on-primary">{{ $logoBadge }}</span>
+                            <span class="type-tagline mt-1 inline-block w-fit bg-emerald-900 px-2 py-0.5 text-on-primary">{{ $logoBadge }}</span>
                         @endif
                     @endif
                 </a>
@@ -155,7 +148,7 @@
                     @foreach ($navItems as $label => $href)
                         <a href="{{ $href }}"
                            @class([
-                               'px-2 py-1 text-sm font-bold uppercase tracking-wide transition-colors',
+                               'type-tagline px-2 py-1 transition-colors',
                                'bg-yellow-400 text-on-accent' => $isActiveNavItem($href),
                                'text-slate-900 hover:bg-yellow-400 hover:text-on-accent' => ! $isActiveNavItem($href),
                            ])>{{ $label }}</a>
@@ -164,7 +157,7 @@
 
                 <div class="flex items-center gap-3">
                     @if ($showEstimateCta)
-                        <a href="{{ url('/estimate') }}" @click.prevent="$dispatch('open-estimate-modal')" class="btn-brutal btn-primary bg-yellow-400 hidden items-center justify-center px-5 py-2 text-xs font-black uppercase tracking-wider lg:inline-flex">
+                        <a href="{{ url('/estimate') }}" @click.prevent="$dispatch('open-estimate-modal')" class="btn-brutal btn-primary type-btn bg-yellow-400 hidden items-center justify-center px-5 py-2 lg:inline-flex">
                             Get Free Estimate
                         </a>
                     @endif
@@ -194,16 +187,16 @@
                  x-transition
                  class="fixed inset-x-0 z-50 flex flex-col overflow-y-auto border-t-2 border-slate-950 bg-white shadow-xl lg:hidden"
                  style="top: var(--header-h, 57px); height: calc(100dvh - var(--header-h, 57px));">
-                <div class="mx-auto flex w-full flex-col px-4 md:px-8 py-2">
+                <div class="mx-auto flex w-full flex-col space-inline py-2">
                     @foreach ($navItems as $label => $href)
                         <a href="{{ $href }}" @click="mobileOpen = false"
                            @class([
-                               'border-b border-slate-200 py-3 text-sm font-bold uppercase tracking-wide transition-colors',
+                               'type-tagline-lg border-b border-slate-200 py-3 transition-colors',
                                'bg-yellow-400 text-on-accent' => $isActiveNavItem($href),
                                'text-slate-900 hover:bg-yellow-400 hover:text-on-accent' => ! $isActiveNavItem($href),
                            ])>{{ $label }}</a>
                     @endforeach
-                    <a href="{{ $telHref }}" @click="mobileOpen = false" class="flex items-center gap-2 py-3 text-sm font-bold uppercase tracking-wide text-slate-900 transition-colors hover:bg-yellow-400 hover:text-on-accent">
+                    <a href="{{ $telHref }}" @click="mobileOpen = false" class="type-tagline-lg flex items-center gap-2 py-3 text-slate-900 transition-colors hover:bg-yellow-400 hover:text-on-accent">
                         <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z"/></svg>
                         {{ $phone }}
                     </a>
@@ -216,26 +209,26 @@
         </main>
 
         {{-- ============================= FOOTER ============================= --}}
-        <footer class="border-t-4 border-slate-950 bg-slate-950 px-4 md:px-8 py-12 text-slate-200">
-            <div class="mx-auto grid max-w-7xl grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-4">
+        <footer class="border-t-4 border-slate-950 bg-slate-950 space-section text-slate-200">
+            <div class="mx-auto grid max-w-7xl grid-cols-1 gap-container-xxl md:grid-cols-2 lg:grid-cols-4">
                 <div>
-                    <span class="text-lg font-black uppercase tracking-tight text-white">{{ $logoText }}</span>
+                    <span class="type-h4 text-white">{{ $logoText }}</span>
                     @if ($logoBadge)
-                        <span class="mt-2 inline-block w-fit bg-emerald-900 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-on-primary">{{ $logoBadge }}</span>
+                        <span class="type-tagline mt-2 inline-block w-fit bg-emerald-900 px-2 py-0.5 text-on-primary">{{ $logoBadge }}</span>
                     @endif
-                    <div class="mt-5 space-y-1.5 text-sm">
-                        <p><a href="{{ $telHref }}" class="font-bold text-white hover:text-yellow-400">{{ $phone }}</a></p>
+                    <div class="type-body-sm mt-5 space-y-1.5">
+                        <p><a href="{{ $telHref }}" class="text-white hover:text-yellow-400">{{ $phone }}</a></p>
                         @if ($email)<p><a href="mailto:{{ $email }}" class="hover:text-yellow-400">{{ $email }}</a></p>@endif
                         @if ($note = setting('footer_note'))<p class="text-slate-400">{{ $note }}</p>@endif
                     </div>
                     @if ($copyright = setting('footer_copyright'))
-                        <p class="mt-6 text-xs leading-relaxed text-slate-500">{{ $copyright }}</p>
+                        <p class="type-tagline mt-6 text-slate-500">{{ $copyright }}</p>
                     @endif
                 </div>
 
                 <div>
-                    <h3 class="mb-4 text-xs font-black uppercase tracking-widest text-yellow-400">Design &amp; Create</h3>
-                    <ul class="space-y-2 text-sm">
+                    <h3 class="type-tagline mb-4 text-yellow-400">Design &amp; Create</h3>
+                    <ul class="type-tagline-lg space-y-2">
                         @foreach (\App\Support\PageBlockData::createServices()->pluck('title') as $item)
                             <li><a href="{{ url('/#create-suite') }}" class="text-slate-300 transition-colors hover:text-white">{{ $item }}</a></li>
                         @endforeach
@@ -243,8 +236,8 @@
                 </div>
 
                 <div>
-                    <h3 class="mb-4 text-xs font-black uppercase tracking-widest text-yellow-400">Property Maintenance</h3>
-                    <ul class="space-y-2 text-sm">
+                    <h3 class="type-tagline mb-4 text-yellow-400">Property Maintenance</h3>
+                    <ul class="type-tagline-lg space-y-2">
                         @foreach (\App\Support\PageBlockData::careServices()->pluck('title') as $item)
                             <li><a href="{{ url('/#care-suite') }}" class="text-slate-300 transition-colors hover:text-white">{{ $item }}</a></li>
                         @endforeach
@@ -252,8 +245,8 @@
                 </div>
 
                 <div>
-                    <h3 class="mb-4 text-xs font-black uppercase tracking-widest text-yellow-400">Core Hub</h3>
-                    <ul class="space-y-2 text-sm">
+                    <h3 class="type-tagline mb-4 text-yellow-400">Core Hub</h3>
+                    <ul class="type-tagline-lg space-y-2">
                         @if (product_part_at_least(3))
                             <li><a href="{{ url('/portal') }}" class="text-slate-300 transition-colors hover:text-white">Client Portal Login</a></li>
                         @endif
@@ -269,10 +262,10 @@
                 {{-- Themeable Mobile Sticky Action Rail --}}
                 <div class="fixed bottom-0 inset-x-0 z-40 border-t-4 border-slate-950 bg-brand-paper p-3 shadow-2xl lg:hidden">
                     <div class="mx-auto flex max-w-md items-center justify-between gap-3">
-                        <a href="{{ url('/estimate') }}" @click.prevent="$dispatch('open-estimate-modal')" class="btn-brutal btn-primary bg-yellow-400 flex-1 py-3 text-center text-xs font-black uppercase tracking-wider">
+                        <a href="{{ url('/estimate') }}" @click.prevent="$dispatch('open-estimate-modal')" class="btn-brutal btn-primary type-btn bg-yellow-400 flex-1 py-3 text-center">
                             ⚡ 2-Min Price Quote
                         </a>
-                        <a href="{{ $telHref }}" class="flex items-center justify-center border-2 border-slate-950 bg-white px-4 py-3 text-xs font-black uppercase tracking-wider text-slate-900 transition-colors hover:bg-slate-100">
+                        <a href="{{ $telHref }}" class="type-btn flex items-center justify-center border-2 border-slate-950 bg-white px-4 py-3 text-slate-900 transition-colors hover:bg-slate-100">
                             📞 Call
                         </a>
                     </div>
@@ -287,7 +280,7 @@
                    x-init="window.addEventListener('scroll', () => { show = window.scrollY > 500 }, { passive: true })"
                    x-show="show"
                    x-cloak
-                   class="btn-brutal btn-primary bg-yellow-400 fixed bottom-6 right-6 z-30 hidden border-2 border-slate-950 px-5 py-3 text-sm font-bold uppercase tracking-wide shadow-lg lg:block">
+                   class="btn-brutal btn-primary type-btn bg-yellow-400 fixed bottom-6 right-6 z-30 hidden border-2 border-slate-950 px-5 py-3 shadow-lg lg:block">
                     Get Estimate
                 </a>
             @endunless

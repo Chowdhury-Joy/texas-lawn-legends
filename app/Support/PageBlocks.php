@@ -61,11 +61,24 @@ class PageBlocks
         return [
             'clean' => 'Clean (flat, no shadows — default)',
             'minimal' => 'Minimal (flat with soft modern shadows)',
-            'editorial' => 'Editorial (serif display, airy whitespace)',
             'rounded' => 'Rounded (pill buttons, large radii)',
             'retro' => 'Retro (70s earthy throwback)',
             'bold' => 'Bold (neo-brutalist hard shadows & borders)',
         ];
+    }
+
+    /**
+     * Normalize a stored theme slug. Legacy "editorial" (removed) falls back to clean.
+     */
+    public static function resolveTheme(?string $theme): string
+    {
+        $theme = $theme ?: 'clean';
+
+        if ($theme === 'editorial' || ! array_key_exists($theme, self::themes())) {
+            return 'clean';
+        }
+
+        return $theme;
     }
 
     /**
@@ -754,10 +767,11 @@ class PageBlocks
             return '';
         }
 
+        // Device tiers match the Figma token breakpoints: 0 / 640 (tab) / 1200 (desk).
         $map = [
             'mobile' => '',
             'tablet' => 'tab:',
-            'desktop' => 'lg:',
+            'desktop' => 'desk:',
         ];
 
         $classes = [];

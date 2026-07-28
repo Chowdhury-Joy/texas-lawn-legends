@@ -22,3 +22,24 @@
  <root_cause>New .btn-primary / text-on-* / text-accent-ink rules lived in @layer components or relied on Tailwind generating theme utilities; soft theme + missing utilities dropped accent fills and left inherited near-black on emerald badges.</root_cause>
  <prevention_rule>Keep accent fills on bg-yellow-400 (CMS-remapped), define brand ink utilities outside @layer, and never replace accent-on-primary badge text (text-yellow-400) with an unguaranteed utility.</prevention_rule>
 </bug>
+
+<bug>
+ <category>UI/UX</category>
+ <symptom>After typography tokens shipped, Care Suite still looked like old Tailwind sizing — fonts/spacing didn’t “show up” and felt non-responsive on laptops.</symptom>
+ <root_cause>Token media queries used Figma frame widths 744/1440, so desktop type never applied under 1440px; cards still used Tailwind p/mt/gap and sm/lg grids instead of token classes.</root_cause>
+ <prevention_rule>Always drive public design tokens and page-builder tiers at 0 / 640 (tab:) / 1200 (desk:), and put section rhythm on .space-* / .grid-* / .type-* — never leave Tailwind text-*, py-*, or lg: as the source of truth for a tokenized section.</prevention_rule>
+</bug>
+
+<bug>
+ <category>Code</category>
+ <symptom>Site rendered with no fonts, no spacing, and no responsive behaviour at all — looked like the new typography tokens had never shipped.</symptom>
+ <root_cause>A leftover public/hot file from a killed `npm run dev` made the layout point every stylesheet at http://[::1]:5173, a dev server that was no longer running, so the page loaded zero CSS instead of the built public/build assets.</root_cause>
+ <prevention_rule>When styles appear completely missing, check public/hot first and delete it if no Vite dev server is listening — verify the rendered HTML links /build/assets/app-*.css before debugging any CSS.</prevention_rule>
+</bug>
+
+<bug>
+ <category>CRO</category>
+ <symptom>Hero ZIP field placeholder was cut off mid-word (“ENTER ZIP CODE OR NEIGHBORHOO”), hiding what the visitor is supposed to type into the primary estimate CTA.</symptom>
+ <root_cause>The field used Tagline Large (18px IBM Plex Mono, uppercase); monospace is much wider per character than the old sans placeholder, so the text overflowed the max-w-xl input.</root_cause>
+ <prevention_rule>Any mono/Tagline text inside a fixed-width control must be checked at the desktop token size — drop to .type-tagline and widen the field rather than letting a conversion field truncate its prompt.</prevention_rule>
+</bug>

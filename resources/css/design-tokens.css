@@ -1,0 +1,418 @@
+/* ---------------------------------------------------------------------------
+   Figma design tokens — plain CSS (not Tailwind).
+   Source: Squidx Token_Typography + Token_device tables.
+   Breakpoints: mobile (base) → tablet 640px → desktop 1200px.
+   Letter-spacing: Figma ratio (ls_px ÷ size_px) applied as em
+   (same proportion as %, better browser support than letter-spacing %).
+   Example: -4.8/80 = -6% = -0.06em
+   --------------------------------------------------------------------------- */
+
+:root {
+    --font-heading: 'Hanken Grotesk', ui-sans-serif, system-ui, sans-serif;
+    --font-body: 'Hanken Grotesk', ui-sans-serif, system-ui, sans-serif;
+    --font-tagline: 'IBM Plex Mono', ui-monospace, monospace;
+    --font-weight-heading: 500;
+    --font-weight-body: 400;
+    --font-weight-tagline: 400;
+
+    /* Spacing/Container — mobile defaults */
+    --space-0: 0px;
+    --space-xxs: 4px;
+    --space-xs: 6px;
+    --space-sm: 8px;
+    --space-md: 12px;
+    --space-lg: 16px;
+    --space-xl: 24px;
+    --space-xxl: 32px;
+
+    /* Section padding — mobile */
+    --space-section-y: 48px;
+    --space-section-x: 16px;
+}
+
+@media (min-width: 640px) {
+    :root {
+        --space-xxs: 6px;
+        --space-xs: 6px;
+        --space-sm: 8px;
+        --space-md: 12px;
+        --space-lg: 20px;
+        --space-xl: 24px;
+        --space-xxl: 40px;
+        --space-section-y: 48px;
+        --space-section-x: 32px;
+    }
+}
+
+@media (min-width: 1200px) {
+    :root {
+        --space-xxs: 6px;
+        --space-xs: 8px;
+        --space-sm: 12px;
+        --space-md: 16px;
+        --space-lg: 24px;
+        --space-xl: 32px;
+        --space-xxl: 48px;
+        --space-section-y: 64px;
+        --space-section-x: 40px;
+    }
+}
+
+/* ---- Font role helpers ---- */
+.font-heading {
+    font-family: var(--font-heading);
+    font-weight: var(--font-weight-heading);
+}
+
+.font-body {
+    font-family: var(--font-body);
+    font-weight: var(--font-weight-body);
+}
+
+.font-tagline {
+    font-family: var(--font-tagline);
+    font-weight: var(--font-weight-tagline);
+    text-transform: uppercase;
+}
+
+/* ---- Type scale: mobile base ---- */
+
+/* Heading / H1 — mobile 48/-2.88 → -6% */
+.type-h1 {
+    font-family: var(--font-heading);
+    font-weight: var(--font-weight-heading);
+    font-size: 48px;
+    line-height: 85%;
+    letter-spacing: -0.06em; /* -2.88/48 = -6% */
+}
+
+/* Heading / H2 — mobile 36/-2.16 → -6% */
+.type-h2 {
+    font-family: var(--font-heading);
+    font-weight: var(--font-weight-heading);
+    font-size: 36px;
+    line-height: 85%;
+    letter-spacing: -0.06em; /* -2.16/36 = -6% */
+}
+
+/* Heading / H3 — mobile 22/-1.32 → -6% */
+.type-h3 {
+    font-family: var(--font-heading);
+    font-weight: var(--font-weight-heading);
+    font-size: 22px;
+    line-height: 100%;
+    letter-spacing: -0.06em; /* -1.32/22 = -6% */
+}
+
+/* Heading / H4 — mobile 20/-0.6 → -3% */
+.type-h4 {
+    font-family: var(--font-heading);
+    font-weight: var(--font-weight-heading);
+    font-size: 20px;
+    line-height: 100%;
+    letter-spacing: -0.03em; /* -0.6/20 = -3% */
+}
+
+/* Paragraph / Large — mobile 16/-0.8 → -5% */
+.type-body-lg {
+    font-family: var(--font-body);
+    font-weight: var(--font-weight-body);
+    font-size: 16px;
+    line-height: 150%;
+    letter-spacing: -0.05em; /* -0.8/16 = -5% */
+}
+
+/* Paragraph / Medium — mobile 14/-0.42 → -3% */
+.type-body-md {
+    font-family: var(--font-body);
+    font-weight: var(--font-weight-body);
+    font-size: 14px;
+    line-height: 135%;
+    letter-spacing: -0.03em; /* -0.42/14 = -3% */
+}
+
+/* Paragraph / Small — mobile 12/-0.48 → -4% */
+.type-body-sm {
+    font-family: var(--font-body);
+    font-weight: var(--font-weight-body);
+    font-size: 12px;
+    line-height: 150%;
+    letter-spacing: -0.04em; /* -0.48/12 = -4% */
+}
+
+/* Button / Regular — mobile 14 */
+.type-btn {
+    font-family: var(--font-body);
+    font-weight: var(--font-weight-heading); /* Medium on Body family */
+    font-size: 14px;
+    line-height: 100%;
+    letter-spacing: 0;
+    text-transform: uppercase;
+}
+
+/* Button / Small — mobile 11 */
+.type-btn-sm {
+    font-family: var(--font-body);
+    font-weight: var(--font-weight-heading);
+    font-size: 11px;
+    line-height: 100%;
+    letter-spacing: 0;
+    text-transform: uppercase;
+}
+
+/* Tagline / Large — mobile 14/0.84 → 6% */
+.type-tagline-lg {
+    font-family: var(--font-tagline);
+    font-weight: var(--font-weight-tagline);
+    font-size: 14px;
+    line-height: 142.86%;
+    letter-spacing: 0.06em; /* 0.84/14 = 6% */
+    text-transform: uppercase;
+}
+
+/* Tagline / Regular — mobile 12/0.48 → 4% */
+.type-tagline {
+    font-family: var(--font-tagline);
+    font-weight: var(--font-weight-tagline);
+    font-size: 12px;
+    line-height: 133.33%;
+    letter-spacing: 0.04em; /* 0.48/12 = 4% */
+    text-transform: uppercase;
+}
+
+@media (min-width: 640px) {
+    .type-h1 {
+        font-size: 64px;
+        letter-spacing: -0.06em; /* -3.84/64 = -6% */
+    }
+    .type-h2 {
+        font-size: 52px;
+        letter-spacing: -0.06em; /* -3.12/52 = -6% */
+    }
+    .type-h3 {
+        font-size: 28px;
+        letter-spacing: -0.06em; /* -1.68/28 = -6% */
+    }
+    .type-h4 {
+        font-size: 24px;
+        letter-spacing: -0.03em; /* -0.72/24 = -3% */
+    }
+    .type-body-lg {
+        font-size: 18px;
+        line-height: 156%;
+        letter-spacing: -0.05em; /* -0.9/18 = -5% */
+    }
+    .type-body-md {
+        font-size: 16px;
+        letter-spacing: -0.03em; /* -0.48/16 = -3% */
+    }
+    .type-body-sm {
+        font-size: 14px;
+        letter-spacing: -0.04em; /* -0.56/14 = -4% */
+    }
+    .type-btn {
+        font-size: 15px;
+    }
+    .type-btn-sm {
+        font-size: 13px;
+    }
+    .type-tagline-lg {
+        font-size: 16px;
+        line-height: 150%;
+        letter-spacing: 0.06em; /* 0.96/16 = 6% */
+    }
+    .type-tagline {
+        font-size: 13px;
+        line-height: 123.08%;
+        letter-spacing: 0.04em; /* 0.52/13 = 4% */
+    }
+}
+
+@media (min-width: 1200px) {
+    .type-h1 {
+        font-size: 80px;
+        letter-spacing: -0.06em; /* -4.8/80 = -6% */
+    }
+    .type-h2 {
+        font-size: 64px;
+        letter-spacing: -0.06em; /* -3.84/64 = -6% */
+    }
+    .type-h3 {
+        font-size: 36px;
+        letter-spacing: -0.06em; /* -2.16/36 = -6% */
+    }
+    .type-h4 {
+        font-size: 28px;
+        letter-spacing: -0.03em; /* -0.84/28 = -3% */
+    }
+    .type-body-lg {
+        font-size: 20px;
+        line-height: 156%;
+        letter-spacing: -0.05em; /* -1/20 = -5% */
+    }
+    .type-body-md {
+        font-size: 18px;
+        letter-spacing: -0.03em; /* -0.54/18 = -3% */
+    }
+    .type-body-sm {
+        font-size: 16px;
+        letter-spacing: -0.04em; /* -0.64/16 = -4% */
+    }
+    .type-tagline-lg {
+        font-size: 18px;
+        line-height: 133.33%;
+        letter-spacing: 0.06em; /* 1.08/18 = 6% */
+    }
+    .type-tagline {
+        font-size: 14px;
+        line-height: 142.86%;
+        letter-spacing: 0.04em; /* 0.56/14 = 4% */
+    }
+}
+
+/* ---- Spacing utility classes ---- */
+.space-section {
+    padding-top: var(--space-section-y);
+    padding-bottom: var(--space-section-y);
+    padding-left: var(--space-section-x);
+    padding-right: var(--space-section-x);
+}
+
+.space-section-y {
+    padding-top: var(--space-section-y);
+    padding-bottom: var(--space-section-y);
+}
+
+.space-inline {
+    padding-left: var(--space-section-x);
+    padding-right: var(--space-section-x);
+}
+
+.space-container {
+    padding: var(--space-md);
+}
+
+.gap-container-sm {
+    gap: var(--space-sm);
+}
+
+.gap-container-md {
+    gap: var(--space-md);
+}
+
+.gap-container-lg {
+    gap: var(--space-lg);
+}
+
+.gap-container-xl {
+    gap: var(--space-xl);
+}
+
+.gap-container-xxl {
+    gap: var(--space-xxl);
+}
+
+/* Card / panel padding from container scale */
+.space-card {
+    padding: var(--space-lg);
+}
+
+@media (min-width: 640px) {
+    .space-card {
+        padding: var(--space-xl);
+    }
+}
+
+@media (min-width: 1200px) {
+    .space-card {
+        padding: var(--space-xxl);
+    }
+}
+
+/* Section header stack (eyebrow → heading) */
+.stack-header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-md);
+}
+
+.stack-after-header {
+    margin-top: var(--space-xxl);
+}
+
+/* Service matrix grid — Figma device breakpoints: 0 / 640 / 1200 */
+.grid-services {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-lg);
+}
+
+@media (min-width: 640px) {
+    .grid-services {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-xl);
+    }
+}
+
+@media (min-width: 1200px) {
+    .grid-services {
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--space-xl);
+    }
+}
+
+/* Process steps grid — stays single column until the desktop tier so each
+   step keeps room for its number, title, and body. */
+.grid-steps {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-xl);
+}
+
+@media (min-width: 1200px) {
+    .grid-steps {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Hero: copy + media split at the desktop tier (1200), stacked below it. */
+.grid-hero {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-xl);
+}
+
+@media (min-width: 1200px) {
+    .grid-hero {
+        grid-template-columns: repeat(12, 1fr);
+        align-items: center;
+    }
+    .grid-hero > .hero-copy {
+        grid-column: span 7 / span 7;
+    }
+    .grid-hero > .hero-media {
+        grid-column: span 5 / span 5;
+        margin-right: 0;
+    }
+}
+
+/* Vertical rhythm inside a service card */
+.stack-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: var(--space-lg);
+}
+
+.stack-card-body {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-sm);
+}
+
+.stack-card-body > .type-h4 {
+    margin-top: var(--space-md);
+}
+

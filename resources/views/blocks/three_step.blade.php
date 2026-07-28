@@ -27,7 +27,7 @@
     $renderElements = array_merge($repeaterElements, $classicFallbacks);
 @endphp
 <section class="border-t-4 border-slate-950 bg-white">
-    <div class="mx-auto max-w-7xl px-6 py-section text-center">
+    <div class="mx-auto max-w-7xl space-section text-center">
         @foreach ($renderElements as $element)
             @php
                 if ($element['is_hidden'] ?? false) {
@@ -38,39 +38,39 @@
             @endphp
 
             @if ($type === 'eyebrow' && filled($text))
-                <span data-field="eyebrow" data-stagger style="--stagger-i: {{ $loop->index }}" class="mx-auto mb-3 inline-block w-fit bg-emerald-900 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-yellow-400">
+                <span data-field="eyebrow" data-stagger style="--stagger-i: {{ $loop->index }}" class="type-tagline mx-auto mb-3 inline-block w-fit bg-emerald-900 px-2 py-0.5 text-yellow-400">
                     {{ $text }}
                 </span>
 
             @elseif ($type === 'heading')
-                <h2 data-field="heading" data-stagger style="--stagger-i: {{ $loop->index }}" class="mx-auto max-w-3xl text-4xl font-medium leading-tight tracking-tighter text-slate-900 sm:text-5xl">
+                <h2 data-field="heading" data-stagger style="--stagger-i: {{ $loop->index }}" class="type-h2 mx-auto max-w-3xl text-slate-900">
                     {{ filled($text) ? $text : 'Our 3-Step Process — Deliver The Wow' }}
                 </h2>
 
             @elseif ($type === 'subheading' && filled($text))
-                <p data-field="subheading" data-stagger style="--stagger-i: {{ $loop->index }}" class="mx-auto mt-4 max-w-2xl text-base text-slate-600">
+                <p data-field="subheading" data-stagger style="--stagger-i: {{ $loop->index }}" class="type-body-md mx-auto mt-4 max-w-2xl text-slate-600">
                     {{ $text }}
                 </p>
             @endif
         @endforeach
-        <div class="mt-14 text-left {{ $layout ?: 'grid grid-cols-1 gap-8 lg:grid-cols-3' }}">
+        <div class="stack-after-header text-left {{ $layout ?: 'grid-steps' }}">
             @foreach ($processSteps as $index => $step)
                 @php
                     $rawNumber = filled($step['number'] ?? null) ? (string) $step['number'] : '0'.($index + 1);
                     // Keep digits only — drop decorative stars/emoji that sometimes land in CMS numbers.
                     $stepNumber = preg_replace('/[^\dA-Za-z]/u', '', $rawNumber) ?: '0'.($index + 1);
                 @endphp
-                <div data-stagger style="--stagger-i: {{ $index }}" class="box-brutal p-5 sm:p-8 mr-[8px] lg:mr-0">
-                    <span data-field="steps.{{ $index }}.number" class="block text-6xl font-black leading-none text-[#1a1a1a]">
+                <div data-stagger style="--stagger-i: {{ $index }}" class="box-brutal space-card mr-[8px] desk:mr-0">
+                    <span data-field="steps.{{ $index }}.number" class="type-h1 block text-[#1a1a1a]">
                         {{ $stepNumber }}
                     </span>
                     @if (filled($step['title'] ?? null))
-                        <h3 data-field="steps.{{ $index }}.title" class="mt-4 text-2xl font-medium tracking-tighter text-slate-900">
+                        <h3 data-field="steps.{{ $index }}.title" class="type-h4 mt-4 text-slate-900">
                             {{ $step['title'] }}
                         </h3>
                     @endif
                     @if (filled($step['body'] ?? null))
-                        <p data-field="steps.{{ $index }}.body" class="mt-3 text-sm leading-relaxed text-slate-600">
+                        <p data-field="steps.{{ $index }}.body" class="type-body-sm mt-3 text-slate-600">
                             {{ $step['body'] }}
                         </p>
                     @endif
