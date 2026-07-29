@@ -38,6 +38,11 @@ return [
         'lawn' => \App\Support\Niche\Packs\LawnPack::class,
         'cleaning' => \App\Support\Niche\Packs\CleaningPack::class,
         'roofing' => \App\Support\Niche\Packs\RoofingPack::class,
+        'pressure' => \App\Support\Niche\Packs\PressurePack::class,
+        'windows' => \App\Support\Niche\Packs\WindowsPack::class,
+        'gutters' => \App\Support\Niche\Packs\GuttersPack::class,
+        'fence' => \App\Support\Niche\Packs\FencePack::class,
+        'pest' => \App\Support\Niche\Packs\PestPack::class,
     ],
 
 ];

@@ -1,9 +1,9 @@
 # Architecture Overview
-Last Updated: 2026-07-30T02:15:00+06:00
+Last Updated: 2026-07-30T03:10:00+06:00
 
 ## Overview
 
-Texas Lawn Legends is a Laravel-based “Systematizing Growth” platform for home-service businesses. One codebase powers a CMS-editable marketing site (page builder), a multi-step lead/estimate funnel, token-gated client project dashboards, a monthly-code member portal, and a Filament admin panel for day-to-day operations. The product ships in three tiers (**Product Parts**) and can be skinned per industry via **Niche Packs** (lawn, cleaning, roofing), with a public `/demo` hub for sales pitches.
+Texas Lawn Legends is a Laravel-based “Systematizing Growth” platform for home-service businesses. One codebase powers a CMS-editable marketing site (page builder), a multi-step lead/estimate funnel, token-gated client project dashboards, a monthly-code member portal, and a Filament admin panel for day-to-day operations. The product ships in three tiers (**Product Parts**) and can be skinned per industry via **Niche Packs** (lawn, cleaning, roofing, pressure washing, window cleaning, gutters, fence/deck, pest), with a public `/demo` hub for sales pitches.
 
 ## Getting Started
 
@@ -34,7 +34,7 @@ php artisan serve
 | Variable | Purpose |
 |---|---|
 | `APP_NAME`, `APP_ENV`, `APP_KEY`, `APP_DEBUG`, `APP_URL` | Core Laravel app config |
-| `APP_NICHE` | Default industry pack (`lawn`, `cleaning`, `roofing`) |
+| `APP_NICHE` | Default industry pack (`lawn`, `cleaning`, `roofing`, `pressure`, `windows`, `gutters`, `fence`, `pest`) |
 | `APP_DEMO_HUB` | Enables public `/demo` hub for pack switching |
 | `DB_CONNECTION` (+ host/database/user/password) | Database (SQLite default in dev) |
 | `SESSION_DRIVER`, `CACHE_STORE`, `QUEUE_CONNECTION` | Session, cache, queue backends |
@@ -96,7 +96,7 @@ Three tiers controlled by `product_part` setting:
 `App\Support\ProductFeatures` maps admin resources and public routes to minimum part. `RequireProductPart` middleware gates public routes; Filament resources use `canAccess()` + `ProductFeatures::allows()`.
 
 ### Niche Packs (industry skin)
-`config/niche.php` registers `LawnPack`, `CleaningPack`, `RoofingPack`. `NicheResolver` reads `APP_NICHE` or `active_niche` setting. `NicheLoader` restores a niche model home on the sales demo install: wipes pitch-mutable ops/CMS/catalog data, clears upload branding keys, re-applies pack settings, reseeds content + access codes, sets `demo_mode`. Blocked when `APP_DEMO_HUB=false`. Public `/demo` hub (`DemoHubController`) and Admin → Industry Packs expose Load / Restore model home. `niche_label()` provides industry vocabulary in views.
+`config/niche.php` registers eight packs: `LawnPack`, `CleaningPack`, `RoofingPack`, `PressurePack`, `WindowsPack`, `GuttersPack`, `FencePack`, `PestPack`. `NicheResolver` reads `APP_NICHE` or `active_niche` setting. `NicheLoader` restores a niche model home on the sales demo install: wipes pitch-mutable ops/CMS/catalog data, clears upload branding keys, re-applies pack settings, reseeds content + access codes, sets `demo_mode`. Blocked when `APP_DEMO_HUB=false`. Public `/demo` hub (`DemoHubController`) and Admin → Industry Packs expose Load / Restore model home. `niche_label()` provides industry vocabulary in views.
 
 ### Estimator funnel (Part 2)
 `App\Livewire\EstimatorWizard` — 4-step wizard on `/estimate`. Captures partial leads on every step advance via `persistLead()` (includes `referred_by_code` from `?ref=`). `EstimatePricingEngine` computes low/high range from sqft, neighborhood, complexity, and service multipliers. `BookingMatrix` builds available slots and exposes `isOfferedSlot()`; `book()` validates against the grid, then books inside a transaction with `lockForUpdate()` to prevent double-booking.

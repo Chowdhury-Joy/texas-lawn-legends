@@ -9,7 +9,7 @@ use Illuminate\Console\Command;
 class NicheLoadCommand extends Command
 {
     protected $signature = 'niche:load
-                            {niche? : Pack id (lawn, cleaning, roofing). Defaults to current active pack.}
+                            {niche? : Pack id (lawn, cleaning, roofing, pressure, windows, gutters, fence, pest). Defaults to current active pack.}
                             {--reset : Reload the current active pack}
                             {--no-demo : Load without enabling demo_mode banner}';
 

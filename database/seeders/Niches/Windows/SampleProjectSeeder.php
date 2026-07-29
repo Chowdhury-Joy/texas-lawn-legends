@@ -1,0 +1,79 @@
+<?php
+
+namespace Database\Seeders\Niches\Windows;
+
+use App\Enums\LeadStatus;
+use App\Enums\MilestoneStatus;
+use App\Enums\ProjectStatus;
+use App\Models\Lead;
+use App\Models\Milestone;
+use App\Models\ProgressPhoto;
+use App\Models\Project;
+use Illuminate\Database\Seeder;
+
+class SampleProjectSeeder extends Seeder
+{
+    public function run(): void
+    {
+        $lead = Lead::query()->updateOrCreate(
+            ['email' => 'demo.windows@example.com'],
+            [
+                'name' => 'Demo Window Client',
+                'phone' => '(817) 555-0122',
+                'address' => '3025 Morton St, Fort Worth, TX 76107',
+                'neighborhood' => 'West 7th',
+                'estimated_sqft' => 42,
+                'service_type' => 'Move-Out Window Detail',
+                'calculated_estimate_low' => 108.00,
+                'calculated_estimate_high' => 124.00,
+                'step_reached' => 'booked',
+                'status' => LeadStatus::Booked,
+                'scheduled_at' => now()->addDays(2)->setTime(10, 0),
+                'is_demo' => true,
+            ],
+        );
+
+        $project = Project::query()->updateOrCreate(
+            ['unique_dashboard_hash' => 'demowindowswest7th2026hash01'],
+            [
+                'lead_id' => $lead->id,
+                'client_name' => 'Demo Window Client',
+                'project_title' => 'West 7th Full Window Detail',
+                'neighborhood' => 'West 7th',
+                'contract_value' => 118.00,
+                'status' => ProjectStatus::Active,
+                'started_at' => now()->subDays(1)->toDateString(),
+            ],
+        );
+
+        $milestones = [
+            ['Arrival & Count', 'Confirm pane count and access with client.', MilestoneStatus::Completed],
+            ['Exterior Panes', 'Pure-water wash on all reachable exterior glass.', MilestoneStatus::Completed],
+            ['Interior & Tracks', 'Interior squeegee and track wipe-down.', MilestoneStatus::InProgress],
+            ['Final Inspection', 'Streak check and client walkthrough.', MilestoneStatus::Pending],
+        ];
+
+        foreach ($milestones as [$title, $description, $status]) {
+            Milestone::query()->updateOrCreate(
+                ['project_id' => $project->id, 'title' => $title],
+                ['description' => $description, 'status' => $status],
+            );
+        }
+
+        ProgressPhoto::query()->where('project_id', $project->id)->delete();
+
+        foreach ([
+            ['Arrival & Count', 'Pane count confirmed'],
+            ['Exterior Panes', 'Front elevation complete'],
+            ['Interior & Tracks', 'Living room in progress'],
+        ] as $i => [$step, $caption]) {
+            ProgressPhoto::query()->create([
+                'project_id' => $project->id,
+                'image_path' => null,
+                'caption' => $caption,
+                'milestone_step' => $step,
+                'created_at' => now()->subHours(8 - $i),
+            ]);
+        }
+    }
+}

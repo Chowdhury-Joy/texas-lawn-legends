@@ -50,7 +50,10 @@ class NichePackTest extends TestCase
     {
         $cards = \App\Support\Niche\NicheLoader::hubCards();
 
-        $this->assertCount(3, $cards);
-        $this->assertSame(['lawn', 'cleaning', 'roofing'], array_column($cards, 'id'));
+        $this->assertCount(8, $cards);
+        $this->assertSame(
+            ['lawn', 'cleaning', 'roofing', 'pressure', 'windows', 'gutters', 'fence', 'pest'],
+            array_column($cards, 'id'),
+        );
     }
 }

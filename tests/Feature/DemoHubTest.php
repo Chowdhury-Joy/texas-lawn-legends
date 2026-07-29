@@ -14,7 +14,7 @@ class DemoHubTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_demo_hub_lists_three_industry_cards(): void
+    public function test_demo_hub_lists_industry_cards(): void
     {
         config(['niche.demo_hub' => true]);
 
@@ -24,6 +24,11 @@ class DemoHubTest extends TestCase
         $response->assertSee('Lawn & landscaping');
         $response->assertSee('Home cleaning');
         $response->assertSee('Roofing');
+        $response->assertSee('Pressure washing');
+        $response->assertSee('Window cleaning');
+        $response->assertSee('Gutter & exterior');
+        $response->assertSee('Fence & deck');
+        $response->assertSee('Pest control');
         $response->assertSee('View live demo');
     }
 
@@ -64,6 +69,28 @@ class DemoHubTest extends TestCase
         $this->assertSame('Install', niche_label('suite_create'));
         $this->assertSame('Summit Roof Co', setting('site_name'));
         $this->assertSame('RoofingContractor', niche()->schemaOrgType());
+    }
+
+    public function test_loading_windows_pack_uses_panes_label(): void
+    {
+        app(NicheLoader::class)->load('windows', demoMode: true);
+        NicheResolver::flush();
+
+        $this->assertSame('panes', niche_label('size_unit'));
+        $this->assertSame('Projects', niche_label('suite_create'));
+        $this->assertSame('PanePerfect', setting('site_name'));
+        $this->assertTrue(Service::query()->where('title', 'Move-Out Window Detail')->exists());
+    }
+
+    public function test_loading_pest_pack_uses_treatments_and_protect_labels(): void
+    {
+        app(NicheLoader::class)->load('pest', demoMode: true);
+        NicheResolver::flush();
+
+        $this->assertSame('Treatments', niche_label('suite_create'));
+        $this->assertSame('Protect', niche_label('suite_care'));
+        $this->assertSame('ShieldBug Pest', setting('site_name'));
+        $this->assertSame('PestControlService', niche()->schemaOrgType());
     }
 
     public function test_demo_reset_route_resets_current_pack(): void
