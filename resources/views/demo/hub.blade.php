@@ -12,7 +12,7 @@
         <p class="text-xs font-black uppercase tracking-widest text-yellow-400">Sales demo hub</p>
         <h1 class="mt-3 text-4xl font-black tracking-tight sm:text-5xl">Pick an industry model home</h1>
         <p class="mt-4 max-w-2xl text-base text-slate-300">
-            One click loads that starter kit on this install. Walk the hero, quote funnel, and admin — then reset from admin when the meeting ends.
+            One click loads that starter kit on this install. Walk the hero, quote funnel, and admin — then restore the model home when the meeting ends.
         </p>
 
         <div class="mt-12 grid gap-6 sm:grid-cols-3">
@@ -41,7 +41,7 @@
                 <form method="POST" action="{{ route('demo.reset') }}">
                     @csrf
                     <button type="submit" class="border-2 border-white/20 bg-slate-900 px-5 py-3 text-xs font-black uppercase tracking-wider text-white hover:border-yellow-400">
-                        Reset current pack
+                        Restore model home
                     </button>
                 </form>
             </div>

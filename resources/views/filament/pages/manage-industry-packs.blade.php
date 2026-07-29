@@ -5,7 +5,7 @@
             <p class="mt-1 opacity-90">
                 Prefer the public hub at
                 <a href="{{ url('/demo') }}" class="underline font-bold" target="_blank" rel="noopener">/demo</a>
-                when pitching — big industry cards, one click, then walk hero → quote → admin. Use this page for Load / Reset between meetings.
+                when pitching — big industry cards, one click, then walk hero → quote → admin. Use this page to Load or Restore model home between meetings.
             </p>
             <p class="mt-2 text-xs opacity-80">
                 Active now: <strong>{{ \App\Support\Niche\NicheResolver::active()->label() }}</strong>

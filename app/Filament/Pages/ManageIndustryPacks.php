@@ -69,7 +69,7 @@ class ManageIndustryPacks extends Page
         return $schema
             ->components([
                 Section::make('Which industry starter kit is loaded?')
-                    ->description('Product Parts control Website / Booking / Ops. This page swaps the industry skin and demo starter content (services, pages, sample project). Loading replaces showcase content — use Reset after a sales call.')
+                    ->description('Product Parts control Website / Booking / Ops. This page swaps the industry skin and demo starter content. Load or Restore model home after a sales call — only on demo installs (APP_DEMO_HUB).')
                     ->schema([
                         Radio::make('niche')
                             ->label('Industry pack')
@@ -87,9 +87,10 @@ class ManageIndustryPacks extends Page
             Action::make('load')
                 ->label('Load this pack')
                 ->color('warning')
+                ->visible(fn (): bool => NicheResolver::demoHubEnabled())
                 ->requiresConfirmation()
                 ->modalHeading('Load industry pack?')
-                ->modalDescription('This replaces services, testimonials, add-ons, sample demo projects, and pack branding defaults. Prospect edits to CMS pages may be overwritten on homepage/services/about.')
+                ->modalDescription('Restores this niche\'s model home — branding, pages, services, sample project, and ops demo data. Pitch edits from the last meeting are cleared.')
                 ->action(function (NicheLoader $loader): void {
                     $niche = (string) ($this->form->getState()['niche'] ?? NicheResolver::activeId());
                     $pack = $loader->load($niche, demoMode: true);
@@ -101,17 +102,18 @@ class ManageIndustryPacks extends Page
                         ->send();
                 }),
             Action::make('reset')
-                ->label('Reset current pack')
+                ->label('Restore model home')
                 ->color('gray')
+                ->visible(fn (): bool => NicheResolver::demoHubEnabled())
                 ->requiresConfirmation()
-                ->modalHeading('Reset demo content?')
-                ->modalDescription('Reloads the currently active pack so the next meeting starts clean.')
+                ->modalHeading('Restore model home?')
+                ->modalDescription('Reloads the currently active pack so the next meeting in this niche starts from the clean showroom — not the last prospect\'s edits.')
                 ->action(function (NicheLoader $loader): void {
                     $pack = $loader->reset();
                     $this->form->fill(['niche' => $pack->id()]);
 
                     Notification::make()
-                        ->title('Reset '.$pack->label())
+                        ->title('Restored '.$pack->label())
                         ->success()
                         ->send();
                 }),

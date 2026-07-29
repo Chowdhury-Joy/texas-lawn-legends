@@ -42,7 +42,7 @@ class DemoHubController extends Controller
         $pack = $loader->reset();
 
         return redirect('/')
-            ->with('status', 'Reset demo: '.$pack->label());
+            ->with('status', 'Restored model home: '.$pack->label());
     }
 
     private function ensureHubEnabled(): void

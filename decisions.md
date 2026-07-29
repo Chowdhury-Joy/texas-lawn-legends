@@ -23,6 +23,13 @@
  <reason>Prevents agents reading "no reset for clients" as "remove reset," and names the real requirement (per-niche snapshot restore) rather than a catalog-wide wipe.</reason>
 </decision>
 
+<decision>
+ <category>Code</category>
+ <context>D-01 — mid-pitch edits (extra projects, logo, crews, staff, custom pages) survived partial wipe, bloating back-to-back sales demos in the same niche.</context>
+ <action>`NicheLoader` restore now wipes all pitch-mutable showcase tables, clears upload branding keys, re-applies pack settings, re-runs content seeders + AccessCodesSeeder, preserves `admin@admin.com` only. Block load/restore when `APP_DEMO_HUB=false`. UI copy: Restore model home. Covered by `NicheModelHomeRestoreTest`.</action>
+ <reason>Matches the video-game save-slot workflow — each meeting in a niche starts from the seeded model home, not the last prospect's edits.</reason>
+</decision>
+
 ## 2026-07-29
 
 <decision>

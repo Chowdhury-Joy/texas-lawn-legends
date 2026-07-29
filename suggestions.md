@@ -1,5 +1,5 @@
 # Suggestions Backlog
-Last Updated: 2026-07-30T01:36:00+06:00
+Last Updated: 2026-07-30T02:08:00+06:00
 
 > **Purpose:** Track known bugs, security hardening, and product improvements that are **not** decided or scheduled yet.  
 > **Not the same as `decisions.md`** — nothing here is locked in. When an item is approved and implemented, move the outcome to `decisions.md` / `bug_history.md` and remove or mark it done here.
@@ -52,19 +52,22 @@ Without restore, four roofing calls stack four sets of demo projects and the sho
 **Keep at onboarding (once):** industry pack selection + default seed.  
 **Drop or hide for clients:** `POST /demo/reset`, `POST /demo/load`, public `/demo` hub.
 
-### Gap today
+### Model-home restore (implemented 2026-07-30)
 
-[`NicheLoader`](app/Support/Niche/NicheLoader.php) aims at this (`reset()` → wipe + reseed) but does not yet restore a full model home:
+[`NicheLoader`](app/Support/Niche/NicheLoader.php) **Restore model home** now:
 
-- Wipes services, add-ons, testimonials, and projects matched by known demo hashes / `is_demo` leads
-- Does **not** reset CMS pages, branding/logo edits, users and roles, crews, equipment, invoices, proposals, time entries
-- Projects created mid-meeting (no demo hash, no `is_demo` lead) survive — that is the bloat problem above
-- Because the wipe is catalog-wide, running it on an install that holds real content is destructive — back up SQLite first
+- Clears pitch-mutable ops data: leads, projects, milestones, progress photos, crews, equipment, maintenance logs, time entries, proposals, invoices (+ items), services, add-ons, testimonials, pages, access codes, activity log, notifications
+- Removes pitch-added staff (keeps `admin@admin.com`)
+- Clears uploaded branding keys (`logo_image`, `favicon`, `og_image`, `hero_media_image`) then re-applies pack settings defaults
+- Re-runs pack content seeders + `AccessCodesSeeder`
+- Blocked when `APP_DEMO_HUB=false` (except in unit tests)
 
-| ID | Item | Direction |
-|----|------|-----------|
-| D-01 | **True model-home snapshot restore** | Define the full set of demo-mutable data (settings/branding, pages, services, add-ons, testimonials, leads, projects, milestones, progress photos, crews, equipment, time entries, proposals, invoices, non-owner users/roles), clear it on restore, then reseed the active pack so the showroom returns to its seeded state |
-| D-02 | **Scope restore to demo installs** | Restore/load only available when the install is flagged as a sales demo; blocked on client production regardless of hub flag (relates to S-07, S-14) |
+UI labels: **Restore model home** on `/demo` and Admin → Industry Packs.
+
+| ID | Status | Notes |
+|----|--------|-------|
+| D-01 | **Done** | Full wipe + reseed; see `NicheModelHomeRestoreTest` |
+| D-02 | **Partial** | Gated via `APP_DEMO_HUB` + hidden admin actions when hub off; client onboarding flow still TBD |
 
 ---
 
@@ -76,7 +79,7 @@ These break QA or CRO even on localhost.
 |----|--------|---------------|
 | F-01 | **Referral tracking silent fail** — `EstimatorWizard` sets `referred_by_code` but `Lead` model `$fillable` omits it | Add to `$fillable`; test `?ref=` persists on lead |
 | F-02 | **Unpublished homepage still renders** — `PageController::home()` skips `is_published` check | Same 404 (or explicit “coming soon”) as other CMS pages |
-| F-03 | **Demo pack reset leaves stale CMS pages** — pages not wiped; seeders only `updateOrCreate` known slugs | Wipe/re-seed demo pages or flag demo pages for selective delete (subsumed by **D-01**) |
+| F-03 | ~~Demo pack reset leaves stale CMS pages~~ | **Fixed** — D-01 wipes all pages before reseed |
 | F-04 | **Proposal decline overwrites accepted** — `decline()` has no guard; `accept()` does | Only decline when status is `sent`; block after `accepted` |
 | F-05 | **Booking accepts arbitrary date/time** — `book()` does not validate against `BookingMatrix` slots | Reject slots not in the offered grid |
 | F-06 | **Double-booking race** — two concurrent `book()` calls can take the same slot | Transaction + lock or unique constraint on `scheduled_at` for booked leads |
@@ -135,3 +138,4 @@ Safe to ignore on solo local dev; **launch checklist** for public client sites.
 |------|--------|
 | 2026-07-30 | Initial backlog from security/bug audit + demo reset product discussion |
 | 2026-07-30 | Reframed demo reset as per-niche model-home snapshot restore for sales calls; added D-01 (full restore scope) and D-02 (demo-install gating) |
+| 2026-07-30 | Implemented D-01 in `NicheLoader` — full model-home restore + tests; UI renamed to Restore model home |

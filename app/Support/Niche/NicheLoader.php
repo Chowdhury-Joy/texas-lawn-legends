@@ -2,25 +2,55 @@
 
 namespace App\Support\Niche;
 
+use App\Models\AccessCode;
 use App\Models\Addon;
+use App\Models\Crew;
+use App\Models\Equipment;
+use App\Models\Invoice;
+use App\Models\InvoiceItem;
 use App\Models\Lead;
+use App\Models\MaintenanceLog;
 use App\Models\Milestone;
+use App\Models\Page;
 use App\Models\ProgressPhoto;
 use App\Models\Project;
+use App\Models\Proposal;
 use App\Models\Service;
 use App\Models\Setting;
 use App\Models\Testimonial;
+use App\Models\TimeEntry;
+use App\Models\User;
+use Database\Seeders\AccessCodesSeeder;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
+use RuntimeException;
 
 /**
- * Loads (or resets) an industry showcase pack on this install.
+ * Loads (or restores) an industry showcase pack on the Getwebfield sales demo install.
+ *
+ * Restore = wipe mid-pitch mutable data, re-apply pack settings, re-run content seeders.
  */
 final class NicheLoader
 {
+    /** Settings keys cleared before pack defaults are applied (uploads / pitch edits). */
+    private const SHOWCASE_UPLOAD_SETTING_KEYS = [
+        'logo_image',
+        'favicon',
+        'og_image',
+        'hero_media_image',
+    ];
+
+    /** Staff logins preserved across restore (seeded admin). */
+    private const PRESERVED_USER_EMAILS = [
+        'admin@admin.com',
+    ];
+
     public function load(string $nicheId, bool $demoMode = true): NichePack
     {
+        $this->ensureDemoInstall();
+
         $packs = config('niche.packs', []);
 
         if (! isset($packs[$nicheId]) || ! is_string($packs[$nicheId])) {
@@ -33,7 +63,8 @@ final class NicheLoader
         $pack = app($packs[$nicheId]);
 
         DB::transaction(function () use ($pack, $nicheId, $demoMode) {
-            $this->wipeShowcaseContent();
+            $this->wipeModelHomeContent();
+            $this->resetShowcaseUploadSettings();
             $this->applySettings($pack);
             Setting::set('active_niche', $nicheId, 'string', 'product');
             Setting::set('demo_mode', $demoMode ? '1' : '0', 'boolean', 'product');
@@ -47,6 +78,11 @@ final class NicheLoader
                 '--force' => true,
             ]);
         }
+
+        Artisan::call('db:seed', [
+            '--class' => AccessCodesSeeder::class,
+            '--force' => true,
+        ]);
 
         NicheResolver::flush();
 
@@ -78,42 +114,64 @@ final class NicheLoader
         return $cards;
     }
 
-    private function wipeShowcaseContent(): void
+    /**
+     * Model-home restore only runs on demo installs (APP_DEMO_HUB) or in tests.
+     */
+    private function ensureDemoInstall(): void
     {
-        $demoLeadIds = Lead::query()->where('is_demo', true)->withTrashed()->pluck('id');
-
-        $projectIds = Project::query()
-            ->where(function ($query) use ($demoLeadIds) {
-                if ($demoLeadIds->isNotEmpty()) {
-                    $query->whereIn('lead_id', $demoLeadIds);
-                }
-
-                $query->orWhereIn('unique_dashboard_hash', [
-                    'demokesslerpark2026renovationhash01',
-                    'democleaninghydepark2026hash01',
-                    'demoroofingalamoheights2026hash01',
-                ]);
-            })
-            ->pluck('id');
-
-        if ($projectIds->isNotEmpty()) {
-            ProgressPhoto::query()->whereIn('project_id', $projectIds)->delete();
-            Milestone::query()->whereIn('project_id', $projectIds)->delete();
-            Project::query()->whereIn('id', $projectIds)->forceDelete();
+        if (app()->runningUnitTests() || NicheResolver::demoHubEnabled()) {
+            return;
         }
 
-        Lead::query()->where('is_demo', true)->withTrashed()->forceDelete();
+        throw new RuntimeException(
+            'Model home restore is only available when APP_DEMO_HUB is enabled on this install.',
+        );
+    }
 
-        // Known lawn demo email from before is_demo existed.
-        Lead::query()->whereIn('email', [
-            'demo.client@example.com',
-            'demo.cleaning@example.com',
-            'demo.roofing@example.com',
-        ])->withTrashed()->forceDelete();
+    /**
+     * Clear all showcase data that can change during a sales pitch.
+     */
+    private function wipeModelHomeContent(): void
+    {
+        InvoiceItem::query()->delete();
+        Invoice::query()->withTrashed()->forceDelete();
+        Proposal::query()->withTrashed()->forceDelete();
+        TimeEntry::query()->delete();
+        MaintenanceLog::query()->delete();
+        Equipment::query()->delete();
+        ProgressPhoto::query()->delete();
+        Milestone::query()->delete();
+
+        Project::query()->withTrashed()->update(['crew_id' => null]);
+        Project::query()->withTrashed()->forceDelete();
+
+        Lead::query()->withTrashed()->forceDelete();
+
+        Crew::query()->withTrashed()->forceDelete();
 
         Service::query()->delete();
         Addon::query()->delete();
         Testimonial::query()->delete();
+        Page::query()->delete();
+        AccessCode::query()->delete();
+
+        User::query()
+            ->whereNotIn('email', self::PRESERVED_USER_EMAILS)
+            ->each(function (User $user): void {
+                $user->permissions()->delete();
+                $user->delete();
+            });
+
+        DB::table('activity_log')->delete();
+        DB::table('notifications')->delete();
+    }
+
+    private function resetShowcaseUploadSettings(): void
+    {
+        foreach (self::SHOWCASE_UPLOAD_SETTING_KEYS as $key) {
+            Setting::query()->where('key', $key)->delete();
+            Cache::forget("setting.{$key}");
+        }
     }
 
     private function applySettings(NichePack $pack): void

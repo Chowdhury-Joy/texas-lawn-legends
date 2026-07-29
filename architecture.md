@@ -1,5 +1,5 @@
 # Architecture Overview
-Last Updated: 2026-07-30T01:12:00+06:00
+Last Updated: 2026-07-30T02:08:00+06:00
 
 ## Overview
 
@@ -96,7 +96,7 @@ Three tiers controlled by `product_part` setting:
 `App\Support\ProductFeatures` maps admin resources and public routes to minimum part. `RequireProductPart` middleware gates public routes; Filament resources use `canAccess()` + `ProductFeatures::allows()`.
 
 ### Niche Packs (industry skin)
-`config/niche.php` registers `LawnPack`, `CleaningPack`, `RoofingPack`. `NicheResolver` reads `APP_NICHE` or `active_niche` setting. `NicheLoader` wipes showcase content, reseeds pack content, sets `demo_mode`. Public `/demo` hub (`DemoHubController`) loads/resets packs for sales demos. `niche_label()` provides industry vocabulary in views.
+`config/niche.php` registers `LawnPack`, `CleaningPack`, `RoofingPack`. `NicheResolver` reads `APP_NICHE` or `active_niche` setting. `NicheLoader` restores a niche model home on the sales demo install: wipes pitch-mutable ops/CMS/catalog data, clears upload branding keys, re-applies pack settings, reseeds content + access codes, sets `demo_mode`. Blocked when `APP_DEMO_HUB=false`. Public `/demo` hub (`DemoHubController`) and Admin → Industry Packs expose Load / Restore model home. `niche_label()` provides industry vocabulary in views.
 
 ### Estimator funnel (Part 2)
 `App\Livewire\EstimatorWizard` — 4-step wizard on `/estimate`. Captures partial leads on every step advance via `persistLead()`. `EstimatePricingEngine` computes low/high range from sqft, neighborhood, complexity, and service multipliers. `BookingMatrix` builds available slots; booking sets lead status to `booked`.
