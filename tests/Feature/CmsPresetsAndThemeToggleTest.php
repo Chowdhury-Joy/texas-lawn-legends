@@ -33,14 +33,16 @@ class CmsPresetsAndThemeToggleTest extends TestCase
         }
     }
 
-    public function test_admin_homepage_editor_renders_clean_floating_editor_layout(): void
+    public function test_admin_homepage_editor_renders_inline_save_action(): void
     {
         $admin = User::factory()->create(['role' => UserRole::Admin]);
 
         $response = $this->actingAs($admin)->get('/admin/manage-homepage');
 
         $response->assertStatus(200);
-        $response->assertSee('Homepage Content Editor');
-        $response->assertSee('sticky bottom-0 z-40', false);
+        $response->assertSee('style="margin-top: 24px"', false);
+        $response->assertSee('flex items-center justify-end', false);
+        $response->assertDontSee('sticky bottom-0 z-40', false);
+        $response->assertDontSee('Homepage Content Editor');
     }
 }

@@ -1,5 +1,5 @@
 <x-filament-panels::page>
-    <div class="max-w-5xl pb-16">
+    <div class="max-w-5xl">
         {{--
             No visible "unsaved changes" indicator here on purpose: an x-show
             badge bound to `dirty` gets left in a stale visual state across a
@@ -17,17 +17,10 @@
               @submit="dirty = false">
             {{ $this->form }}
 
-            {{-- Sticky Floating Save Bar with solid background --}}
-            <div class="sticky bottom-0 z-40 -mx-4 -mb-4 sm:-mx-6 sm:-mb-6 mt-8 flex items-center justify-between gap-4 border-t border-slate-200 bg-white px-6 py-4 shadow-2xl dark:border-slate-800 dark:bg-slate-900">
-                <div class="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400">
-                    <span class="h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                    <span>Site Settings Editor</span>
-                </div>
-                <div class="flex items-center gap-3">
-                    @foreach ($this->getFormActions() as $action)
-                        {{ $action }}
-                    @endforeach
-                </div>
+            <div class="flex items-center justify-end" style="margin-top: 24px">
+                @foreach ($this->getFormActions() as $action)
+                    {{ $action }}
+                @endforeach
             </div>
         </form>
     </div>

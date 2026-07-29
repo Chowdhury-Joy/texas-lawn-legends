@@ -3,6 +3,13 @@
 ## 2026-07-29
 
 <decision>
+ <category>UI/UX</category>
+ <context>Admin settings and page editors used a sticky bottom save bar with an "Site Settings Editor" label that floated over content and added visual noise.</context>
+ <action>Replace the sticky save bar with a static inline Save changes button (24px top margin via inline style, right-aligned) and remove the editor label text across settings, homepage, and page create/edit forms.</action>
+ <reason>Save sits naturally at the end of the form scroll instead of covering fields; inline margin is required because Filament admin CSS does not ship project Tailwind utilities like mt-6.</reason>
+</decision>
+
+<decision>
  <category>Business_Logic</category>
  <context>Getwebfield pricing needed one internal master, a minimal public price list, and a separate upsells page — US/UK/CA/AU in USD only; Bangladesh is a separate venture.</context>
  <action>docs/pricing-master.md holds full terms (20/40/40 Track A milestones, unlimited content updates, chargeback immediate suspend, code handover at month 2, 25% escalator every 3 clients internal-only, email upsell $397/mo, no priority support, no SEO+email bundle). docs/pricing-public.md and docs/pricing-upsells-public.md are website-ready. Industry packs remain internal demo tooling only.</action>

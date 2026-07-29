@@ -24,11 +24,10 @@ class AdminUxEnhancementsTest extends TestCase
 
     /**
      * The Create and Edit screens for a Page render the exact same custom
-     * Blade view, so the save bar and content width can't drift between
-     * "new page" and "existing page" the way they would if only one of the
-     * two had a hand-styled sticky bar.
+     * Blade view, so the save action and content width can't drift between
+     * "new page" and "existing page".
      */
-    public function test_create_and_edit_page_screens_render_matching_sticky_save_bars(): void
+    public function test_create_and_edit_page_screens_render_matching_save_actions(): void
     {
         $admin = User::factory()->create(['role' => UserRole::Admin]);
 
@@ -38,9 +37,11 @@ class AdminUxEnhancementsTest extends TestCase
         $editHtml = $this->actingAs($admin)->get("/admin/pages/{$page->slug}/edit")->assertStatus(200)->getContent();
 
         foreach ([$createHtml, $editHtml] as $html) {
-            $this->assertStringContainsString('sticky bottom-0 z-40', $html);
-            $this->assertStringContainsString('Page Content Editor', $html);
-            $this->assertStringContainsString('max-w-5xl pb-16', $html);
+            $this->assertStringContainsString('style="margin-top: 24px"', $html);
+            $this->assertStringContainsString('flex items-center justify-end', $html);
+            $this->assertStringNotContainsString('sticky bottom-0 z-40', $html);
+            $this->assertStringNotContainsString('Page Content Editor', $html);
+            $this->assertStringContainsString('max-w-5xl', $html);
         }
     }
 
