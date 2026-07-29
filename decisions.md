@@ -39,6 +39,20 @@
  <reason>Matches the video-game save-slot workflow — each meeting in a niche starts from the seeded model home, not the last prospect's edits.</reason>
 </decision>
 
+<decision>
+ <category>Business_Logic</category>
+ <context>Need a self-serve 7-day trial so curious prospects can try the product without a Zoom for every inquiry. Must not look like their live customer-facing website.</context>
+ <action>Offer a Getwebfield-hosted trial sandbox (not a white-label client site): templated niche website on Getwebfield hosting/branding; always-on "Demo purpose only" public banner; logo/branding locked. Admin: Site Settings, Site Content (Pages, Services, Testimonials, Add-ons, Homepage), and Configuration (Users, raw Settings) are view-only — can open screens, cannot save/rewrite/create. Operations (Leads, Projects, Invoices, crews, etc. per Product Part) stay fully usable. No demo hub / Restore model home for trialists. After 7 days, lock or upgrade gate. Track B "no free month" still applies only after they become a paying renter on a real client install — the trial is a product demo front door, not Track B hosting. Build items tracked as T-01+ in suggestions.md.</action>
+ <reason>Self-serve cuts meeting load; view-only content/settings/configuration keeps the template and staff setup intact and stops them treating the sandbox as their shopfront; open Operations lets them feel the booking/ops product story.</reason>
+</decision>
+
+<decision>
+ <category>Business_Logic</category>
+ <context>Open product choices for the 7-day trial needed locking before build: part level, niche, expiry UX, signup, public estimate limits, conversion, URL shape.</context>
+ <action>Trial workspaces run at Product Part 3 (full Website + Booking + Ops). Signup: prospect picks niche themselves; auth = email + password (password field visible/plain at start, no confirm-password on trial signup) and Google OAuth. URL shape: getwebfield.com/trial/{slug} (e.g. /trial/acme). Public estimate/booking funnel allows up to 3 submissions per trial; each submit shows a reminder banner that this is a demo. After day 7: admin login blocked + public demo banner remains (no further authenticated use). Converting to a paying client starts fresh on a new install — trial ops data is not migrated. No billing and no card required for the trial/demo — payment only when they become a paying Track A/B client. Timing of when to build the trial vs keep selling with meetings is still undecided. Details mirrored in suggestions.md § 7-day trial.</action>
+ <reason>Part 3 lets them feel the full product story; self-serve niche + Google lowers signup friction; 3-lead cap + per-submit banner stops spam and reinforces demo; expire = no login keeps the sandbox from becoming free forever; start-fresh conversion avoids messy half-migrated demo data onto real client sites; no card at signup keeps the trial low-friction and matches manual billing until later SaaS.</reason>
+</decision>
+
 ## 2026-07-29
 
 <decision>

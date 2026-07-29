@@ -1,5 +1,5 @@
 # Suggestions Backlog
-Last Updated: 2026-07-30T02:15:00+06:00
+Last Updated: 2026-07-30T03:12:00+06:00
 
 > **Purpose:** Track known bugs, security hardening, and product improvements that are **not** decided or scheduled yet.  
 > **Not the same as `decisions.md`** — nothing here is locked in. When an item is approved and implemented, move the outcome to `decisions.md` / `bug_history.md` and remove or mark it done here.
@@ -67,7 +67,48 @@ UI labels: **Restore model home** on `/demo` and Admin → Industry Packs.
 | ID | Status | Notes |
 |----|--------|-------|
 | D-01 | **Done** | Full wipe + reseed; see `NicheModelHomeRestoreTest` |
-| D-02 | **Partial** | Gated via `APP_DEMO_HUB` + hidden admin actions when hub off; client onboarding flow still TBD |
+| D-02 | **Partial / enough for now** | Separate host+domain per paying client already isolates Restore; keep `APP_DEMO_HUB=false` on client deploys |
+
+---
+
+## Product direction — 7-day self-serve trial (decided 2026-07-30)
+
+**Goal:** Prospects sign up and try the product alone — no video meeting required for every curious visitor.
+
+**What it is:** A temporary **practice sandbox** on Getwebfield hosting with Getwebfield branding — not a live shopfront for their customers.
+
+| Rule | Detail |
+|------|--------|
+| Hosting / brand | Lives on Getwebfield host; site does not pretend to be the prospect’s public business |
+| URL | `getwebfield.com/trial/{slug}` (e.g. `/trial/acme`) |
+| Product Part | **Part 3** (Website + Booking + Ops) |
+| Niche | Prospect **picks at signup** from registered packs (lawn, cleaning, roofing, pressure, windows, gutters, fence, pest) |
+| Public banner | Always-on **“Demo purpose only”** (or equivalent) |
+| Logo / branding | Locked — cannot rebrand as theirs |
+| **Site Settings** | **View only** (Product Parts, Branding, Industry Packs, SEO, Contact, Homepage Content, Estimator & Pricing, Operations Alerts) |
+| **Site Content** | **View only** (Pages, Services, Testimonials, Add-ons — including homepage) |
+| **Configuration** | **View only** (Users, raw Settings escape hatch — no create/edit/delete) |
+| **Operations** | **Fully open** (Leads, Projects, Invoices, crews, portal tools, etc.) |
+| Demo hub / Restore | **Not available** to trialists (Getwebfield sales install only) |
+| Signup | Email + password (**password visible at start**, **no confirm-password** on trial) **and** Google OAuth |
+| Public estimate / booking | **Max 3 submissions** per trial; **banner every time** they submit (demo reminder) |
+| Duration / expiry | **7 days** → **no admin login** + public demo banner remains |
+| Convert to paid | **Start fresh** on a new client install — do **not** migrate trial ops data |
+| Billing / card | **None** on trial — no Stripe, no card at signup; pay only when becoming a Track A/B client |
+| vs Track B | Trial ≠ free Track B month; “no free month” still applies once they are a paying renter |
+| When to build | **Still deciding** (sell with meetings first vs build trial now) |
+
+**Relation to SaaS:** Trial needs signup + isolated workspace + timer + permission locks. That is the first SaaS-shaped slice; full multi-tenant billing/custom domains can wait.
+
+| ID | Item | Direction |
+|----|------|-----------|
+| T-01 | Trial signup + workspace provision | Email/password (visible, no confirm) + Google; niche picker; seed Part 3 template; slug under `getwebfield.com/trial/{slug}`; start 7-day clock |
+| T-02 | Trial role / permissions | View-only Site Settings + Site Content + Configuration; full Operations; hide Industry Packs Load/Restore |
+| T-03 | Public demo banner + locked logo | Always visible on public pages; block branding edits in admin |
+| T-04 | Expiry gate | After day 7: **block admin login**; keep public demo banner |
+| T-05 | Public funnel cap | Max **3** estimate/booking submits per trial; show demo banner on each submit |
+| T-06 | Convert trial → paying client | **Start fresh** install for Track A/B — no trial data migration; billing starts only then (manual for now) |
+| T-07 | Build timing | Undecided — product rules locked; engineering start date TBD |
 
 ---
 
@@ -140,3 +181,5 @@ Safe to ignore on solo local dev; **launch checklist** for public client sites.
 | 2026-07-30 | Reframed demo reset as per-niche model-home snapshot restore for sales calls; added D-01 (full restore scope) and D-02 (demo-install gating) |
 | 2026-07-30 | Implemented D-01 in `NicheLoader` — full model-home restore + tests; UI renamed to Restore model home |
 | 2026-07-30 | Fixed F-01–F-08 functional bugs (referrals, homepage publish, proposals, booking validation/race, reserved slugs, BookingMatrix cursor) |
+| 2026-07-30 | Logged 7-day self-serve trial product: demo sandbox, Site Settings+Content view-only, Operations open; backlog T-01–T-07 |
+| 2026-07-30 | Locked trial details: Part 3, niche picker, expiry=no login+banner, email/Google signup, 3-submit cap, start-fresh convert, getwebfield.com/trial/{slug}; build timing still TBD |
