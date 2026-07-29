@@ -3,8 +3,8 @@
     $layout = \App\Support\PageBlocks::layoutClasses($data['layout'] ?? []);
 @endphp
 <section class="border-t-4 border-slate-950 bg-brand-paper">
-    <div class="mx-auto max-w-7xl space-section">
-        <div class="{{ $layout ?: 'grid-services' }}">
+    <div class="layout-container space-section">
+        <div class="{{ $layout ?: 'grid-cards' }}" @if(empty($layout)) data-card-count="{{ count($images) }}" @endif>
             @foreach ($images as $index => $item)
                 @php $url = filled($item['image'] ?? null) ? public_url($item['image']) : null; @endphp
                 <figure data-stagger style="--stagger-i: {{ $index }}" class="box-brutal overflow-hidden">

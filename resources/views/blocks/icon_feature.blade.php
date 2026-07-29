@@ -3,7 +3,7 @@
     $layout = \App\Support\PageBlocks::layoutClasses($data['layout'] ?? []);
 @endphp
 <section class="border-t-4 border-slate-950 bg-brand-paper">
-    <div class="mx-auto max-w-7xl space-section">
+    <div class="layout-container space-section">
         <div class="stack-header">
             @if (filled($data['eyebrow'] ?? null))
                 <span data-field="eyebrow" data-reveal class="inline-block w-fit bg-emerald-900 px-2 py-0.5 type-tagline text-yellow-400">
@@ -18,7 +18,7 @@
         </div>
 
         @if (! empty($features))
-            <div class="stack-after-header {{ $layout ?: 'grid-services' }}">
+            <div class="stack-after-header {{ $layout ?: 'grid-cards' }}" @if(empty($layout)) data-card-count="{{ count($features) }}" @endif>
                 @foreach ($features as $index => $feature)
                     <div data-field="features.{{ $index }}" data-stagger style="--stagger-i: {{ $index }}" class="box-brutal space-card">
                         @if (filled($feature['icon'] ?? null))

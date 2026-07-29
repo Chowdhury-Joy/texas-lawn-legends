@@ -2,8 +2,8 @@
     $logos = (array) ($data['logos'] ?? []);
     $layout = \App\Support\PageBlocks::layoutClasses($data['layout'] ?? []);
 @endphp
-<section class="border-t-4 border-slate-950 bg-slate-950 space-section">
-    <div class="mx-auto max-w-7xl">
+<section class="border-t-4 border-slate-950 bg-slate-950">
+    <div class="layout-container space-section">
         <div class="stack-header items-center text-center">
             @if (filled($data['eyebrow'] ?? null))
                 <span data-field="eyebrow" data-reveal class="inline-block w-fit bg-emerald-900 px-2 py-0.5 type-tagline text-yellow-400">

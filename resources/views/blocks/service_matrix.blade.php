@@ -2,14 +2,14 @@
     $layout = \App\Support\PageBlocks::layoutClasses($data['layout'] ?? []);
 @endphp
 {{-- CREATE SUITE --}}
-<section id="create-suite" class="border-t-4 border-slate-950 bg-emerald-900 space-section text-on-primary">
-    <div class="mx-auto max-w-7xl">
+<section id="create-suite" class="border-t-4 border-slate-950 bg-emerald-900 text-on-primary">
+    <div class="layout-container space-section">
         <div class="stack-header">
             <span data-reveal class="chip-accent type-tagline bg-yellow-400 inline-block px-3 py-1">{{ niche_label('suite_create') }}</span>
             <h2 data-field="create_suite_heading" data-reveal class="type-h2 max-w-3xl text-on-primary">{{ $data['create_suite_heading'] ?? 'Premium Landscape Design & Structural Hardscaping' }}</h2>
         </div>
 
-        <div class="stack-after-header {{ $layout ?: 'grid-services' }}">
+        <div class="stack-after-header {{ $layout ?: 'grid-cards' }}" @if(empty($layout)) data-card-count="{{ $createServices->count() }}" @endif>
             @foreach ($createServices as $service)
                 <div data-stagger style="--stagger-i: {{ $loop->index }}" class="stack-card space-card border-2 border-emerald-950 bg-emerald-800/40 shadow-brutal-forest mr-[6px] sm:mr-0 text-on-primary-light">
                     <div class="stack-card-body">
@@ -29,14 +29,14 @@
 </section>
 
 {{-- CARE SUITE --}}
-<section id="care-suite" class="border-t-4 border-slate-950 bg-white space-section text-slate-900">
-    <div class="mx-auto max-w-7xl">
+<section id="care-suite" class="border-t-4 border-slate-950 bg-white text-slate-900">
+    <div class="layout-container space-section">
         <div class="stack-header">
             <span data-reveal class="chip-accent type-tagline bg-yellow-400 inline-block px-3 py-1">{{ niche_label('suite_care') }}</span>
             <h2 data-field="care_suite_heading" data-reveal class="type-h2 max-w-3xl text-slate-950">{{ $data['care_suite_heading'] ?? 'Comprehensive Property Preservation & Lawn Maintenance' }}</h2>
         </div>
 
-        <div class="stack-after-header {{ $layout ?: 'grid-services' }}">
+        <div class="stack-after-header {{ $layout ?: 'grid-cards' }}" @if(empty($layout)) data-card-count="{{ $careServices->count() }}" @endif>
             @foreach ($careServices as $service)
                 <div data-stagger style="--stagger-i: {{ $loop->index }}" class="stack-card space-card border-2 border-slate-950 bg-white shadow-brutal-forest mr-[6px] sm:mr-0">
                     <div class="stack-card-body">

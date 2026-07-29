@@ -7,7 +7,7 @@
     $layout = \App\Support\PageBlocks::layoutClasses($data['layout'] ?? []);
 @endphp
 <section class="border-t-4 border-slate-950 bg-brand-paper">
-    <div class="mx-auto max-w-7xl space-section">
+    <div class="layout-container space-section">
         <div class="stack-header">
             @if (filled($data['eyebrow'] ?? null))
                 <span data-field="eyebrow" data-reveal class="inline-block w-fit bg-emerald-900 px-2 py-0.5 type-tagline text-yellow-400">
@@ -25,7 +25,7 @@
         </div>
 
         @if ($reviews->isNotEmpty())
-            <div class="stack-after-header {{ $layout ?: 'grid-services' }}">
+            <div class="stack-after-header {{ $layout ?: 'grid-cards' }}" @if(empty($layout)) data-card-count="{{ $reviews->count() }}" @endif>
                 @foreach ($reviews as $review)
                     <figure data-stagger style="--stagger-i: {{ $loop->index }}" class="box-brutal stack-card space-card">
                         @php $stars = max(0, min(5, (int) $review->rating)); @endphp

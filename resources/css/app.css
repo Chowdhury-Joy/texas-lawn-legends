@@ -54,7 +54,7 @@
     --color-brand-on-primary: #f2f2f2;
     --color-brand-on-primary-light: #f2f2f2;
 
-    /* Section rhythm — Figma Spacing/Section/Vertical (mobile 48 → desktop 64) */
+    /* Section rhythm — Figma Spacing/Section/Vertical (mobile 48 → desktop 96) */
     --spacing-section: var(--space-section-y);
 
     /* Device tiers from the Figma Token_device table: mobile 0, tablet 640,

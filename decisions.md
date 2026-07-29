@@ -109,3 +109,40 @@
  <action>Wire every public block (about, faq, gallery, image_text_split, rich_text, icon_feature, logo_cloud, neighborhood_proof, review_spotlight, stat_band, testimonial_grid, testimonial_quote, trust_bar) to .type-* / .space-section / .space-card / .stack-* / .grid-split|services|stats using the same Heading / Body / Tagline role map.</action>
  <reason>Pre-made blocks are the product’s “model home rooms” — they must share one type and spacing language or demos look half-finished.</reason>
 </decision>
+
+## 2026-07-29 (anti-slop design rule)
+
+<decision>
+ <category>UI/UX</category>
+ <context>AI-generated UI drifted toward generic SaaS patterns (gradients, brand-colored text, decorative backgrounds, mixed heading weights). Needed a persistent rule so every new page/block starts from a defined system.</context>
+ <action>Ship `.cursor/rules/anti-slop-design.mdc` (always apply). Before UI work: AskQuestion for fonts (heading / paragraph / button / tagline) and typography scale (Large → Figma 28305-260, Regular → 28334-265). Lock text to Content/Base and Content/Inverted grayscale tokens in `design-tokens.css`; section backgrounds `#FFFFFF` or `#000000` only unless user says otherwise; spacing from Figma 28297-253 via existing token utilities; WCAG 2.1 AA; no checker/dot/grid decorative backgrounds; single weight per heading element.</action>
+ <reason>Turns anti-slop from advice into enforced workflow — fonts and scale are chosen per project, but color/spacing/type structure stay predictable and non-generic.</reason>
+</decision>
+
+<decision>
+ <category>UI/UX</category>
+ <context>AI defaults often add soft card shadows and layered elevation on every block, which reads as generic SaaS slop and fights the flat B/W section system.</context>
+ <action>Add anti-slop rule §9: shadows minimal by default — no box-shadow on cards/sections unless functionally needed (dropdown, focus) or user explicitly requests; prefer flat surfaces, spacing, and 1px borders over elevation.</action>
+ <reason>Flat black/white sections already create hierarchy; decorative shadows are a common AI tell and add visual noise without improving conversion.</reason>
+</decision>
+
+<decision>
+ <category>UI/UX</category>
+ <context>Public pages used Tailwind max-w-7xl (1280px) instead of the intended desktop content cap; horizontal padding needed to live inside that shell.</context>
+ <action>Add `--layout-max-width: 1400px` and `.layout-container` in design-tokens.css (centered, full width below cap). Pair with `.space-inline` / `.space-section` for Figma horizontal padding inside the box. Replace public `max-w-7xl` shells with `.layout-container`; document in anti-slop rule §5.</action>
+ <reason>1400px matches the design spec; token-based inner padding keeps content off the edges on wide screens without ad-hoc Tailwind px-*.</reason>
+</decision>
+
+<decision>
+ <category>UI/UX</category>
+ <context>Card grids used inconsistent column counts (3-col desktop always, stats with 4-col) instead of a simple count-based rule.</context>
+ <action>Horizontal card grids: mobile 1col, tablet 2col, desktop 2col when card count is 1/2/4 else 3col. Ship `.grid-cards` + `data-card-count` in design-tokens.css; wire icon_feature, service_matrix, testimonial_grid, neighborhood_proof, gallery, three_step; document as anti-slop rule §6.</action>
+ <reason>Predictable card rhythm — 4 cards become a clean 2×2 on desktop, 6 cards become 3×2, no AI-style auto-fit mush.</reason>
+</decision>
+
+<decision>
+ <category>UI/UX</category>
+ <context>Card grid gaps used a single `gap` token that did not match the Figma horizontal/vertical split.</context>
+ <action>Card grids (`.grid-cards`, `.grid-steps`): `column-gap: var(--space-lg)` always; `row-gap: var(--space-lg)` on mobile, `row-gap: var(--space-xl)` from tablet (640px+) up; document in anti-slop rule §6.</action>
+ <reason>Side-by-side cards breathe on lg; stacked rows separate on xl — matches the spacing token intent.</reason>
+</decision>

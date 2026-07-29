@@ -27,7 +27,7 @@
     $renderElements = array_merge($repeaterElements, $classicFallbacks);
 @endphp
 <section class="border-t-4 border-slate-950 bg-white">
-    <div class="mx-auto max-w-7xl space-section text-center">
+    <div class="layout-container space-section text-center">
         @foreach ($renderElements as $element)
             @php
                 if ($element['is_hidden'] ?? false) {
@@ -53,7 +53,7 @@
                 </p>
             @endif
         @endforeach
-        <div class="stack-after-header text-left {{ $layout ?: 'grid-steps' }}">
+        <div class="stack-after-header text-left {{ $layout ?: 'grid-cards' }}" @if(empty($layout)) data-card-count="{{ count($processSteps) }}" @endif>
             @foreach ($processSteps as $index => $step)
                 @php
                     $rawNumber = filled($step['number'] ?? null) ? (string) $step['number'] : '0'.($index + 1);

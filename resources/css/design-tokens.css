@@ -15,6 +15,18 @@
     --font-weight-body: 400;
     --font-weight-tagline: 400;
 
+    /* Content / Base — text on #FFFFFF (Figma Content/Base) */
+    --content-main: #1f2937;
+    --content-base: #4b5563;
+    --content-subtle: #9ca3af;
+    --content-disabled: #d1d5db;
+
+    /* Content / Inverted — text on #000000 (Figma Content/Inverted) */
+    --content-inverted-main: #f9fafb;
+    --content-inverted-base: #f3f4f6;
+    --content-inverted-subtle: #d1d5db;
+    --content-inverted-disabled: #6b7280;
+
     /* Spacing/Container — mobile defaults */
     --space-0: 0px;
     --space-xxs: 4px;
@@ -28,6 +40,9 @@
     /* Section padding — mobile */
     --space-section-y: 48px;
     --space-section-x: 16px;
+
+    /* Page shell — content caps here; horizontal padding sits inside via .space-inline / .space-section */
+    --layout-max-width: 1400px;
 }
 
 @media (min-width: 640px) {
@@ -53,7 +68,7 @@
         --space-lg: 24px;
         --space-xl: 32px;
         --space-xxl: 48px;
-        --space-section-y: 64px;
+        --space-section-y: 96px;
         --space-section-x: 40px;
     }
 }
@@ -75,7 +90,37 @@
     text-transform: uppercase;
 }
 
-/* ---- Type scale: mobile base ---- */
+/* ---- Content color utilities (never use brand hues for text) ---- */
+.text-content-main { color: var(--content-main); }
+.text-content-base { color: var(--content-base); }
+.text-content-subtle { color: var(--content-subtle); }
+.text-content-disabled { color: var(--content-disabled); }
+
+.text-content-inverted-main { color: var(--content-inverted-main); }
+.text-content-inverted-base { color: var(--content-inverted-base); }
+.text-content-inverted-subtle { color: var(--content-inverted-subtle); }
+.text-content-inverted-disabled { color: var(--content-inverted-disabled); }
+
+/* Auto content colors from section background */
+[data-section-bg="#000000"],
+[data-section-bg="#000"],
+.bg-section-dark {
+    color: var(--content-inverted-base);
+}
+
+[data-section-bg="#000000"] .text-content-main,
+[data-section-bg="#000"] .text-content-main,
+.bg-section-dark .text-content-main { color: var(--content-inverted-main); }
+
+[data-section-bg="#000000"] .text-content-base,
+[data-section-bg="#000"] .text-content-base,
+.bg-section-dark .text-content-base { color: var(--content-inverted-base); }
+
+[data-section-bg="#000000"] .text-content-subtle,
+[data-section-bg="#000"] .text-content-subtle,
+.bg-section-dark .text-content-subtle { color: var(--content-inverted-subtle); }
+
+/* ---- Type scale: Large (default) — Figma node 28305-260 ---- */
 
 /* Heading / H1 — mobile 48/-2.88 → -6% */
 .type-h1 {
@@ -270,6 +315,160 @@
     }
 }
 
+/* ---- Type scale: Regular — Figma node 28334-265 ----
+   Set <html data-type-scale="regular"> after user picks Regular in the typography question. */
+
+/* Mobile base */
+[data-type-scale="regular"] .type-h1 {
+    font-size: 32px;
+    line-height: 100%;
+    letter-spacing: -0.06em; /* -1.92/32 */
+}
+[data-type-scale="regular"] .type-h2 {
+    font-size: 28px;
+    line-height: 100%;
+    letter-spacing: -0.06em; /* -1.68/28 */
+}
+[data-type-scale="regular"] .type-h3 {
+    font-size: 22px;
+    line-height: 100%;
+    letter-spacing: -0.06em; /* -1.32/22 */
+}
+[data-type-scale="regular"] .type-h4 {
+    font-size: 18px;
+    line-height: 100%;
+    letter-spacing: -0.03em; /* -0.54/18 */
+}
+[data-type-scale="regular"] .type-body-lg {
+    font-size: 15px;
+    line-height: 150%;
+    letter-spacing: -0.05em; /* -0.75/15 */
+}
+[data-type-scale="regular"] .type-body-md {
+    font-size: 13px;
+    line-height: 135%;
+    letter-spacing: -0.03em; /* -0.39/13 */
+}
+[data-type-scale="regular"] .type-body-sm {
+    font-size: 11px;
+    line-height: 150%;
+    letter-spacing: -0.04em; /* -0.44/11 */
+}
+[data-type-scale="regular"] .type-btn {
+    font-size: 14px;
+    line-height: 100%;
+    letter-spacing: 0;
+}
+[data-type-scale="regular"] .type-btn-sm {
+    font-size: 11px;
+    line-height: 100%;
+    letter-spacing: 0;
+}
+[data-type-scale="regular"] .type-tagline-lg {
+    font-size: 14px;
+    line-height: 142.86%;
+    letter-spacing: 0.06em; /* 0.84/14 */
+}
+[data-type-scale="regular"] .type-tagline {
+    font-size: 8px;
+    line-height: 133.33%;
+    letter-spacing: 0.04em; /* 0.32/8 */
+}
+
+@media (min-width: 640px) {
+    [data-type-scale="regular"] .type-h1 {
+        font-size: 40px;
+        letter-spacing: -0.06em; /* -2.4/40 */
+    }
+    [data-type-scale="regular"] .type-h2 {
+        font-size: 32px;
+        letter-spacing: -0.06em; /* -1.92/32 */
+    }
+    [data-type-scale="regular"] .type-h3 {
+        font-size: 24px;
+        letter-spacing: -0.06em; /* -1.44/24 */
+    }
+    [data-type-scale="regular"] .type-h4 {
+        font-size: 20px;
+        letter-spacing: -0.03em; /* -0.6/20 */
+    }
+    [data-type-scale="regular"] .type-body-lg {
+        font-size: 16px;
+        letter-spacing: -0.05em; /* -0.8/16 */
+    }
+    [data-type-scale="regular"] .type-body-md {
+        font-size: 14px;
+        letter-spacing: -0.03em; /* -0.42/14 */
+    }
+    [data-type-scale="regular"] .type-body-sm {
+        font-size: 12px;
+        letter-spacing: -0.04em; /* -0.48/12 */
+    }
+    [data-type-scale="regular"] .type-btn {
+        font-size: 15px;
+    }
+    [data-type-scale="regular"] .type-btn-sm {
+        font-size: 13px;
+    }
+    [data-type-scale="regular"] .type-tagline-lg {
+        font-size: 16px;
+        line-height: 150%;
+        letter-spacing: 0.06em; /* 0.96/16 */
+    }
+    [data-type-scale="regular"] .type-tagline {
+        font-size: 13px;
+        line-height: 123.08%;
+        letter-spacing: 0.04em; /* 0.52/13 */
+    }
+}
+
+@media (min-width: 1200px) {
+    [data-type-scale="regular"] .type-h1 {
+        font-size: 44px;
+        letter-spacing: -0.06em; /* -2.64/44 */
+    }
+    [data-type-scale="regular"] .type-h2 {
+        font-size: 36px;
+        letter-spacing: -0.06em; /* -2.16/36 */
+    }
+    [data-type-scale="regular"] .type-h3 {
+        font-size: 28px;
+        letter-spacing: -0.06em; /* -1.68/28 */
+    }
+    [data-type-scale="regular"] .type-h4 {
+        font-size: 22px;
+        letter-spacing: -0.03em; /* -0.66/22 */
+    }
+    [data-type-scale="regular"] .type-body-lg {
+        font-size: 16px;
+        letter-spacing: -0.05em; /* -0.8/16 */
+    }
+    [data-type-scale="regular"] .type-body-md {
+        font-size: 14px;
+        letter-spacing: -0.03em; /* -0.42/14 */
+    }
+    [data-type-scale="regular"] .type-body-sm {
+        font-size: 12px;
+        letter-spacing: -0.04em; /* -0.48/12 */
+    }
+    [data-type-scale="regular"] .type-btn {
+        font-size: 15px;
+    }
+    [data-type-scale="regular"] .type-btn-sm {
+        font-size: 13px;
+    }
+    [data-type-scale="regular"] .type-tagline-lg {
+        font-size: 18px;
+        line-height: 133.33%;
+        letter-spacing: 0.06em; /* 1.08/18 */
+    }
+    [data-type-scale="regular"] .type-tagline {
+        font-size: 14px;
+        line-height: 142.86%;
+        letter-spacing: 0.04em; /* 0.56/14 */
+    }
+}
+
 /* ---- Spacing utility classes ---- */
 .space-section {
     padding-top: var(--space-section-y);
@@ -286,6 +485,14 @@
 .space-inline {
     padding-left: var(--space-section-x);
     padding-right: var(--space-section-x);
+}
+
+/* Desktop shell: max 1400px, centered; pair with .space-inline or .space-section for inner horizontal padding */
+.layout-container {
+    width: 100%;
+    max-width: var(--layout-max-width);
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .space-container {
@@ -341,38 +548,64 @@
     margin-top: var(--space-xxl);
 }
 
-/* Service matrix grid — Figma device breakpoints: 0 / 640 / 1200 */
+/* Horizontal card grids — mobile 1×1, tablet 2×2, desktop 2×2 (1/2/4 cards) or 3×3 (others)
+   Gap: horizontal = lg always; vertical = lg on mobile, xl on tablet+. */
+.grid-cards,
 .grid-services {
     display: grid;
     grid-template-columns: 1fr;
-    gap: var(--space-lg);
+    column-gap: var(--space-lg);
+    row-gap: var(--space-lg);
 }
 
 @media (min-width: 640px) {
+    .grid-cards,
     .grid-services {
         grid-template-columns: repeat(2, 1fr);
-        gap: var(--space-xl);
+        row-gap: var(--space-xl);
     }
 }
 
 @media (min-width: 1200px) {
+    .grid-cards,
     .grid-services {
         grid-template-columns: repeat(3, 1fr);
-        gap: var(--space-xl);
+    }
+
+    .grid-cards[data-card-count="1"],
+    .grid-cards[data-card-count="2"],
+    .grid-cards[data-card-count="4"],
+    .grid-services[data-card-count="1"],
+    .grid-services[data-card-count="2"],
+    .grid-services[data-card-count="4"] {
+        grid-template-columns: repeat(2, 1fr);
     }
 }
 
-/* Process steps grid — stays single column until the desktop tier so each
-   step keeps room for its number, title, and body. */
+/* Alias — process/step cards use the same horizontal card grid rules */
 .grid-steps {
     display: grid;
     grid-template-columns: 1fr;
-    gap: var(--space-xl);
+    column-gap: var(--space-lg);
+    row-gap: var(--space-lg);
+}
+
+@media (min-width: 640px) {
+    .grid-steps {
+        grid-template-columns: repeat(2, 1fr);
+        row-gap: var(--space-xl);
+    }
 }
 
 @media (min-width: 1200px) {
     .grid-steps {
         grid-template-columns: repeat(3, 1fr);
+    }
+
+    .grid-steps[data-card-count="1"],
+    .grid-steps[data-card-count="2"],
+    .grid-steps[data-card-count="4"] {
+        grid-template-columns: repeat(2, 1fr);
     }
 }
 

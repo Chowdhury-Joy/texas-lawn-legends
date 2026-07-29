@@ -2,7 +2,7 @@
     $layout = \App\Support\PageBlocks::layoutClasses($data['layout'] ?? []);
 @endphp
 <section id="portfolio" class="border-t-4 border-slate-950 bg-brand-paper">
-    <div class="mx-auto max-w-7xl space-section">
+    <div class="layout-container space-section">
         <div class="stack-header items-center text-center">
             <h2 data-field="heading" data-reveal class="type-h2 text-slate-900">{{ $data['heading'] ?? 'Verified Local Proof' }}</h2>
             @if ($proofSub = $data['subheading'] ?? null)
@@ -10,7 +10,7 @@
             @endif
         </div>
 
-        <div class="stack-after-header {{ $layout ?: 'grid-services' }}">
+        <div class="stack-after-header {{ $layout ?: 'grid-cards' }}" @if(empty($layout)) data-card-count="{{ $testimonials->count() }}" @endif>
             @forelse ($testimonials as $review)
                 <div data-stagger style="--stagger-i: {{ $loop->index }}" class="box-brutal stack-card space-card">
                     <div class="relative aspect-square overflow-hidden border-b-2 border-slate-950 select-none"

@@ -3,7 +3,7 @@
     $reverse = (bool) ($data['reverse'] ?? false);
 @endphp
 <section class="border-t-4 border-slate-950 bg-brand-paper">
-    <div @class(['grid-split mx-auto max-w-7xl space-section', 'is-reversed' => $reverse])>
+    <div @class(['grid-split layout-container space-section', 'is-reversed' => $reverse])>
         <div data-reveal>
             @if ($image)
                 <img src="{{ $image }}" alt="{{ $data['heading'] ?? '' }}" loading="lazy" decoding="async" class="box-brutal aspect-[4/3] w-full object-cover">

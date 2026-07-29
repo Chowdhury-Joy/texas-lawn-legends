@@ -72,7 +72,7 @@
 @endphp
 
 <section class="border-b-4 border-slate-950 bg-brand-paper flex flex-col justify-center min-h-[calc(85vh_-_var(--header-h,57px))]">
-    <div class="grid-hero mx-auto w-full max-w-7xl space-inline space-section-y">
+    <div class="grid-hero layout-container w-full space-inline space-section-y">
         <div class="hero-copy">
             {{-- Micro-Social Proof Trust Badge (Static) --}}
             <div data-stagger style="--stagger-i: 0" class="mb-4 flex items-center gap-1.5 type-body-sm text-slate-700">

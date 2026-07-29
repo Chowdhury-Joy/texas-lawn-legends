@@ -2,8 +2,8 @@
     $stats = (array) ($data['stats'] ?? []);
     $layout = \App\Support\PageBlocks::layoutClasses($data['layout'] ?? []);
 @endphp
-<section class="border-y-4 border-slate-950 bg-emerald-900 space-section text-on-primary">
-    <div class="mx-auto max-w-7xl">
+<section class="border-y-4 border-slate-950 bg-emerald-900 text-on-primary">
+    <div class="layout-container space-section">
         <div class="stack-header">
             @if (filled($data['eyebrow'] ?? null))
                 <span data-field="eyebrow" data-reveal class="inline-block w-fit bg-slate-950 px-2 py-0.5 type-tagline text-yellow-400">

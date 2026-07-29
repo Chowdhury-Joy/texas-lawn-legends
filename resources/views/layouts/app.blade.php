@@ -87,8 +87,8 @@
                 @keydown.escape.window="mobileOpen = false">
 
             {{-- Top Info & Phone Banner --}}
-            <div class="border-b-2 border-slate-950 bg-slate-950 space-inline py-2 type-tagline text-white">
-                <div class="mx-auto flex max-w-7xl items-center justify-between gap-4">
+            <div class="border-b-2 border-slate-950 bg-slate-950 py-2 type-tagline text-white">
+                <div class="layout-container space-inline flex items-center justify-between gap-4">
                     <div class="flex items-center gap-2 text-yellow-400">
                         @if (filled($headerLocation))
                             <span>📍 {{ $headerLocation }}</span>
@@ -113,7 +113,7 @@
 
             {{-- Main Navigation Bar --}}
             <div class="w-full border-b-4 border-slate-950 bg-white">
-                <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 space-inline py-3">
+                <div class="layout-container flex items-center justify-between gap-4 space-inline py-3">
                 <a href="{{ url('/') }}" class="flex flex-col leading-none">
                     @if ($logoImage)
                         <img src="{{ $logoImage }}" alt="{{ $logoText }}" class="h-10 w-auto max-w-[220px] object-contain">
@@ -209,8 +209,8 @@
         </main>
 
         {{-- ============================= FOOTER ============================= --}}
-        <footer class="border-t-4 border-slate-950 bg-slate-950 space-section text-slate-200">
-            <div class="mx-auto grid max-w-7xl grid-cols-1 gap-container-xxl md:grid-cols-2 lg:grid-cols-4">
+        <footer class="border-t-4 border-slate-950 bg-slate-950 text-slate-200">
+            <div class="layout-container space-section grid grid-cols-1 gap-container-xxl md:grid-cols-2 lg:grid-cols-4">
                 <div>
                     <span class="type-h4 text-white">{{ $logoText }}</span>
                     @if ($logoBadge)
