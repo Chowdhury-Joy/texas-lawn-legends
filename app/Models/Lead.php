@@ -46,6 +46,7 @@ class Lead extends Model
         'escalated_at',
         'external_booking_id',
         'is_demo',
+        'referred_by_code',
     ];
 
     protected function casts(): array

@@ -1,5 +1,5 @@
 # Suggestions Backlog
-Last Updated: 2026-07-30T02:08:00+06:00
+Last Updated: 2026-07-30T02:15:00+06:00
 
 > **Purpose:** Track known bugs, security hardening, and product improvements that are **not** decided or scheduled yet.  
 > **Not the same as `decisions.md`** — nothing here is locked in. When an item is approved and implemented, move the outcome to `decisions.md` / `bug_history.md` and remove or mark it done here.
@@ -75,16 +75,16 @@ UI labels: **Restore model home** on `/demo` and Admin → Industry Packs.
 
 These break QA or CRO even on localhost.
 
-| ID | Issue | Fix direction |
-|----|--------|---------------|
-| F-01 | **Referral tracking silent fail** — `EstimatorWizard` sets `referred_by_code` but `Lead` model `$fillable` omits it | Add to `$fillable`; test `?ref=` persists on lead |
-| F-02 | **Unpublished homepage still renders** — `PageController::home()` skips `is_published` check | Same 404 (or explicit “coming soon”) as other CMS pages |
-| F-03 | ~~Demo pack reset leaves stale CMS pages~~ | **Fixed** — D-01 wipes all pages before reseed |
-| F-04 | **Proposal decline overwrites accepted** — `decline()` has no guard; `accept()` does | Only decline when status is `sent`; block after `accepted` |
-| F-05 | **Booking accepts arbitrary date/time** — `book()` does not validate against `BookingMatrix` slots | Reject slots not in the offered grid |
-| F-06 | **Double-booking race** — two concurrent `book()` calls can take the same slot | Transaction + lock or unique constraint on `scheduled_at` for booked leads |
-| F-07 | **Incomplete reserved page slugs** — blocks `estimate`, `portal`, etc. but not `demo`, `proposals`, `invoices`, `api` | Expand reserved list to match all static routes in `routes/web.php` |
-| F-08 | **BookingMatrix date cursor mutation** — `$cursor->addDay()` mutates in loop | Use `$cursor->copy()->addDay()` |
+| ID | Status | Notes |
+|----|--------|-------|
+| F-01 | **Done** | `referred_by_code` in Lead `$fillable`; `FunctionalBugFixesTest` |
+| F-02 | **Done** | Unpublished homepage 404; fresh install still renders empty home |
+| F-03 | **Done** | D-01 wipes all pages before reseed |
+| F-04 | **Done** | `decline()` blocked after `accepted`; only updates when `sent` |
+| F-05 | **Done** | `book()` validates slot via `BookingMatrix::isOfferedSlot()` |
+| F-06 | **Done** | `book()` uses transaction + `lockForUpdate()` on slot check |
+| F-07 | **Done** | `ReservedPageSlugs` lists all static routes from `web.php` |
+| F-08 | **Done** | `BookingMatrix` uses `$cursor->copy()->addDay()` |
 
 ---
 
@@ -139,3 +139,4 @@ Safe to ignore on solo local dev; **launch checklist** for public client sites.
 | 2026-07-30 | Initial backlog from security/bug audit + demo reset product discussion |
 | 2026-07-30 | Reframed demo reset as per-niche model-home snapshot restore for sales calls; added D-01 (full restore scope) and D-02 (demo-install gating) |
 | 2026-07-30 | Implemented D-01 in `NicheLoader` — full model-home restore + tests; UI renamed to Restore model home |
+| 2026-07-30 | Fixed F-01–F-08 functional bugs (referrals, homepage publish, proposals, booking validation/race, reserved slugs, BookingMatrix cursor) |

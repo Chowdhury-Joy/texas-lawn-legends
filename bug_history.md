@@ -1,5 +1,56 @@
 # Bug History
 
+## 2026-07-30
+
+<bug>
+ <category>CRO</category>
+ <symptom>Referral codes from ?ref= on /estimate were dropped — leads saved without referred_by_code even though EstimatorWizard passed it.</symptom>
+ <root_cause>Lead model $fillable omitted referred_by_code, so mass assignment silently stripped the field on create/update.</root_cause>
+ <prevention_rule>When adding a DB column used in persistLead() or similar mass-assignment paths, add it to $fillable in the same change and cover with a feature test.</prevention_rule>
+</bug>
+
+<bug>
+ <category>UI/UX</category>
+ <symptom>Unpublished homepage still rendered at / while other CMS pages correctly 404'd.</symptom>
+ <root_cause>PageController::home() used Page::home() without checking is_published; show() already enforced publish state.</root_cause>
+ <prevention_rule>Home and CMS show actions must share the same is_published guard when a homepage record exists.</prevention_rule>
+</bug>
+
+<bug>
+ <category>Business_Logic</category>
+ <symptom>Declining an already-accepted proposal overwrote status to declined.</symptom>
+ <root_cause>ProposalController::decline() updated status unconditionally; accept() had an idempotency guard but decline() did not.</root_cause>
+ <prevention_rule>Public proposal mutations must guard on current status — never downgrade accepted to declined.</prevention_rule>
+</bug>
+
+<bug>
+ <category>Business_Logic</category>
+ <symptom>Estimator book() accepted arbitrary date/time strings outside the offered BookingMatrix grid.</symptom>
+ <root_cause>book() parsed and saved any date/time without validating against BookingMatrix::slots().</root_cause>
+ <prevention_rule>book() must call BookingMatrix::isOfferedSlot() before persisting scheduled_at.</prevention_rule>
+</bug>
+
+<bug>
+ <category>Business_Logic</category>
+ <symptom>Two concurrent book() calls could double-book the same slot.</symptom>
+ <root_cause>Slot availability used a plain exists() check outside a transaction with no row lock.</root_cause>
+ <prevention_rule>Booking confirmation must run inside DB::transaction with lockForUpdate on conflicting booked leads for that scheduled_at.</prevention_rule>
+</bug>
+
+<bug>
+ <category>Code</category>
+ <symptom>Admin could create CMS pages with slugs that collide with static routes (demo, proposals, invoices, api).</symptom>
+ <root_cause>PageForm slug notIn list was incomplete vs routes/web.php.</root_cause>
+ <prevention_rule>Keep reserved CMS slugs in App\Support\ReservedPageSlugs synced with static routes in web.php.</prevention_rule>
+</bug>
+
+<bug>
+ <category>Code</category>
+ <symptom>BookingMatrix loop mutated Carbon::today via addDay() on a shared cursor reference.</symptom>
+ <root_cause>$cursor->addDay() mutates in place; without copy() the date cursor could drift or affect Carbon::today().</root_cause>
+ <prevention_rule>In BookingMatrix day iteration, always advance with $cursor->copy()->addDay().</prevention_rule>
+</bug>
+
 ## 2026-07-28
 
 <bug>

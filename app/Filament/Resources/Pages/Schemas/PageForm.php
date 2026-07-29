@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Pages\Schemas;
 
 use App\Support\PageBlocks;
+use App\Support\ReservedPageSlugs;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\FileUpload;
@@ -35,7 +36,7 @@ class PageForm
                             ->required()
                             ->maxLength(255)
                             ->unique(ignoreRecord: true)
-                            ->notIn(['estimate', 'portal', 'dashboard', 'admin', 'robots.txt', 'sitemap.xml'])
+                            ->notIn(ReservedPageSlugs::all())
                             ->helperText('URL path, e.g. "about-us" renders at /about-us.'),
                         Toggle::make('is_published')
                             ->default(true)

@@ -1,5 +1,5 @@
 # Architecture Overview
-Last Updated: 2026-07-30T02:08:00+06:00
+Last Updated: 2026-07-30T02:15:00+06:00
 
 ## Overview
 
@@ -85,7 +85,7 @@ php artisan serve
 Nearly all site copy, branding, pricing math, and ops config lives in the `settings` table (key/value, typed). Global helpers `setting()` and `setting_image()` resolve values with per-key caching via `App\Models\Setting`. Filament settings pages (`ManageBranding`, `ManageSeo`, `ManageContact`, `ManageHomepage`, `ManagePricing`, `ManageOperations`, `ManageProductParts`, `ManageIndustryPacks`) edit these keys through forms. A generic `SettingResource` is the escape hatch for raw keys.
 
 ### Page builder (Part 1 — Website + CMS)
-The `pages` table stores block JSON. `App\Support\PageBlocks` defines block types, Filament form schemas, and labels. `PageController` renders `resources/views/pages/show.blade.php`, which includes matching `resources/views/blocks/*` partials. Homepage is the page where `is_home = true`.
+The `pages` table stores block JSON. `App\Support\PageBlocks` defines block types, Filament form schemas, and labels. `App\Support\ReservedPageSlugs` lists URL segments reserved by static routes so CMS slugs cannot collide. `PageController` renders `resources/views/pages/show.blade.php`, which includes matching `resources/views/blocks/*` partials. Homepage is the page where `is_home = true`; unpublished homepage records 404 (fresh installs without a row still render an empty home).
 
 ### Product Parts (feature packaging)
 Three tiers controlled by `product_part` setting:
@@ -99,7 +99,7 @@ Three tiers controlled by `product_part` setting:
 `config/niche.php` registers `LawnPack`, `CleaningPack`, `RoofingPack`. `NicheResolver` reads `APP_NICHE` or `active_niche` setting. `NicheLoader` restores a niche model home on the sales demo install: wipes pitch-mutable ops/CMS/catalog data, clears upload branding keys, re-applies pack settings, reseeds content + access codes, sets `demo_mode`. Blocked when `APP_DEMO_HUB=false`. Public `/demo` hub (`DemoHubController`) and Admin → Industry Packs expose Load / Restore model home. `niche_label()` provides industry vocabulary in views.
 
 ### Estimator funnel (Part 2)
-`App\Livewire\EstimatorWizard` — 4-step wizard on `/estimate`. Captures partial leads on every step advance via `persistLead()`. `EstimatePricingEngine` computes low/high range from sqft, neighborhood, complexity, and service multipliers. `BookingMatrix` builds available slots; booking sets lead status to `booked`.
+`App\Livewire\EstimatorWizard` — 4-step wizard on `/estimate`. Captures partial leads on every step advance via `persistLead()` (includes `referred_by_code` from `?ref=`). `EstimatePricingEngine` computes low/high range from sqft, neighborhood, complexity, and service multipliers. `BookingMatrix` builds available slots and exposes `isOfferedSlot()`; `book()` validates against the grid, then books inside a transaction with `lockForUpdate()` to prevent double-booking.
 
 ### Client dashboard (Part 3)
 `/dashboard/{hash}` — auth via `Project.unique_dashboard_hash` (no login). Shows milestones and progress photos grouped by step.
@@ -108,7 +108,7 @@ Three tiers controlled by `product_part` setting:
 `/portal` — `PortalGate` Livewire component. `MonthlyCodeAuthenticator` validates month-scoped access codes. Unlocked state shows add-on grid; orders dispatch `AddonOrdered` event.
 
 ### Proposals & invoices (Part 3)
-Token-based public URLs: `/proposals/{token}`, `/invoices/{token}`. Accept/decline flows on proposals trigger `ProposalAccepted` → ops notification.
+Token-based public URLs: `/proposals/{token}`, `/invoices/{token}`. Accept/decline flows on proposals trigger `ProposalAccepted` → ops notification. Decline is blocked once a proposal is accepted.
 
 ### Admin panel (`/admin`)
 Filament panel via `AdminPanelProvider`. Auto-discovers Resources, custom Pages, and Widgets (lead funnel, revenue chart, needs attention). Role-based access via `UserRole` enum + `AccessPermissions` registry + per-user permission overrides. Admin topbar shows current page heading via Livewire hook.

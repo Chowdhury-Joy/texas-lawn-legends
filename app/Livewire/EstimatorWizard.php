@@ -8,6 +8,7 @@ use App\Models\Service;
 use App\Services\BookingMatrix;
 use App\Services\EstimatePricingEngine;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Url;
@@ -218,32 +219,47 @@ class EstimatorWizard extends Component
 
     public function book(string $date, string $time): void
     {
+        $matrix = app(BookingMatrix::class);
+
+        if (! $matrix->isOfferedSlot($date, $time)) {
+            $this->addError('booking', 'That time slot is not available. Please select another time.');
+
+            return;
+        }
+
         $parsedTime = Carbon::parse($date.' '.$time);
 
-        // Concurrency check: Ensure slot is still open
-        $isBooked = Lead::query()
-            ->where('status', LeadStatus::Booked)
-            ->where('scheduled_at', $parsedTime)
-            ->exists();
+        $booked = DB::transaction(function () use ($parsedTime) {
+            $isTaken = Lead::query()
+                ->where('status', LeadStatus::Booked)
+                ->where('scheduled_at', $parsedTime)
+                ->lockForUpdate()
+                ->exists();
 
-        if ($isBooked) {
+            if ($isTaken) {
+                return false;
+            }
+
+            if ($this->leadUuid) {
+                Lead::query()->where('uuid', $this->leadUuid)->update([
+                    'scheduled_at' => $parsedTime,
+                    'status' => LeadStatus::Booked,
+                    'step_reached' => 'booked',
+                ]);
+            }
+
+            return true;
+        });
+
+        if (! $booked) {
             $this->addError('booking', 'Sorry, that time slot was just taken! Please select another time.');
-            unset($this->bookingSlots); // clear computed cache if applicable
+            unset($this->bookingSlots);
 
             return;
         }
 
         $this->selectedDate = $date;
         $this->selectedTime = $time;
-
-        if ($this->leadUuid) {
-            Lead::query()->where('uuid', $this->leadUuid)->update([
-                'scheduled_at' => $parsedTime,
-                'status' => LeadStatus::Booked,
-                'step_reached' => 'booked',
-            ]);
-        }
-
         $this->booked = true;
     }
 

@@ -57,6 +57,14 @@ class ProposalController extends Controller
             abort(410, 'This proposal has expired.');
         }
 
+        if ($proposal->status === ProposalStatus::Accepted) {
+            return redirect()->back()->with('error', 'This proposal has already been accepted and cannot be declined.');
+        }
+
+        if ($proposal->status !== ProposalStatus::Sent) {
+            return redirect()->back()->with('success', 'Proposal declined.');
+        }
+
         $proposal->update([
             'status' => ProposalStatus::Declined,
         ]);

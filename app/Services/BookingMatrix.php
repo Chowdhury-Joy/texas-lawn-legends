@@ -33,7 +33,7 @@ class BookingMatrix
         $added = 0;
 
         while ($added < $daysToOffer) {
-            $cursor = $cursor->addDay();
+            $cursor = $cursor->copy()->addDay();
 
             if ($cursor->isWeekend()) {
                 continue;
@@ -59,5 +59,27 @@ class BookingMatrix
         }
 
         return $days;
+    }
+
+    /**
+     * Whether the given date/time appears in the current offered booking grid.
+     */
+    public function isOfferedSlot(string $date, string $time): bool
+    {
+        $formattedTime = Carbon::parse($time)->format('g:i A');
+
+        foreach ($this->slots() as $day) {
+            if ($day['date'] !== $date) {
+                continue;
+            }
+
+            foreach ($day['times'] as $slotTime) {
+                if (Carbon::parse($slotTime)->format('g:i A') === $formattedTime) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }

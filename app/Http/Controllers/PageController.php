@@ -9,8 +9,16 @@ class PageController extends Controller
 {
     public function home()
     {
+        $page = Page::query()->where('is_home', true)->first();
+
+        if ($page) {
+            abort_unless($page->is_published, 404);
+        } else {
+            $page = new Page(['title' => 'Home', 'blocks' => [], 'is_published' => true]);
+        }
+
         return view('pages.show', [
-            'page' => Page::home(),
+            'page' => $page,
             ...PageBlockData::live(),
         ]);
     }
