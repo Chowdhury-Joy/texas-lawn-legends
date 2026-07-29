@@ -1,0 +1,29 @@
+---
+description: Consult suggestions.md before security, demo tooling, onboarding, or production-readiness decisions
+alwaysApply: true
+---
+
+# Suggestions Backlog
+
+Before proposing or implementing work that touches **security**, **demo/industry packs**, **client onboarding**, **production deployment**, or **known bug fixes**, read `suggestions.md` in the project root.
+
+## Required workflow
+
+1. **Read** `suggestions.md` when the task could overlap the backlog (even if the user did not mention it).
+2. **Flag** relevant items to the user — e.g. “This relates to **F-01** (referral tracking) in `suggestions.md`.”
+3. **Do not** treat suggestions as decided — they are candidates until logged in `decisions.md` or fixed and noted in `bug_history.md`.
+4. **Precedence:** `decisions.md` > `bug_history.md` > `suggestions.md`. If a suggestion conflicts with a logged decision, follow the decision and update `suggestions.md`.
+
+## When to flag (non-exhaustive)
+
+- Demo hub, `/demo/reset`, `/demo/load`, `NicheLoader`, `APP_DEMO_HUB`
+- Estimator, leads, booking, referrals, portal, access codes
+- Proposals, invoices, token URLs, client dashboard
+- Admin auth, rate limits, sessions, webhooks, analytics IDs
+- Pre-launch / production / SaaS provisioning
+
+## After implementing a suggestion
+
+- Remove or mark the item done in `suggestions.md`
+- Log the chosen approach in `decisions.md` (if a product/code decision) or `bug_history.md` (if a bug fix)
+- Update `Last Updated` in `suggestions.md`

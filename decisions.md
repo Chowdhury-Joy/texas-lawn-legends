@@ -1,5 +1,21 @@
 # Decisions
 
+## 2026-07-30
+
+<decision>
+ <category>Code</category>
+ <context>Security/bug audit surfaced many hardening items; most are not urgent for local prototype but easy to lose track of before launch.</context>
+ <action>Ship `suggestions.md` as the living backlog (not decided work). Add `.cursor/rules/suggestions-backlog.mdc` so agents read and flag relevant items before security, demo, onboarding, or production-readiness changes. Precedence: decisions.md &gt; bug_history.md &gt; suggestions.md.</action>
+ <reason>Separates “ideas for later” from locked decisions; agents surface overlap without silently implementing or contradicting logged choices.</reason>
+</decision>
+
+<decision>
+ <category>Business_Logic</category>
+ <context>Public demo reset/load was built for Getwebfield’s shared sales pitch install, not for paying client sites (SaaS or one-install-per-client).</context>
+ <action>Do not ship public demo reset on client production. Paying customers start with empty/fresh ops data; onboarding is one-time industry pack + seed. Optional: keep load/reset admin-only on a dedicated internal demo/staging URL. Document full rationale in suggestions.md § Demo hub & reset.</action>
+ <reason>Reset wipes catalog content (services, add-ons, testimonials) and solves an internal demo problem clients do not have.</reason>
+</decision>
+
 ## 2026-07-29
 
 <decision>

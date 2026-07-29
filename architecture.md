@@ -1,5 +1,5 @@
 # Architecture Overview
-Last Updated: 2026-07-30T00:26:00+06:00
+Last Updated: 2026-07-30T01:12:00+06:00
 
 ## Overview
 
@@ -77,6 +77,7 @@ php artisan serve
 | `routes/web.php` | Public routes, product-part gates, CMS catch-all |
 | `routes/console.php` | Scheduler: stalled leads (every minute), overdue invoices (daily) |
 | `docs/` | Internal pricing/proposal docs (not runtime) |
+| `suggestions.md` | Living backlog of unscheduled bugs, security hardening, and launch items — consult before demo/production work; see `.cursor/rules/suggestions-backlog.mdc` |
 
 ## Key Components
 
