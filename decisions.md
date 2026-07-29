@@ -16,6 +16,13 @@
  <reason>Reset wipes catalog content (services, add-ons, testimonials) and solves an internal demo problem clients do not have.</reason>
 </decision>
 
+<decision>
+ <category>Business_Logic</category>
+ <context>Clarifies the entry above, which read as "reset is optional." Each niche has a pre-built model home (logo, homepage copy, sample projects, one in-progress job with a crew) so a demo never opens empty. Running back-to-back calls in the same niche — roofer A, then roofer B — stacks each prospect's mid-pitch edits and bloats the showroom.</context>
+ <action>Reset is required tooling on the Getwebfield sales install, not optional: treat it as "restore this niche's model home" (snapshot restore) run between meetings, with Load pack switching niche and restoring that pack's model home. Still never shipped to paying clients. Scope of a true restore and demo-install gating tracked as D-01 / D-02 in suggestions.md § Demo hub & model-home restore.</action>
+ <reason>Prevents agents reading "no reset for clients" as "remove reset," and names the real requirement (per-niche snapshot restore) rather than a catalog-wide wipe.</reason>
+</decision>
+
 ## 2026-07-29
 
 <decision>

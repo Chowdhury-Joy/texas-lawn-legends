@@ -1,5 +1,5 @@
 # Suggestions Backlog
-Last Updated: 2026-07-30T01:12:00+06:00
+Last Updated: 2026-07-30T01:36:00+06:00
 
 > **Purpose:** Track known bugs, security hardening, and product improvements that are **not** decided or scheduled yet.  
 > **Not the same as `decisions.md`** — nothing here is locked in. When an item is approved and implemented, move the outcome to `decisions.md` / `bug_history.md` and remove or mark it done here.
@@ -22,25 +22,49 @@ Last Updated: 2026-07-30T01:12:00+06:00
 
 ---
 
-## Product direction — demo hub & reset
+## Product direction — demo hub & model-home restore
 
-### Decision stance (2026-07-30)
+### What reset is actually for (2026-07-30, clarified)
 
-**Public demo reset is not needed for paying customers** — now or at launch (SaaS or one-install-per-client).
+Reset is a **snapshot restore of a niche's model home** on the Getwebfield sales install. It is **not** a client-facing feature and **not** a plain "wipe everything" button.
 
-| Audience | Reset / public demo hub |
-|----------|-------------------------|
-| **Paying client site** | **Do not ship.** Client starts with empty or freshly seeded ops data. No “clean up last sales call” problem. |
-| **Non-SaaS (one deploy per client)** | New install + seed once. `APP_DEMO_HUB=false`. |
-| **SaaS (multi-tenant)** | New tenant / blank workspace on signup — not a shared reset. |
-| **Getwebfield internal sales demo** | Optional on a **dedicated** demo/staging URL only; never on client domains. |
+**The real workflow it serves:**
+
+Each niche has a pre-built model home — logo, homepage copy, a couple of finished projects, one in-progress job with a crew scheduled — so the first screen a prospect sees never looks empty.
+
+1. Meeting 1 (roofer A): you change the logo, add projects, add an employee/role during the pitch.
+2. Before meeting 2 (roofer B): **Restore** that niche's model home so roofer B sees the clean showroom, not roofer A's edits.
+3. Switch niche (plumber/cleaning) → load that pack → same restore behaviour per niche.
+
+Without restore, four roofing calls stack four sets of demo projects and the showroom gets bloated.
+
+**Naming:** think of this as **"Restore model home"** / snapshot restore. Same button as today's Reset, clearer intent.
+
+### Who gets it
+
+| Audience | Demo hub / restore |
+|----------|--------------------|
+| **Getwebfield sales install** | **Keep.** `/demo` hub + Restore (active niche) + Load pack (switch niche and restore its model home). |
+| **Paying client site** | **Do not ship.** Their site is a real business, not a showroom — no public `/demo`, no restore. |
+| **Non-SaaS (one deploy per client)** | New install, one-time pack seed at onboarding, `APP_DEMO_HUB=false`. |
+| **SaaS (multi-tenant)** | New tenant gets a clean workspace at signup — provisioning, not a shared reset. |
 
 **Keep at onboarding (once):** industry pack selection + default seed.  
 **Drop or hide for clients:** `POST /demo/reset`, `POST /demo/load`, public `/demo` hub.
 
-**Why reset exists today:** one shared install for pitching lawn / cleaning / roofing mid-call. That is internal sales tooling, not client ops.
+### Gap today
 
-**Caution even locally:** `NicheLoader` wipe deletes **all** services, add-ons, and testimonials — not just demo rows. Treat load/reset as factory reset; back up SQLite before using if you have custom catalog content.
+[`NicheLoader`](app/Support/Niche/NicheLoader.php) aims at this (`reset()` → wipe + reseed) but does not yet restore a full model home:
+
+- Wipes services, add-ons, testimonials, and projects matched by known demo hashes / `is_demo` leads
+- Does **not** reset CMS pages, branding/logo edits, users and roles, crews, equipment, invoices, proposals, time entries
+- Projects created mid-meeting (no demo hash, no `is_demo` lead) survive — that is the bloat problem above
+- Because the wipe is catalog-wide, running it on an install that holds real content is destructive — back up SQLite first
+
+| ID | Item | Direction |
+|----|------|-----------|
+| D-01 | **True model-home snapshot restore** | Define the full set of demo-mutable data (settings/branding, pages, services, add-ons, testimonials, leads, projects, milestones, progress photos, crews, equipment, time entries, proposals, invoices, non-owner users/roles), clear it on restore, then reseed the active pack so the showroom returns to its seeded state |
+| D-02 | **Scope restore to demo installs** | Restore/load only available when the install is flagged as a sales demo; blocked on client production regardless of hub flag (relates to S-07, S-14) |
 
 ---
 
@@ -52,7 +76,7 @@ These break QA or CRO even on localhost.
 |----|--------|---------------|
 | F-01 | **Referral tracking silent fail** — `EstimatorWizard` sets `referred_by_code` but `Lead` model `$fillable` omits it | Add to `$fillable`; test `?ref=` persists on lead |
 | F-02 | **Unpublished homepage still renders** — `PageController::home()` skips `is_published` check | Same 404 (or explicit “coming soon”) as other CMS pages |
-| F-03 | **Demo pack reset leaves stale CMS pages** — pages not wiped; seeders only `updateOrCreate` known slugs | Wipe/re-seed demo pages or flag demo pages for selective delete |
+| F-03 | **Demo pack reset leaves stale CMS pages** — pages not wiped; seeders only `updateOrCreate` known slugs | Wipe/re-seed demo pages or flag demo pages for selective delete (subsumed by **D-01**) |
 | F-04 | **Proposal decline overwrites accepted** — `decline()` has no guard; `accept()` does | Only decline when status is `sent`; block after `accepted` |
 | F-05 | **Booking accepts arbitrary date/time** — `book()` does not validate against `BookingMatrix` slots | Reject slots not in the offered grid |
 | F-06 | **Double-booking race** — two concurrent `book()` calls can take the same slot | Transaction + lock or unique constraint on `scheduled_at` for booked leads |
@@ -73,7 +97,7 @@ Safe to ignore on solo local dev; **launch checklist** for public client sites.
 | S-04 | **No rate limit on estimate funnel** | Throttle `persistLead` / Livewire steps; optional honeypot or CAPTCHA on contact step |
 | S-05 | **Lead UUID hijacking** — public Livewire `leadUuid` can overwrite another lead | Store lead id in signed session; authorize updates |
 | S-06 | **Token URL = full access** — dashboard, proposal, invoice links are secret-URL auth only | Optional PIN/email step; shorter proposal expiry; `Referrer-Policy: no-referrer` on sensitive pages |
-| S-07 | **Public demo load/reset when hub enabled** — unauthenticated POST can wipe catalog data | Admin-only or dedicated demo server; never on client production |
+| S-07 | **Public demo load/reset when hub enabled** — unauthenticated POST can wipe catalog data | Admin-only or dedicated demo server; never on client production (see **D-02**) |
 | S-08 | **GA ID not format-validated** — `partials/analytics.blade.php` uses `{{ $gaId }}` in script src | Regex validate `G-…` / `GTM-…` in `ManageSeo` |
 | S-09 | **Stored HTML XSS** — `{!! !!}` in `rich_text`, proposals | HTML sanitizer on save/render (trusted-admin model OK for prototype) |
 | S-10 | **Operations webhook SSRF** — admin can POST to any URL | Block private IPs; HTTPS only; optional domain allowlist |
@@ -88,7 +112,7 @@ Safe to ignore on solo local dev; **launch checklist** for public client sites.
 
 | Item | Notes |
 |------|--------|
-| Demo hub enabled in local | Intentional for sales pitch workflow |
+| Demo hub enabled in local | Intentional — this is the sales model-home workflow |
 | `APP_DEBUG=true` | Expected locally; must be `false` in production |
 | Predictable demo dashboard hashes in seeders | OK for model-home demos |
 | `/api/site-version` public | Low risk — version integer only |
@@ -110,3 +134,4 @@ Safe to ignore on solo local dev; **launch checklist** for public client sites.
 | Date | Change |
 |------|--------|
 | 2026-07-30 | Initial backlog from security/bug audit + demo reset product discussion |
+| 2026-07-30 | Reframed demo reset as per-niche model-home snapshot restore for sales calls; added D-01 (full restore scope) and D-02 (demo-install gating) |
