@@ -71,6 +71,13 @@ class EstimatePricingEngine
             }
         }
 
+        $customThreshold = (float) setting('estimate_custom_threshold', 25000);
+        $maxSqft = (int) setting('estimate_max_sqft', 10000);
+
+        if ($totalHigh > $customThreshold || $sqft >= $maxSqft) {
+            $anyCustom = true;
+        }
+
         return [
             'low'       => round($totalLow, 2),
             'high'      => round($totalHigh, 2),

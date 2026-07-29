@@ -1,4 +1,5 @@
 ## 2026-07-30
+- Fixed audit bugs F-09–F-14: estimator sqft mount/slider, multi-service custom threshold, invoice number collision after soft delete, booked lead status preservation, book-without-lead guard, niche pack custom thresholds; see bug_history.md 2026-07-30 (audit fixes).
 - Added five industry niche packs (pressure washing, window cleaning, gutters, fence/deck, pest) with demo content seeders; generalized DatabaseSeeder to seed any active APP_NICHE pack; see decisions.md.
 - Created architecture.md as the live codebase blueprint documenting stack, folders, components, data flow, and integrations.
 - Added suggestions.md backlog and suggestions-backlog.mdc Cursor rule for pre-decision agent checks; see decisions.md 2026-07-30.

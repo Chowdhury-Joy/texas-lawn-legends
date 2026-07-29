@@ -1,5 +1,49 @@
 # Bug History
 
+## 2026-07-30 (audit fixes)
+
+<bug>
+ <category>CRO</category>
+ <symptom>Four niche packs (roofing, windows, gutters, fence) opened the estimator at 500 sqft even when pack max was lower — first Continue failed validation before the prospect touched anything.</symptom>
+ <root_cause>EstimatorWizard::mount() used max(setting min, hardcoded 500) instead of the pack minimum; slider step was also hardcoded to 50.</root_cause>
+ <prevention_rule>Mount sqft from sqftBounds min only; derive slider step from pack range via sqftStep computed property.</prevention_rule>
+</bug>
+
+<bug>
+ <category>Business_Logic</category>
+ <symptom>Multi-service Full Estimate mode never flagged custom quote when summed total exceeded estimate_custom_threshold.</symptom>
+ <root_cause>EstimatePricingEngine::calculateMany() OR'd per-service is_custom only and never compared totalHigh to the threshold.</root_cause>
+ <prevention_rule>calculateMany() must apply the same threshold and max-sqft checks against the combined total.</prevention_rule>
+</bug>
+
+<bug>
+ <category>Business_Logic</category>
+ <symptom>Soft-deleting the newest invoice caused UniqueConstraintViolationException on the next create — admin 500 on the money path.</symptom>
+ <root_cause>Invoice::generateNextNumber() used static::query() which excludes soft-deleted rows while invoice_number has a UNIQUE index.</root_cause>
+ <prevention_rule>Number generation must use withTrashed() when finding the last invoice number for a year prefix.</prevention_rule>
+</bug>
+
+<bug>
+ <category>Business_Logic</category>
+ <symptom>Booked leads silently downgraded to Qualified when the user went Back then Continue; scheduled_at stayed set so scopeStalled could not catch them.</symptom>
+ <root_cause>persistLead() always recomputed status from estimateLow on every step advance, overwriting Booked.</root_cause>
+ <prevention_rule>persistLead() must preserve Booked status when booked flag or existing lead status is Booked.</prevention_rule>
+</bug>
+
+<bug>
+ <category>CRO</category>
+ <symptom>Booking confirmation screen appeared even when no lead row existed (leadUuid null) — silently lost customer.</symptom>
+ <root_cause>book() returned success from the transaction without requiring leadUuid or creating a lead.</root_cause>
+ <prevention_rule>book() must reject when leadUuid is null before confirming the slot.</prevention_rule>
+</bug>
+
+<bug>
+ <category>Business_Logic</category>
+ <symptom>Fence pack never showed an instant price; windows pack showed prices on only a tiny pane range — instant-estimate demo broken on sales calls.</symptom>
+ <root_cause>estimate_custom_threshold in FencePack (180) and WindowsPack (80) were authored as size units not dollars; fence cheapest high (~867) always exceeded 180.</root_cause>
+ <prevention_rule>Niche pack custom thresholds must be dollar amounts validated against cheapest realistic high estimate at pack minimum size.</prevention_rule>
+</bug>
+
 ## 2026-07-30
 
 <bug>

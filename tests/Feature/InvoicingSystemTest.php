@@ -161,4 +161,34 @@ class InvoicingSystemTest extends TestCase
 
         $this->assertEquals("INV-{$year}-10000", $nextInvoice->invoice_number);
     }
+
+    public function test_soft_deleted_invoice_does_not_cause_number_collision(): void
+    {
+        $invoice1 = Invoice::create([
+            'client_name' => 'First Client',
+            'issue_date' => now(),
+            'due_date' => now()->addDays(14),
+            'status' => InvoiceStatus::Draft,
+        ]);
+
+        $invoice2 = Invoice::create([
+            'client_name' => 'Second Client',
+            'issue_date' => now(),
+            'due_date' => now()->addDays(14),
+            'status' => InvoiceStatus::Draft,
+        ]);
+
+        $trashedNumber = $invoice2->invoice_number;
+        $invoice2->delete();
+
+        $invoice3 = Invoice::create([
+            'client_name' => 'Third Client',
+            'issue_date' => now(),
+            'due_date' => now()->addDays(14),
+            'status' => InvoiceStatus::Draft,
+        ]);
+
+        $this->assertNotEquals($trashedNumber, $invoice3->invoice_number);
+        $this->assertNotEquals($invoice1->invoice_number, $invoice3->invoice_number);
+    }
 }

@@ -123,7 +123,7 @@
                     <label class="text-xs font-black uppercase tracking-widest text-slate-700">{{ niche_label('size_field') }}</label>
                     <span class="text-3xl font-black text-slate-900"><span x-text="Number(v).toLocaleString()"></span> <span class="text-base text-slate-500">{{ niche_label('size_unit') }}</span></span>
                 </div>
-                <input type="range" min="{{ $this->sqftBounds['min'] }}" max="{{ $this->sqftBounds['max'] }}" step="50"
+                <input type="range" min="{{ $this->sqftBounds['min'] }}" max="{{ $this->sqftBounds['max'] }}" step="{{ $this->sqftStep }}"
                        x-model.number="v"
                        class="mt-4 h-3 w-full cursor-pointer appearance-none border-2 border-slate-950 bg-slate-100 accent-yellow-400">
                 <div class="mt-1 flex justify-between text-[11px] font-bold uppercase tracking-widest text-slate-400">

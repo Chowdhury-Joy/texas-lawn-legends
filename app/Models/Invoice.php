@@ -72,7 +72,7 @@ class Invoice extends Model
             $year = date('Y');
             $prefix = "INV-{$year}-";
 
-            $lastInvoice = static::query()
+            $lastInvoice = static::withTrashed()
                 ->where('invoice_number', 'like', "{$prefix}%")
                 ->lockForUpdate()
                 ->orderByDesc('id')

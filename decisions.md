@@ -4,6 +4,15 @@
 
 <decision>
  <category>Business_Logic</category>
+ <context>Audit found fence/windows/gutters packs had estimate_custom_threshold values that read like size units (linear ft / panes) not dollars, breaking instant-estimate demos.</context>
+ <action>Raise pack defaults to dollar thresholds validated against cheapest realistic quote: fence $2500, windows $500, gutters $1500. Lawn/roofing/cleaning/pressure/pest unchanged.</action>
+ <reason>Threshold must exceed minimum-size high estimate for the cheapest service so prospects on a live call see a price before custom-quote routing.</reason>
+</decision>
+
+## 2026-07-30 (industry packs expansion)
+
+<decision>
+ <category>Business_Logic</category>
  <context>Sales demos needed more home-service verticals beyond lawn, cleaning, and roofing — without rebuilding the product or estimator engine.</context>
  <action>Add five niche packs as skins only: pressure (`ClearPath Wash`), windows (`PanePerfect`), gutters (`FlowGuard Gutters`), fence/deck (`TimberLine`), pest (`ShieldBug Pest`). Each ships Pack class + five content seeders (services, testimonials, add-ons, sample project, pages). All reuse `sqft_neighborhood` pricing strategy with industry-specific size labels (sq ft, panes, linear ft). Register in `config/niche.php`; demo hub and Admin Industry Packs pick them up automatically. `DatabaseSeeder` now runs `contentSeeders()` for any active `APP_NICHE`, not lawn-only.</action>
  <reason>Expands pitch surface for owner-led trades that quote by size/scope and run jobs as projects — same Tier 2/3 story, minimal code risk.</reason>

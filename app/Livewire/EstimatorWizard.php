@@ -65,7 +65,7 @@ class EstimatorWizard extends Component
 
     public function mount(): void
     {
-        $this->sqft = max((int) setting('estimate_min_sqft', 100), 500);
+        $this->sqft = $this->sqftBounds['min'];
     }
 
     /**
@@ -194,6 +194,19 @@ class EstimatorWizard extends Component
             $serviceLabel = $this->service_id ? optional(Service::find($this->service_id))->title : null;
         }
 
+        $status = match (true) {
+            $this->booked => LeadStatus::Booked,
+            $this->estimateLow !== null => LeadStatus::Qualified,
+            default => LeadStatus::Partial,
+        };
+
+        if ($this->leadUuid) {
+            $existing = Lead::query()->where('uuid', $this->leadUuid)->first();
+            if ($existing?->status === LeadStatus::Booked) {
+                $status = LeadStatus::Booked;
+            }
+        }
+
         $data = [
             'name'                     => $this->name ?: null,
             'email'                    => $this->email ?: null,
@@ -205,7 +218,7 @@ class EstimatorWizard extends Component
             'calculated_estimate_low'  => $this->estimateLow,
             'calculated_estimate_high' => $this->estimateHigh,
             'step_reached'             => 'step_'.$this->step,
-            'status'                   => $this->estimateLow !== null ? LeadStatus::Qualified : LeadStatus::Partial,
+            'status'                   => $status,
             'referred_by_code'         => $this->referred_by_code,
             'is_demo'                  => \App\Support\Niche\NicheResolver::demoMode(),
         ];
@@ -219,6 +232,12 @@ class EstimatorWizard extends Component
 
     public function book(string $date, string $time): void
     {
+        if (! $this->leadUuid) {
+            $this->addError('booking', 'Please complete the estimate steps before booking.');
+
+            return;
+        }
+
         $matrix = app(BookingMatrix::class);
 
         if (! $matrix->isOfferedSlot($date, $time)) {
@@ -297,6 +316,14 @@ class EstimatorWizard extends Component
             'min' => (int) setting('estimate_min_sqft', 100),
             'max' => (int) setting('estimate_max_sqft', 10000),
         ];
+    }
+
+    #[Computed]
+    public function sqftStep(): int
+    {
+        $range = max(1, $this->sqftBounds['max'] - $this->sqftBounds['min']);
+
+        return min(50, max(1, (int) round($range / 15)));
     }
 
     /**

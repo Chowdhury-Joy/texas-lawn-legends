@@ -80,7 +80,7 @@ final class FencePack implements NichePack
             ['estimate_min_sqft', '25', 'integer', 'pricing'],
             ['estimate_max_sqft', '350', 'integer', 'pricing'],
             ['estimate_high_multiplier', '1.22', 'decimal', 'pricing'],
-            ['estimate_custom_threshold', '180', 'decimal', 'pricing'],
+            ['estimate_custom_threshold', '2500', 'decimal', 'pricing'],
             ['booking_days_offered', '5', 'integer', 'pricing'],
             ['booking_time_slots', ['8:00 AM', '11:00 AM', '2:00 PM'], 'json', 'pricing'],
             ['operations_alert_email', 'ops@timberline.demo', 'string', 'operations'],

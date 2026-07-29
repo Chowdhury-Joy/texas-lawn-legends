@@ -1,5 +1,5 @@
 # Suggestions Backlog
-Last Updated: 2026-07-30T03:12:00+06:00
+Last Updated: 2026-07-30T03:35:00+06:00
 
 > **Purpose:** Track known bugs, security hardening, and product improvements that are **not** decided or scheduled yet.  
 > **Not the same as `decisions.md`** — nothing here is locked in. When an item is approved and implemented, move the outcome to `decisions.md` / `bug_history.md` and remove or mark it done here.
@@ -126,6 +126,12 @@ These break QA or CRO even on localhost.
 | F-06 | **Done** | `book()` uses transaction + `lockForUpdate()` on slot check |
 | F-07 | **Done** | `ReservedPageSlugs` lists all static routes from `web.php` |
 | F-08 | **Done** | `BookingMatrix` uses `$cursor->copy()->addDay()` |
+| F-09 | **Done** | Estimator mounts sqft at pack min; dynamic slider step; `FunctionalBugFixesTest` |
+| F-10 | **Done** | `calculateMany()` checks summed total against custom threshold |
+| F-11 | **Done** | `Invoice::generateNextNumber()` uses `withTrashed()`; `InvoicingSystemTest` |
+| F-12 | **Done** | `persistLead()` preserves Booked status on step revisit |
+| F-13 | **Done** | `book()` rejects when `leadUuid` is null |
+| F-14 | **Done** | Fence/Windows/Gutters pack `estimate_custom_threshold` raised to dollar amounts |
 
 ---
 

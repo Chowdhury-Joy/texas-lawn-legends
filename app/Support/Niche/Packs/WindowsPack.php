@@ -80,7 +80,7 @@ final class WindowsPack implements NichePack
             ['estimate_min_sqft', '12', 'integer', 'pricing'],
             ['estimate_max_sqft', '180', 'integer', 'pricing'],
             ['estimate_high_multiplier', '1.15', 'decimal', 'pricing'],
-            ['estimate_custom_threshold', '80', 'decimal', 'pricing'],
+            ['estimate_custom_threshold', '500', 'decimal', 'pricing'],
             ['booking_days_offered', '5', 'integer', 'pricing'],
             ['booking_time_slots', ['9:00 AM', '12:00 PM', '3:00 PM'], 'json', 'pricing'],
             ['operations_alert_email', 'ops@paneperfect.demo', 'string', 'operations'],
