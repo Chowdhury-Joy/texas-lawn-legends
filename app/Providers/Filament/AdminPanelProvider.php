@@ -36,6 +36,7 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->brandName(fn () => setting('site_name') ?: config('app.name'))
             ->login(Login::class)
+            ->viteTheme('resources/css/filament/admin/theme.css')
             ->databaseNotifications()
             ->sidebarCollapsibleOnDesktop()
             ->colors([

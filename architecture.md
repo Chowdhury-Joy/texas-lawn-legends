@@ -1,5 +1,5 @@
 # Architecture Overview
-Last Updated: 2026-07-30T04:05:00+06:00
+Last Updated: 2026-07-30T11:20:00+06:00
 
 ## Overview
 
@@ -45,9 +45,9 @@ php artisan serve
 ## Tech Stack
 
 - **Backend:** PHP 8.3, Laravel 13.8
-- **Admin UI:** Filament v4 (resources, custom settings pages, widgets, role/permission gating)
+- **Admin UI:** Filament v4 (resources, custom settings pages, widgets, role/permission gating) with a Vite-compiled panel theme at `resources/css/filament/admin/theme.css` so custom admin Blade Tailwind utilities are included
 - **Reactive UI:** Livewire 3.8 (`EstimatorWizard`, `PortalGate`, admin heading hook)
-- **Frontend:** Tailwind CSS v4 (CSS-first via `@tailwindcss/vite`), Alpine.js (via Livewire), Vite 8
+- **Frontend:** Tailwind CSS v4 (CSS-first via `@tailwindcss/vite`), Alpine.js (via Livewire), Vite 8 — public site via `resources/css/app.css`; Filament admin via the panel theme above
 - **Design tokens:** `resources/css/design-tokens.css` (Getwebfield anti-slop system)
 - **Activity logging:** Spatie Laravel Activity Log
 - **Database:** SQLite (dev default); MySQL-compatible via Laravel config

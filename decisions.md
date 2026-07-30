@@ -1,5 +1,14 @@
 # Decisions
 
+## 2026-07-30 (filament theme)
+
+<decision>
+ <category>UI/UX</category>
+ <context>Custom Filament pages like Crew Schedule used raw Tailwind in Blade, but Filament's default CSS only styles its own components — so the schedule page shipped unstyled.</context>
+ <action>Add a Filament Vite theme at `resources/css/filament/admin/theme.css` that imports Filament's base theme and `@source`s `app/Filament` + `resources/views/filament`. Register it with `->viteTheme()` and include it in `vite.config.js`. Guard with `FilamentThemeCompilesCustomAdminClassesTest`.</action>
+ <reason>One theme fixes every custom admin Blade (Crew Schedule, Industry Packs tip banner, settings forms) without rewriting pages to Filament primitives; matches Filament v4's documented Tailwind v4 workflow.</reason>
+</decision>
+
 ## 2026-07-30 (efficiency audit)
 
 <decision>

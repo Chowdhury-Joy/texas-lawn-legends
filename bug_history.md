@@ -1,5 +1,14 @@
 # Bug History
 
+## 2026-07-30 (filament theme)
+
+<bug>
+ <category>UI/UX</category>
+ <symptom>Crew Schedule (and other custom Filament Blade pages) rendered as bare white text on a black background — filter tabs looked like a sentence, amber alert had no box, cards had no borders.</symptom>
+ <root_cause>Custom admin views use Tailwind utilities that are not in Filament's default stylesheet. The panel had no `->viteTheme()`, so those classes existed in HTML but never compiled to CSS.</root_cause>
+ <prevention_rule>Any custom Filament Blade that uses Tailwind utilities must be covered by a panel Vite theme (`resources/css/filament/{panel}/theme.css` with `@source` for those views) registered via `->viteTheme()`, and covered by a compile-presence test.</prevention_rule>
+</bug>
+
 ## 2026-07-30 (efficiency audit)
 
 <bug>

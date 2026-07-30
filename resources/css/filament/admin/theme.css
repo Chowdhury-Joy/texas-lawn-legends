@@ -1,0 +1,7 @@
+@import '../../../../vendor/filament/filament/resources/css/theme.css';
+
+/* Scan custom admin Blade + Filament PHP for Tailwind utilities used outside
+   Filament's own components (Crew Schedule, Industry Packs tip banner, etc.). */
+@source '../../../../app/Filament/**/*';
+@source '../../../../resources/views/filament/**/*';
+@source '../../../../resources/views/vendor/filament-panels/**/*';
