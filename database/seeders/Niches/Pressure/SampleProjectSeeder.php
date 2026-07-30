@@ -2,6 +2,7 @@
 
 namespace Database\Seeders\Niches\Pressure;
 
+use App\Enums\EquipmentType;
 use App\Enums\LeadStatus;
 use App\Enums\MilestoneStatus;
 use App\Enums\ProjectStatus;
@@ -9,10 +10,13 @@ use App\Models\Lead;
 use App\Models\Milestone;
 use App\Models\ProgressPhoto;
 use App\Models\Project;
+use Database\Seeders\Niches\Concerns\SeedsDemoOps;
 use Illuminate\Database\Seeder;
 
 class SampleProjectSeeder extends Seeder
 {
+    use SeedsDemoOps;
+
     public function run(): void
     {
         $lead = Lead::query()->updateOrCreate(
@@ -75,5 +79,28 @@ class SampleProjectSeeder extends Seeder
                 'created_at' => now()->subHours(8 - $i),
             ]);
         }
+
+        $this->seedDemoOps($project, $lead, [
+            'crew_name' => 'Heights Wash Crew',
+            'crew_leader' => 'Terrance Hobbs',
+            'crew_phone' => '(713) 555-0171',
+            'crew_color' => 'sky',
+            'crew_notes' => 'Runs the hot-water rig — handles concrete and soft-wash jobs.',
+            'proposal_intro' => '<p>This covers the exterior wash at Yale St: surface-cleaner pass on the driveway and walkways, then a low-pressure detergent soft-wash and rinse on the siding.</p><p>We tarp and pre-wet landscaping before any detergent goes down.</p>',
+            'proposal_items' => [
+                ['Driveway & walkway surface clean', 0.55],
+                ['Siding soft-wash & rinse', 0.45],
+            ],
+            'invoice_items' => [
+                ['Driveway & walkway pressure wash', 0.55],
+                ['Siding soft-wash & rinse', 0.45],
+            ],
+            'equipment' => [
+                ['Wash Rig Trailer', EquipmentType::Vehicle, 'Carries tank, reels, and surface cleaner.'],
+                ['4000 PSI Hot-Water Unit', EquipmentType::Machinery, 'Primary pressure unit for concrete work.'],
+            ],
+            'labor_rate' => 30.00,
+            'material_share' => 0.09,
+        ]);
     }
 }

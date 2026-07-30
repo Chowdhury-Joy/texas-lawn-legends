@@ -2,6 +2,7 @@
 
 namespace Database\Seeders\Niches\Gutters;
 
+use App\Enums\EquipmentType;
 use App\Enums\LeadStatus;
 use App\Enums\MilestoneStatus;
 use App\Enums\ProjectStatus;
@@ -9,10 +10,13 @@ use App\Models\Lead;
 use App\Models\Milestone;
 use App\Models\ProgressPhoto;
 use App\Models\Project;
+use Database\Seeders\Niches\Concerns\SeedsDemoOps;
 use Illuminate\Database\Seeder;
 
 class SampleProjectSeeder extends Seeder
 {
+    use SeedsDemoOps;
+
     public function run(): void
     {
         $lead = Lead::query()->updateOrCreate(
@@ -75,5 +79,30 @@ class SampleProjectSeeder extends Seeder
                 'created_at' => now()->subHours(8 - $i),
             ]);
         }
+
+        $this->seedDemoOps($project, $lead, [
+            'crew_name' => 'Plano Seamless Crew',
+            'crew_leader' => 'Kyle Duffy',
+            'crew_phone' => '(972) 555-0148',
+            'crew_color' => 'slate',
+            'crew_notes' => 'Runs the on-site roll former — handles all seamless replacements.',
+            'proposal_intro' => '<p>This proposal covers replacing 185 linear feet of gutter at Granite Pkwy: tear-off of the old runs, fascia inspection, on-site seamless fabrication, and new hangers, downspouts, and splash blocks.</p><p>Every run gets water-tested before we call it done.</p>',
+            'proposal_items' => [
+                ['Tear-off & fascia inspection', 0.18],
+                ['Seamless fabrication & hanging', 0.52],
+                ['Downspouts, elbows & water test', 0.30],
+            ],
+            'invoice_items' => [
+                ['Gutter tear-off & disposal', 0.18],
+                ['Seamless gutter fabrication & install', 0.52],
+                ['Downspouts & water test', 0.30],
+            ],
+            'equipment' => [
+                ['Gutter Machine Trailer', EquipmentType::Vehicle, 'Houses the roll former and coil stock.'],
+                ['Seamless Roll Former', EquipmentType::Machinery, 'Fabricates runs on site to length.'],
+            ],
+            'labor_rate' => 32.00,
+            'material_share' => 0.34,
+        ]);
     }
 }

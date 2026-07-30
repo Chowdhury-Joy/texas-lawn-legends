@@ -1,5 +1,5 @@
 # Architecture Overview
-Last Updated: 2026-07-30T11:20:00+06:00
+Last Updated: 2026-07-30T11:55:00+06:00
 
 ## Overview
 
@@ -70,7 +70,7 @@ php artisan serve
 | `app/helpers.php` | Global helpers: `setting()`, `product_part()`, `niche_label()`, etc. |
 | `config/niche.php` | Registered industry packs and demo hub flag |
 | `database/migrations/` | Schema (settings, pages, leads, projects, ops tables, permissions) |
-| `database/seeders/Niches/` | Per-pack content seeders (pages, services, testimonials, etc.) |
+| `database/seeders/Niches/` | Per-pack content seeders (pages, services, testimonials, sample project + ops demo data) |
 | `resources/views/blocks/` | Page-builder block Blade partials (hero, FAQ, gallery, etc.) |
 | `resources/views/layouts/` | Public site shell (SEO, fonts, design tokens) |
 | `resources/css/` | `app.css` + `design-tokens.css` |
@@ -100,6 +100,8 @@ Three tiers controlled by `product_part` setting:
 
 ### Niche Packs (industry skin)
 `config/niche.php` registers eight packs: `LawnPack`, `CleaningPack`, `RoofingPack`, `PressurePack`, `WindowsPack`, `GuttersPack`, `FencePack`, `PestPack`. `NicheResolver` reads `APP_NICHE` or `active_niche` setting. `NicheLoader` restores a niche model home on the sales demo install: wipes pitch-mutable ops/CMS/catalog data, clears upload branding keys, re-applies pack settings, reseeds content + access codes, sets `demo_mode`. Blocked when `APP_DEMO_HUB=false`. Public `/demo` hub (`DemoHubController`) and Admin → Industry Packs expose Load / Restore model home. `niche_label()` provides industry vocabulary in views.
+
+Each pack's `SampleProjectSeeder` seeds a demo lead, project, milestones, and photos, then calls the shared `Database\Seeders\Niches\Concerns\SeedsDemoOps` trait to stock admin Operations: one crew (assigned to the sample project), a sent proposal, a sent invoice with line items, two equipment rows, and two or three time entries. Proposal and invoice amounts are derived from the project's `contract_value`; time entries feed `labor_cost` and a per-niche `material_share` sets `material_cost`, so the projects table shows a believable profit margin.
 
 ### Estimator funnel (Part 2)
 `App\Livewire\EstimatorWizard` — 4-step wizard on `/estimate`. Captures partial leads on every step advance via `persistLead()` (includes `referred_by_code` from `?ref=`). `EstimatePricingEngine` computes low/high range from sqft, neighborhood, complexity, and service multipliers. `BookingMatrix` builds available slots and exposes `isOfferedSlot()`; `book()` validates against the grid, then books inside a transaction with `lockForUpdate()` to prevent double-booking.

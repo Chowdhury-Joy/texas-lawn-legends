@@ -1,5 +1,5 @@
 # Suggestions Backlog
-Last Updated: 2026-07-30T04:05:00+06:00
+Last Updated: 2026-07-30T11:58:00+06:00
 
 > **Purpose:** Track known bugs, security hardening, and product improvements that are **not** decided or scheduled yet.  
 > **Not the same as `decisions.md`** — nothing here is locked in. When an item is approved and implemented, move the outcome to `decisions.md` / `bug_history.md` and remove or mark it done here.
@@ -64,9 +64,14 @@ Without restore, four roofing calls stack four sets of demo projects and the sho
 
 UI labels: **Restore model home** on `/demo` and Admin → Industry Packs.
 
+### Ops demo data (implemented 2026-07-30)
+
+All eight packs' `SampleProjectSeeder`s call the shared [`SeedsDemoOps`](database/seeders/Niches/Concerns/SeedsDemoOps.php) trait, so a restored model home also stocks admin **Operations**: one crew (assigned to the sample project), a sent proposal, a sent invoice with line items, two equipment rows, and 2–3 time entries. Money is derived from each pack's `contract_value`, and material/labour cost are set together so the projects table shows a believable 34–62% profit margin.
+
 | ID | Status | Notes |
 |----|--------|-------|
 | D-01 | **Done** | Full wipe + reseed; see `NicheModelHomeRestoreTest` |
+| D-03 | **Done** | Ops demo data (crew, proposal, invoice, equipment, time entries) seeded for all 8 niches |
 | D-02 | **Partial / enough for now** | Separate host+domain per paying client already isolates Restore; keep `APP_DEMO_HUB=false` on client deploys |
 
 ---
@@ -229,3 +234,4 @@ Safe to ignore on solo local dev; **launch checklist** for public client sites.
 | 2026-07-30 | Logged 7-day self-serve trial product: demo sandbox, Site Settings+Content view-only, Operations open; backlog T-01–T-07 |
 | 2026-07-30 | Locked trial details: Part 3, niche picker, expiry=no login+banner, email/Google signup, 3-submit cap, start-fresh convert, getwebfield.com/trial/{slug}; build timing still TBD |
 | 2026-07-30 | Efficiency audit implemented (P-01–P-10): settings cache/memo, file cache driver, widget query consolidation, lazy widgets, poll interval, indexes. P-11 (SQLite triple duty) open for trial prep |
+| 2026-07-30 | Added D-03 ops demo data — shared `SeedsDemoOps` seeder concern stocks crew/proposal/invoice/equipment/time entries in all 8 niche model homes |

@@ -2,6 +2,7 @@
 
 namespace Database\Seeders\Niches\Lawn;
 
+use App\Enums\EquipmentType;
 use App\Enums\LeadStatus;
 use App\Enums\MilestoneStatus;
 use App\Enums\ProjectStatus;
@@ -9,10 +10,13 @@ use App\Models\Lead;
 use App\Models\Milestone;
 use App\Models\ProgressPhoto;
 use App\Models\Project;
+use Database\Seeders\Niches\Concerns\SeedsDemoOps;
 use Illuminate\Database\Seeder;
 
 class SampleProjectSeeder extends Seeder
 {
+    use SeedsDemoOps;
+
     public function run(): void
     {
         $lead = Lead::query()->updateOrCreate(
@@ -84,5 +88,32 @@ class SampleProjectSeeder extends Seeder
                 'created_at' => now()->subDays(6 - $i),
             ]);
         }
+
+        $this->seedDemoOps($project, $lead, [
+            'crew_name' => 'North Dallas Crew',
+            'crew_leader' => 'Marcus Ellery',
+            'crew_phone' => '(214) 555-0192',
+            'crew_color' => 'emerald',
+            'crew_notes' => 'Hardscape build crew — runs Truck #3 and the stone trailer.',
+            'proposal_intro' => '<p>Thanks for having us out to Kessler Park. This proposal covers the full yard renovation: clearing the existing turf, building the natural stone retaining wall, extending the flagstone patio, and finishing with climate-resilient sod.</p><p>Work runs about two weeks from start date, weather permitting.</p>',
+            'proposal_items' => [
+                ['Site prep, demolition & grading', 0.18],
+                ['Natural stone retaining wall', 0.37],
+                ['Flagstone patio extension', 0.28],
+                ['Sod, cleanup & final walkthrough', 0.17],
+            ],
+            'invoice_items' => [
+                ['Site prep & grading', 0.18],
+                ['Retaining wall build (materials + labor)', 0.37],
+                ['Flagstone patio extension', 0.28],
+                ['Sod install & final cleanup', 0.17],
+            ],
+            'equipment' => [
+                ['F-250 Crew Truck', EquipmentType::Vehicle, 'Tows the stone trailer on hardscape jobs.'],
+                ['60" Zero-Turn Mower', EquipmentType::Machinery, 'Primary maintenance-route mower.'],
+            ],
+            'labor_rate' => 34.00,
+            'material_share' => 0.42,
+        ]);
     }
 }

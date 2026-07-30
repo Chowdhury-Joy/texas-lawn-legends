@@ -2,6 +2,7 @@
 
 namespace Database\Seeders\Niches\Pest;
 
+use App\Enums\EquipmentType;
 use App\Enums\LeadStatus;
 use App\Enums\MilestoneStatus;
 use App\Enums\ProjectStatus;
@@ -9,10 +10,13 @@ use App\Models\Lead;
 use App\Models\Milestone;
 use App\Models\ProgressPhoto;
 use App\Models\Project;
+use Database\Seeders\Niches\Concerns\SeedsDemoOps;
 use Illuminate\Database\Seeder;
 
 class SampleProjectSeeder extends Seeder
 {
+    use SeedsDemoOps;
+
     public function run(): void
     {
         $lead = Lead::query()->updateOrCreate(
@@ -75,5 +79,28 @@ class SampleProjectSeeder extends Seeder
                 'created_at' => now()->subHours(8 - $i),
             ]);
         }
+
+        $this->seedDemoOps($project, $lead, [
+            'crew_name' => 'Teravista Route Team',
+            'crew_leader' => 'Nina Okafor',
+            'crew_phone' => '(512) 555-0187',
+            'crew_color' => 'emerald',
+            'crew_notes' => 'Round Rock recurring route — licensed applicator on every visit.',
+            'proposal_intro' => '<p>Scope for the whole-home perimeter treatment at Teravista Club Dr: exterior inspection for entry points and nests, barrier application around the foundation and eaves, and targeted interior treatment in the kitchen, baths, and utility areas.</p><p>You get a written service report with the next visit date before we leave.</p>',
+            'proposal_items' => [
+                ['Exterior inspection & perimeter barrier', 0.65],
+                ['Interior targeted treatment & report', 0.35],
+            ],
+            'invoice_items' => [
+                ['Perimeter barrier treatment', 0.65],
+                ['Interior targeted treatment', 0.35],
+            ],
+            'equipment' => [
+                ['Route Truck 4', EquipmentType::Vehicle, 'Locked chemical storage, Round Rock route.'],
+                ['Backpack Power Sprayer', EquipmentType::Tool, 'Used for foundation and eave applications.'],
+            ],
+            'labor_rate' => 29.00,
+            'material_share' => 0.14,
+        ]);
     }
 }

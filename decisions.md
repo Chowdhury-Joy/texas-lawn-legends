@@ -240,3 +240,12 @@
  <action>Card grids (`.grid-cards`, `.grid-steps`): `column-gap: var(--space-lg)` always; `row-gap: var(--space-lg)` on mobile, `row-gap: var(--space-xl)` from tablet (640px+) up; document in anti-slop rule §6.</action>
  <reason>Side-by-side cards breathe on lg; stacked rows separate on xl — matches the spacing token intent.</reason>
 </decision>
+
+## 2026-07-30 (demo ops seed data)
+
+<decision>
+ <category>Business_Logic</category>
+ <context>After Load / Restore model home, admin Operations looked empty on sales calls — each niche only seeded a lead, project, milestones, and photos, so Crews, Proposals, Invoices, Equipment, and Time Entries were blank screens mid-pitch.</context>
+ <action>Added shared `Database\Seeders\Niches\Concerns\SeedsDemoOps` trait, called from all eight niche `SampleProjectSeeder`s. Each model home now seeds one crew (assigned to the sample project), one sent proposal, one sent invoice with line items, two equipment rows, and two to three time entries. Amounts derive from the pack's existing `contract_value` (proposal total and invoice total both equal it); time entries use a per-niche labour rate capped so labour stays roughly a third of contract and no shift exceeds ~8 hours. Because time entries populate `labor_cost`, the helper also sets `material_cost` from a per-niche `material_share` — otherwise the projects table would report a ~90% profit margin on the bigger jobs. Seeding is idempotent via `updateOrCreate` on stable keys. Covered by `NicheModelHomeRestoreTest` across all eight packs.</action>
+ <reason>One shared helper instead of eight copies keeps the ops story consistent and cheap to extend; deriving money from `contract_value` keeps every niche's numbers believable without hard-coding amounts per pack.</reason>
+</decision>

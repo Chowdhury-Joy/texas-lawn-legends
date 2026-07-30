@@ -2,6 +2,7 @@
 
 namespace Database\Seeders\Niches\Windows;
 
+use App\Enums\EquipmentType;
 use App\Enums\LeadStatus;
 use App\Enums\MilestoneStatus;
 use App\Enums\ProjectStatus;
@@ -9,10 +10,13 @@ use App\Models\Lead;
 use App\Models\Milestone;
 use App\Models\ProgressPhoto;
 use App\Models\Project;
+use Database\Seeders\Niches\Concerns\SeedsDemoOps;
 use Illuminate\Database\Seeder;
 
 class SampleProjectSeeder extends Seeder
 {
+    use SeedsDemoOps;
+
     public function run(): void
     {
         $lead = Lead::query()->updateOrCreate(
@@ -75,5 +79,28 @@ class SampleProjectSeeder extends Seeder
                 'created_at' => now()->subHours(8 - $i),
             ]);
         }
+
+        $this->seedDemoOps($project, $lead, [
+            'crew_name' => 'West 7th Glass Team',
+            'crew_leader' => 'Priya Nandan',
+            'crew_phone' => '(817) 555-0165',
+            'crew_color' => 'sky',
+            'crew_notes' => 'Two-tech detail team — pure-water pole system for upper floors.',
+            'proposal_intro' => '<p>Scope for your move-out window detail on Morton St: pure-water wash on all reachable exterior glass, interior squeegee, and a wipe-down of every track and sill.</p><p>Streak check and walkthrough before we leave.</p>',
+            'proposal_items' => [
+                ['Exterior pane wash (42 panes)', 0.55],
+                ['Interior panes, tracks & sills', 0.45],
+            ],
+            'invoice_items' => [
+                ['Exterior window wash', 0.55],
+                ['Interior panes, tracks & sills', 0.45],
+            ],
+            'equipment' => [
+                ['Detail Van', EquipmentType::Vehicle, 'Carries the filtration tank and ladders.'],
+                ['Pure-Water Pole System', EquipmentType::Tool, 'Reaches second-storey glass without ladders.'],
+            ],
+            'labor_rate' => 27.00,
+            'material_share' => 0.06,
+        ]);
     }
 }

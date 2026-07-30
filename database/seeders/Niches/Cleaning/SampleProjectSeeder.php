@@ -2,6 +2,7 @@
 
 namespace Database\Seeders\Niches\Cleaning;
 
+use App\Enums\EquipmentType;
 use App\Enums\LeadStatus;
 use App\Enums\MilestoneStatus;
 use App\Enums\ProjectStatus;
@@ -9,10 +10,13 @@ use App\Models\Lead;
 use App\Models\Milestone;
 use App\Models\ProgressPhoto;
 use App\Models\Project;
+use Database\Seeders\Niches\Concerns\SeedsDemoOps;
 use Illuminate\Database\Seeder;
 
 class SampleProjectSeeder extends Seeder
 {
+    use SeedsDemoOps;
+
     public function run(): void
     {
         $lead = Lead::query()->updateOrCreate(
@@ -75,5 +79,30 @@ class SampleProjectSeeder extends Seeder
                 'created_at' => now()->subHours(8 - $i),
             ]);
         }
+
+        $this->seedDemoOps($project, $lead, [
+            'crew_name' => 'Hyde Park Team',
+            'crew_leader' => 'Renata Vargas',
+            'crew_phone' => '(512) 555-0164',
+            'crew_color' => 'sky',
+            'crew_notes' => 'Two-tech deep-clean team — runs Van #2 with the HEPA kit.',
+            'proposal_intro' => '<p>Here is the scope for your move-in deep clean at Avenue F. We cover every room top to bottom, with extra time on the kitchen appliances and both baths before the final detail pass.</p><p>Plan on a single visit of roughly four hours with two techs on site.</p>',
+            'proposal_items' => [
+                ['Kitchen & appliance deep clean', 0.35],
+                ['Bathrooms & floor care', 0.35],
+                ['Whole-home detail pass', 0.30],
+            ],
+            'invoice_items' => [
+                ['Move-in deep clean — kitchen & appliances', 0.35],
+                ['Move-in deep clean — baths & floors', 0.35],
+                ['Final detail pass & walkthrough', 0.30],
+            ],
+            'equipment' => [
+                ['Service Van #2', EquipmentType::Vehicle, 'Stocked for move-in/move-out deep cleans.'],
+                ['HEPA Backpack Vacuum', EquipmentType::Tool, 'Used on all allergy-sensitive jobs.'],
+            ],
+            'labor_rate' => 28.00,
+            'material_share' => 0.08,
+        ]);
     }
 }

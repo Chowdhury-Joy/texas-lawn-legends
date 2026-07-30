@@ -2,6 +2,7 @@
 
 namespace Database\Seeders\Niches\Fence;
 
+use App\Enums\EquipmentType;
 use App\Enums\LeadStatus;
 use App\Enums\MilestoneStatus;
 use App\Enums\ProjectStatus;
@@ -9,10 +10,13 @@ use App\Models\Lead;
 use App\Models\Milestone;
 use App\Models\ProgressPhoto;
 use App\Models\Project;
+use Database\Seeders\Niches\Concerns\SeedsDemoOps;
 use Illuminate\Database\Seeder;
 
 class SampleProjectSeeder extends Seeder
 {
+    use SeedsDemoOps;
+
     public function run(): void
     {
         $lead = Lead::query()->updateOrCreate(
@@ -75,5 +79,32 @@ class SampleProjectSeeder extends Seeder
                 'created_at' => now()->subHours(8 - $i),
             ]);
         }
+
+        $this->seedDemoOps($project, $lead, [
+            'crew_name' => 'Frisco Build Crew',
+            'crew_leader' => 'Andre Salas',
+            'crew_phone' => '(469) 555-0159',
+            'crew_color' => 'amber',
+            'crew_notes' => 'Post-setting and build crew — auger and post truck stay with this team.',
+            'proposal_intro' => '<p>This proposal covers 165 linear feet of cedar privacy fence at Legacy Dr: layout and post setting in concrete, board-on-board pickets on a steel-reinforced frame, one gate with heavy-duty hardware, and a stain and seal pass.</p><p>Old fence removal and haul-off is included.</p>',
+            'proposal_items' => [
+                ['Layout, post holes & concrete', 0.24],
+                ['Frame & board-on-board cedar pickets', 0.46],
+                ['Gate, hinges & latch hardware', 0.14],
+                ['Stain, seal & haul-off', 0.16],
+            ],
+            'invoice_items' => [
+                ['Post setting & concrete', 0.24],
+                ['Cedar pickets & framing (materials + labor)', 0.46],
+                ['Gate & hardware', 0.14],
+                ['Stain, seal & cleanup', 0.16],
+            ],
+            'equipment' => [
+                ['Post Truck & Trailer', EquipmentType::Vehicle, 'Hauls cedar stock and concrete bags.'],
+                ['Hydraulic Auger', EquipmentType::Machinery, 'Two-man auger for post holes.'],
+            ],
+            'labor_rate' => 36.00,
+            'material_share' => 0.40,
+        ]);
     }
 }

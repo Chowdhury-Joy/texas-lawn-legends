@@ -2,20 +2,27 @@
 
 namespace Tests\Feature;
 
+use App\Enums\InvoiceStatus;
 use App\Enums\LeadStatus;
 use App\Enums\ProjectStatus;
+use App\Enums\ProposalStatus;
 use App\Enums\ServiceCategory;
 use App\Enums\UserRole;
 use App\Models\Crew;
+use App\Models\Equipment;
+use App\Models\Invoice;
 use App\Models\Lead;
 use App\Models\Page;
 use App\Models\Project;
+use App\Models\Proposal;
 use App\Models\Service;
 use App\Models\Setting;
+use App\Models\TimeEntry;
 use App\Models\User;
 use App\Support\Niche\NicheLoader;
 use App\Support\Niche\NicheResolver;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 class NicheModelHomeRestoreTest extends TestCase
@@ -101,5 +108,90 @@ class NicheModelHomeRestoreTest extends TestCase
         $this->assertTrue(User::query()->where('email', 'admin@admin.com')->exists());
         $this->assertFalse(Page::query()->where('slug', 'pitch-custom-page')->exists());
         $this->assertTrue(Page::query()->where('is_home', true)->exists());
+    }
+
+    public function test_load_stocks_operations_and_restore_reseeds_it(): void
+    {
+        config(['niche.demo_hub' => true]);
+
+        app(NicheLoader::class)->load('lawn', demoMode: true);
+        NicheResolver::flush();
+
+        $this->assertOpsDemoDataSeeded('North Dallas Crew');
+
+        Invoice::query()->forceDelete();
+        Proposal::query()->forceDelete();
+        Equipment::query()->delete();
+        TimeEntry::query()->delete();
+
+        app(NicheLoader::class)->reset();
+        NicheResolver::flush();
+
+        $this->assertOpsDemoDataSeeded('North Dallas Crew');
+    }
+
+    #[DataProvider('nichePacksWithDemoCrews')]
+    public function test_every_niche_pack_stocks_operations(string $nicheId, string $crewName): void
+    {
+        config(['niche.demo_hub' => true]);
+
+        app(NicheLoader::class)->load($nicheId, demoMode: true);
+        NicheResolver::flush();
+
+        $this->assertOpsDemoDataSeeded($crewName);
+    }
+
+    /**
+     * @return array<string, array{0: string, 1: string}>
+     */
+    public static function nichePacksWithDemoCrews(): array
+    {
+        return [
+            'lawn' => ['lawn', 'North Dallas Crew'],
+            'cleaning' => ['cleaning', 'Hyde Park Team'],
+            'roofing' => ['roofing', 'Summit Install Crew'],
+            'pressure' => ['pressure', 'Heights Wash Crew'],
+            'windows' => ['windows', 'West 7th Glass Team'],
+            'gutters' => ['gutters', 'Plano Seamless Crew'],
+            'fence' => ['fence', 'Frisco Build Crew'],
+            'pest' => ['pest', 'Teravista Route Team'],
+        ];
+    }
+
+    private function assertOpsDemoDataSeeded(string $crewName): void
+    {
+        $crew = Crew::query()->where('name', $crewName)->first();
+        $this->assertNotNull($crew, "Expected demo crew [{$crewName}] to be seeded.");
+
+        $project = Project::query()->where('crew_id', $crew->id)->first();
+        $this->assertNotNull($project, 'Expected the sample project to be assigned to the demo crew.');
+
+        $proposal = Proposal::query()->where('project_id', $project->id)->first();
+        $this->assertNotNull($proposal, 'Expected a demo proposal for the sample project.');
+        $this->assertSame(ProposalStatus::Sent, $proposal->status);
+        $this->assertSame(
+            (float) $project->contract_value,
+            (float) $proposal->total_amount,
+        );
+
+        $invoice = Invoice::query()->where('project_id', $project->id)->first();
+        $this->assertNotNull($invoice, 'Expected a demo invoice for the sample project.');
+        $this->assertSame(InvoiceStatus::Sent, $invoice->status);
+        $this->assertGreaterThan(0, $invoice->items()->count());
+        $this->assertSame(
+            (float) $project->contract_value,
+            (float) $invoice->total,
+            'Invoice line items should add up to the contract value.',
+        );
+
+        $this->assertGreaterThanOrEqual(2, Equipment::query()->where('crew_id', $crew->id)->count());
+
+        $this->assertGreaterThanOrEqual(2, TimeEntry::query()->where('project_id', $project->id)->count());
+
+        $project = $project->fresh();
+        $this->assertGreaterThan(0, (float) $project->labor_cost);
+        $this->assertGreaterThan(0, (float) $project->material_cost);
+        $this->assertGreaterThan(20, $project->profit_margin_percent, 'Demo profit margin should not look implausibly high.');
+        $this->assertLessThan(70, $project->profit_margin_percent, 'Demo profit margin should not look implausibly high.');
     }
 }
