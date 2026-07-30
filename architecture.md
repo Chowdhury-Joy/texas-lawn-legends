@@ -1,5 +1,5 @@
 # Architecture Overview
-Last Updated: 2026-07-30T11:55:00+06:00
+Last Updated: 2026-07-30T13:10:00+06:00
 
 ## Overview
 
@@ -60,10 +60,10 @@ php artisan serve
 | `app/Models/` | Eloquent models (Setting, Page, Lead, Project, Invoice, etc.) |
 | `app/Http/Controllers/` | Public routes: pages, dashboard, invoices, proposals, demo hub |
 | `app/Http/Middleware/` | `RequireProductPart` — gates public routes by product tier |
-| `app/Livewire/` | `EstimatorWizard`, `PortalGate`; Filament heading capture hook |
+| `app/Livewire/` | `EstimatorWizard`, `PortalGate` |
 | `app/Filament/` | Admin panel: Resources, Pages (settings), Widgets, Auth |
 | `app/Services/` | `EstimatePricingEngine`, `BookingMatrix`, `OperationsNotifier`, `MonthlyCodeAuthenticator` |
-| `app/Support/` | `PageBlocks`, `ProductFeatures`, `AccessPermissions`, `Niche/*` packs |
+| `app/Support/` | `PageBlocks`, `ProductFeatures`, `AccessPermissions`, `FilamentContentHeader`, `Niche/*` packs |
 | `app/Enums/` | `ProductPart`, `LeadStatus`, `ProjectStatus`, `UserRole`, etc. |
 | `app/Events/` + `app/Listeners/` | `AddonOrdered`, `ProposalAccepted` → ops notifications |
 | `app/Console/Commands/` | `leads:escalate-stalled`, `app:escalate-overdue-invoices`, `niche:load` |
@@ -116,7 +116,7 @@ Each pack's `SampleProjectSeeder` seeds a demo lead, project, milestones, and ph
 Token-based public URLs: `/proposals/{token}`, `/invoices/{token}`. Accept/decline flows on proposals trigger `ProposalAccepted` → ops notification. Decline is blocked once a proposal is accepted.
 
 ### Admin panel (`/admin`)
-Filament panel via `AdminPanelProvider`. Auto-discovers Resources, custom Pages, and Widgets (lead funnel, revenue chart, needs attention). Role-based access via `UserRole` enum + `AccessPermissions` registry + per-user permission overrides. Admin topbar shows current page heading via Livewire hook. Widgets aggregate with grouped queries rather than per-day/per-status loops; charts and table widgets lazy-load, while the two stats overview widgets (`BusinessSnapshot`, `FinancialOverview`) render inline since they are above-the-fold and cost two queries each.
+Filament panel via `AdminPanelProvider`. Auto-discovers Resources, custom Pages, and Widgets (lead funnel, revenue chart, needs attention). Role-based access via `UserRole` enum + `AccessPermissions` registry + per-user permission overrides. Global topbar is off: brand lives in the sidebar; each page opens with a Figma-style dark content header (`fi-content-shell-header` + `FilamentContentHeader`) — page title left, ← back on Create/Edit only, primary Save/Create actions right (Delete is danger-zoned in the form footer). Admin theme loads Geist Sans + Geist Mono and applies Figma Text/sm, Text/xs, and mono title styles. Widgets aggregate with grouped queries rather than per-day/per-status loops; charts and table widgets lazy-load, while the two stats overview widgets (`BusinessSnapshot`, `FinancialOverview`) render inline since they are above-the-fold and cost two queries each.
 
 ### Operations alerting
 `OperationsNotifier::dispatch()` — logs + optional webhook POST. Triggers:

@@ -2,18 +2,13 @@
 
 namespace App\Filament\Resources\TimeEntries\Pages;
 
+use App\Filament\Concerns\HasPrimarySaveAndDangerDelete;
 use App\Filament\Resources\TimeEntries\TimeEntryResource;
-use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 
 class EditTimeEntry extends EditRecord
 {
-    protected static string $resource = TimeEntryResource::class;
+    use HasPrimarySaveAndDangerDelete;
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            DeleteAction::make(),
-        ];
-    }
+    protected static string $resource = TimeEntryResource::class;
 }

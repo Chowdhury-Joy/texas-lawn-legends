@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Users\Pages;
 
+use App\Filament\Concerns\HasPrimarySaveAndDangerDelete;
 use App\Filament\Resources\Users\Concerns\SyncsAccessPermissions;
 use App\Filament\Resources\Users\UserResource;
 use App\Models\User;
@@ -10,6 +11,7 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditUser extends EditRecord
 {
+    use HasPrimarySaveAndDangerDelete;
     use SyncsAccessPermissions;
 
     protected static string $resource = UserResource::class;
@@ -31,11 +33,9 @@ class EditUser extends EditRecord
         return $data;
     }
 
-    protected function getHeaderActions(): array
+    protected function getDangerDeleteAction(): DeleteAction
     {
-        return [
-            DeleteAction::make()
-                ->visible(fn () => $this->getRecord()->id !== auth()->id()),
-        ];
+        return parent::getDangerDeleteAction()
+            ->visible(fn () => $this->getRecord()->id !== auth()->id());
     }
 }

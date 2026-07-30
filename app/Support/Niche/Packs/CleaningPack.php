@@ -36,12 +36,23 @@ final class CleaningPack implements NichePack
         return [
             'suite_create' => 'Projects',
             'suite_care' => 'Maintain',
-            'size_unit' => 'sq ft',
-            'size_field' => 'Approx. area',
+            'size_unit' => 'interior sq ft',
+            'size_field' => 'Approx. cleanable area',
             'area_field' => 'Service area',
             'job_noun' => 'home',
             'job_noun_plural' => 'homes',
             'tagline_fallback' => 'Residential & Office Cleaning',
+            'estimate_progress_1' => 'Scope',
+            'estimate_progress_2' => 'Area',
+            'estimate_progress_3' => 'Details',
+            'estimate_progress_4' => 'Your Estimate',
+            'estimate_step_1_title' => 'What should we clean?',
+            'estimate_step_1_body' => 'Pick the cleaning scope and tell us where the property is.',
+            'estimate_step_2_title' => 'Cleanable area & access',
+            'estimate_step_2_body' => 'Drag to estimate the area, then tell us how involved the visit looks.',
+            'complexity_simple_desc' => 'Light tidy, easy access, mostly open floors.',
+            'complexity_standard_desc' => 'Typical home, some clutter or pets.',
+            'complexity_complex_desc' => 'Heavy build-up, many rooms, or delicate finishes.',
         ];
     }
 

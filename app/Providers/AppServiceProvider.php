@@ -2,9 +2,7 @@
 
 namespace App\Providers;
 
-use App\Livewire\Hooks\CaptureFilamentPageHeading;
 use Illuminate\Support\ServiceProvider;
-use Livewire\Livewire;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -24,8 +22,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Capture each Filament page heading before its layout renders, so the
-        // topbar logo can show e.g. "Edit About Us" instead of the site name.
-        Livewire::componentHook(CaptureFilamentPageHeading::class);
+        //
     }
 }

@@ -33,7 +33,10 @@ class NichePackTest extends TestCase
         $this->assertSame('The Create Suite', niche_label('suite_create'));
         $this->assertSame('The Care Suite', niche_label('suite_care'));
         $this->assertSame('sq ft', niche_label('size_unit'));
+        $this->assertSame('Approx. yard size', niche_label('size_field'));
         $this->assertSame('Neighborhood', niche_label('area_field'));
+        $this->assertSame('What are we building?', niche_label('estimate_step_1_title'));
+        $this->assertSame('Yard size', niche_label('estimate_progress_2'));
         $this->assertSame('The Create Suite', ServiceCategory::Create->getLabel());
         $this->assertSame('The Care Suite', ServiceCategory::Care->getLabel());
     }

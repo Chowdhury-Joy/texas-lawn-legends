@@ -37,11 +37,22 @@ final class LawnPack implements NichePack
             'suite_create' => 'The Create Suite',
             'suite_care' => 'The Care Suite',
             'size_unit' => 'sq ft',
-            'size_field' => 'Approx. area',
+            'size_field' => 'Approx. yard size',
             'area_field' => 'Neighborhood',
             'job_noun' => 'yard',
             'job_noun_plural' => 'yards',
             'tagline_fallback' => 'Landscape Design & Hardscaping',
+            'estimate_progress_1' => 'Scope',
+            'estimate_progress_2' => 'Yard size',
+            'estimate_progress_3' => 'Details',
+            'estimate_progress_4' => 'Your Estimate',
+            'estimate_step_1_title' => 'What are we building?',
+            'estimate_step_1_body' => 'Pick the primary scope for your project and tell us where you’re located.',
+            'estimate_step_2_title' => 'Yard size & access',
+            'estimate_step_2_body' => 'Drag to estimate the area, then tell us how involved the site is.',
+            'complexity_simple_desc' => 'Open area, easy access, flat ground.',
+            'complexity_standard_desc' => 'Typical yard, minor slopes or obstacles.',
+            'complexity_complex_desc' => 'Tight access, steep hills, or heavy overgrowth.',
         ];
     }
 

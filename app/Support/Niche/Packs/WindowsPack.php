@@ -42,6 +42,17 @@ final class WindowsPack implements NichePack
             'job_noun' => 'home',
             'job_noun_plural' => 'homes',
             'tagline_fallback' => 'Residential & Storefront Windows',
+            'estimate_progress_1' => 'Scope',
+            'estimate_progress_2' => 'Panes',
+            'estimate_progress_3' => 'Details',
+            'estimate_progress_4' => 'Your Estimate',
+            'estimate_step_1_title' => 'Which windows need work?',
+            'estimate_step_1_body' => 'Choose interior, exterior, or both and tell us where the property is.',
+            'estimate_step_2_title' => 'Pane count & access',
+            'estimate_step_2_body' => 'Drag to estimate how many panes, then tell us how involved the visit looks.',
+            'complexity_simple_desc' => 'Ground-floor panes, easy access.',
+            'complexity_standard_desc' => 'Two-story mix, typical screens and tracks.',
+            'complexity_complex_desc' => 'Hard-to-reach panes, skylights, or heavy build-up.',
         ];
     }
 

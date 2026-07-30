@@ -43,6 +43,8 @@ class EstimatorWizardTest extends TestCase
             ->set('sqft', 1200)
             ->set('complexity', 'standard')
             ->assertSee('sq ft')
+            ->assertSee('Yard size & access')
+            ->assertDontSee('What needs treatment?')
             ->call('nextStep')
             ->assertSet('step', 3)
             ->set('name', 'Alex Johnson')

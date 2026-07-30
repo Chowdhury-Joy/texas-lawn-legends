@@ -42,6 +42,17 @@ final class RoofingPack implements NichePack
             'job_noun' => 'roof',
             'job_noun_plural' => 'roofs',
             'tagline_fallback' => 'Roof Install & Storm Repair',
+            'estimate_progress_1' => 'Scope',
+            'estimate_progress_2' => 'Roof size',
+            'estimate_progress_3' => 'Details',
+            'estimate_progress_4' => 'Your Estimate',
+            'estimate_step_1_title' => 'What roof work do you need?',
+            'estimate_step_1_body' => 'Pick install or repair and tell us where the property is.',
+            'estimate_step_2_title' => 'Roof size & pitch',
+            'estimate_step_2_body' => 'Drag to estimate roof squares, then tell us how involved the job looks.',
+            'complexity_simple_desc' => 'Low pitch, easy staging, simple rectangle.',
+            'complexity_standard_desc' => 'Typical pitch, a few valleys or penetrations.',
+            'complexity_complex_desc' => 'Steep pitch, multi-level, or heavy storm damage.',
         ];
     }
 

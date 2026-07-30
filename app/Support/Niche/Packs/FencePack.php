@@ -42,6 +42,17 @@ final class FencePack implements NichePack
             'job_noun' => 'property',
             'job_noun_plural' => 'properties',
             'tagline_fallback' => 'Fence Install & Deck Repair',
+            'estimate_progress_1' => 'Scope',
+            'estimate_progress_2' => 'Length',
+            'estimate_progress_3' => 'Details',
+            'estimate_progress_4' => 'Your Estimate',
+            'estimate_step_1_title' => 'What fence or deck work do you need?',
+            'estimate_step_1_body' => 'Pick install or repair and tell us where the property is.',
+            'estimate_step_2_title' => 'Fence length & access',
+            'estimate_step_2_body' => 'Drag to estimate linear feet, then tell us how involved the site is.',
+            'complexity_simple_desc' => 'Straight run, clear ground, easy gate access.',
+            'complexity_standard_desc' => 'Typical yard, a few corners or slopes.',
+            'complexity_complex_desc' => 'Steep grade, existing dig-outs, or tight side yards.',
         ];
     }
 

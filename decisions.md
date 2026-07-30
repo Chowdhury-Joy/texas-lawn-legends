@@ -141,11 +141,49 @@
 </decision>
 
 
+## 2026-07-30 (niche estimator vocabulary)
+
 <decision>
  <category>UI/UX</category>
- <context>Admin top-left brand label always showed the site name ("Texas Lawn Legends"), which made it harder to know which page you were on without looking at the main heading.</context>
- <action>Override Filament’s logo Blade view to show the current page heading (e.g. "Edit About Us"). A Livewire render hook captures the heading from the active Filament page before the layout renders the topbar. Login/simple pages still show the site name. Browser tab title still ends with the site brand via brandName().</action>
- <reason>Matches how people scan admin tools (page name in the chrome), without changing document titles or the public site brand.</reason>
+ <context>Switching industry packs still left the estimator sounding like lawn care — hardcoded “What are we building?” / “Project dimensions” / yard complexity copy, and packs like pest reused the bare “sq ft” unit.</context>
+ <action>Expand each niche pack’s `labels()` with estimator progress titles, step titles/bodies, and complexity blurbs. Wire `estimator-wizard` to `niche_label()`. Differentiate size units (e.g. pest `home sq ft`, pressure `surface sq ft`, cleaning `interior sq ft`; roofing/windows/fence/gutters keep squares/panes/linear ft).</action>
+ <reason>Pack switch should change the quote funnel’s language, not only the logo — prospects must hear their trade’s words on a live demo.</reason>
+</decision>
+
+## 2026-07-30 (admin figma typography)
+
+<decision>
+ <category>UI/UX</category>
+ <context>Admin shell still used Filament’s default Inter-like heading weight/size instead of the Lux Figma text styles.</context>
+ <action>Load Geist Sans + Geist Mono via Fontsource in the Filament Vite theme. Apply Figma Text/sm (14/22/-2%), Text/xs (12/16/-3%), and page title/brand mono (18/22/-2%, title uppercase). Remove the previous header `text-lg font-medium tracking-wide` overrides.</action>
+ <reason>Matches the Figma type styles named in the frame so admin chrome reads as the same product as the design reference.</reason>
+</decision>
+
+## 2026-07-30 (admin main CTA vs danger delete)
+
+<decision>
+ <category>UI/UX</category>
+ <context>On edit pages, Delete was the only header action, so it read as the page’s main CTA (Figma’s “Main Button of the Page”). Create / Add / Save should own that slot; Delete is a destructive secondary action.</context>
+ <action>Shared trait `HasPrimarySaveAndDangerDelete` on all resource Edit pages: header shows Save as the primary CTA; form footer shows Cancel plus outlined danger Delete (visually separated). Create/Add stay as list-page header CTAs.</action>
+ <reason>Matches the Figma header contract — primary action advances the job (create/save); delete is danger-zoned so operators don’t treat it as the default next step.</reason>
+</decision>
+
+## 2026-07-30 (filament content header)
+
+<decision>
+ <category>UI/UX</category>
+ <context>The prior fix put the page title in the sidebar logo slot, which felt like a back button and did not match the Figma admin shell (brand in sidebar, title in the main content header, back arrow only on drill-down pages).</context>
+ <action>Disable Filament’s global topbar so brand stays in the sidebar only. Override the page header Blade into a Figma-style 64px dark content shell (`fi-content-shell-header`): uppercase page title left, ← back on Create/Edit only, primary actions right. `FilamentContentHeader` resolves title/back. Rebuild admin Vite theme so styles ship.</action>
+ <reason>Matches the Lux dashboard shell — sidebar = app identity + nav; main column header = where you are + what you can do — without a second brand bar that reads as a back button.</reason>
+</decision>
+
+## 2026-07-30 (invoice public page)
+
+<decision>
+ <category>UI/UX</category>
+ <context>Public invoice page (`/invoices/{token}`) used nested bordered boxes that made the layout feel heavy; notes sat mid-page; Print felt like a secondary action.</context>
+ <action>Flatten the invoice layout (no outer card shadow/border stack), right-align totals, move notes to a centered bottom panel with subtle `bg-slate-50` + border, and style Print / Save as PDF as the primary button.</action>
+ <reason>Cleaner client-facing document that reads like an invoice, not an admin form — better for email-link opens and print/PDF.</reason>
 </decision>
 
 <decision>

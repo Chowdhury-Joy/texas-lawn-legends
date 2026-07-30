@@ -2,7 +2,12 @@
 
     {{-- Progress rail --}}
     @php
-        $labels = ['Scope', 'Dimensions', 'Details', 'Your Estimate'];
+        $labels = [
+            niche_label('estimate_progress_1'),
+            niche_label('estimate_progress_2'),
+            niche_label('estimate_progress_3'),
+            niche_label('estimate_progress_4'),
+        ];
         $progressPct = match ($step) {
             1 => '0%',
             2 => '33.33%',
@@ -38,8 +43,8 @@
 
         {{-- ================= STEP 1: Service Scope + Neighborhood ================= --}}
         @if ($step === 1)
-            <h2 class="text-2xl font-black uppercase tracking-tight text-slate-900 sm:text-3xl">What are we building?</h2>
-            <p class="mt-2 text-slate-600">Pick the primary scope for your project and tell us where you're located.</p>
+            <h2 class="text-2xl font-black uppercase tracking-tight text-slate-900 sm:text-3xl">{{ niche_label('estimate_step_1_title') }}</h2>
+            <p class="mt-2 text-slate-600">{{ niche_label('estimate_step_1_body') }}</p>
 
             <div class="mt-8">
                 <label class="block text-xs font-black uppercase tracking-widest text-slate-700">{{ niche_label('area_field') }}</label>
@@ -115,8 +120,8 @@
 
         {{-- ================= STEP 2: Dimensions + Complexity ================= --}}
         @if ($step === 2)
-            <h2 class="text-2xl font-black uppercase tracking-tight text-slate-900 sm:text-3xl">Project dimensions</h2>
-            <p class="mt-2 text-slate-600">Drag to estimate the area, then tell us how involved it is.</p>
+            <h2 class="text-2xl font-black uppercase tracking-tight text-slate-900 sm:text-3xl">{{ niche_label('estimate_step_2_title') }}</h2>
+            <p class="mt-2 text-slate-600">{{ niche_label('estimate_step_2_body') }}</p>
 
             <div class="mt-8" x-data="{ v: @entangle('sqft').live }">
                 <div class="flex items-baseline justify-between">
@@ -138,9 +143,9 @@
                 <div class="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-3">
                     @php
                         $complexities = [
-                            'simple' => ['label' => 'Simple', 'desc' => 'Open area, easy access, flat ground.'],
-                            'standard' => ['label' => 'Standard', 'desc' => 'Typical yard, minor slopes or obstacles.'],
-                            'complex' => ['label' => 'Complex', 'desc' => 'Tight access, steep hills, or heavy overgrowth.']
+                            'simple' => ['label' => 'Simple', 'desc' => niche_label('complexity_simple_desc')],
+                            'standard' => ['label' => 'Standard', 'desc' => niche_label('complexity_standard_desc')],
+                            'complex' => ['label' => 'Complex', 'desc' => niche_label('complexity_complex_desc')],
                         ];
                     @endphp
                     @foreach ($complexities as $value => $data)

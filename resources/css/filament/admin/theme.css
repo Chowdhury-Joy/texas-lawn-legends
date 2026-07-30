@@ -1,7 +1,233 @@
 @import '../../../../vendor/filament/filament/resources/css/theme.css';
+@import '@fontsource/geist-sans/400.css';
+@import '@fontsource/geist-sans/600.css';
+@import '@fontsource/geist-mono/400.css';
+@import '@fontsource/geist-mono/600.css';
 
 /* Scan custom admin Blade + Filament PHP for Tailwind utilities used outside
    Filament's own components (Crew Schedule, Industry Packs tip banner, etc.). */
 @source '../../../../app/Filament/**/*';
 @source '../../../../resources/views/filament/**/*';
 @source '../../../../resources/views/vendor/filament-panels/**/*';
+
+/*
+ * Figma shell (Lux travel dashboard — My Trips frame)
+ * Colors + Text styles from node 4091:3001
+ */
+
+:root {
+    --fi-shell-sidebar-bg: #171717;
+    --fi-shell-header-bg: #171717;
+    --fi-shell-header-stroke: #20252d;
+    --fi-shell-sidebar-stroke: #20272d;
+    --fi-shell-content-bg: #0d0d0d;
+
+    /* Fonts — Figma Geist / Geist Mono */
+    --fi-font-sans: 'Geist Sans', 'Geist', ui-sans-serif, system-ui, sans-serif;
+    --fi-font-mono: 'Geist Mono', ui-monospace, monospace;
+
+    /* Text/sm — Geist Regular 14 / 22 / -2% */
+    --fi-text-sm-size: 14px;
+    --fi-text-sm-leading: 22px;
+    --fi-text-sm-tracking: -0.02em;
+
+    /* Text/xs — Geist Regular 12 / 16 / -3% */
+    --fi-text-xs-size: 12px;
+    --fi-text-xs-leading: 16px;
+    --fi-text-xs-tracking: -0.03em;
+
+    /* Page title / brand — Geist Mono 18 / 22 / -2% */
+    --fi-text-title-size: 18px;
+    --fi-text-title-leading: 22px;
+    --fi-text-title-tracking: -0.02em;
+
+    /* Content Container: px 160 / py 48 on 1160px main */
+    --fi-shell-inline: 1rem;
+    --fi-shell-block: 1.5rem;
+}
+
+@media (min-width: 768px) {
+    :root {
+        --fi-shell-inline: 1.5rem;
+        --fi-shell-block: 2rem;
+    }
+}
+
+@media (min-width: 1200px) {
+    :root {
+        --fi-shell-inline: 160px;
+        --fi-shell-block: 48px;
+    }
+}
+
+/* ---- Base admin type (replace Filament Inter defaults) ---- */
+.fi-body {
+    background-color: var(--fi-shell-content-bg) !important;
+    font-family: var(--fi-font-sans);
+    font-size: var(--fi-text-sm-size);
+    font-weight: 400;
+    line-height: var(--fi-text-sm-leading);
+    letter-spacing: var(--fi-text-sm-tracking);
+}
+
+.fi-main-sidebar,
+.fi-sidebar {
+    background-color: var(--fi-shell-sidebar-bg) !important;
+    border-right: 1px solid var(--fi-shell-sidebar-stroke);
+}
+
+.fi-sidebar-header {
+    border-bottom: 1px solid var(--fi-shell-header-stroke);
+}
+
+.fi-main-ctn {
+    background-color: var(--fi-shell-content-bg);
+}
+
+/* Brand — Geist Mono SemiBold 18 (Figma Logo / TripEver) */
+.fi-logo {
+    font-family: var(--fi-font-mono) !important;
+    font-size: var(--fi-text-title-size) !important;
+    font-weight: 600 !important;
+    line-height: var(--fi-text-title-leading) !important;
+    letter-spacing: var(--fi-text-title-tracking) !important;
+    color: #ffffff !important;
+}
+
+/* Sidebar nav — Text/sm */
+.fi-sidebar-item-label,
+.fi-sidebar-group-label {
+    font-family: var(--fi-font-sans);
+    font-size: var(--fi-text-sm-size);
+    font-weight: 400;
+    line-height: var(--fi-text-sm-leading);
+    letter-spacing: var(--fi-text-sm-tracking);
+}
+
+/* Drop Filament’s inset padding so the header can span the full main column. */
+.fi-main:has(.fi-content-shell-header) {
+    @apply max-w-none px-0;
+}
+
+.fi-page-header-main-ctn:has(.fi-content-shell-header) {
+    @apply gap-y-0 py-0;
+}
+
+/* Full-width dark header bar — edge to edge of the main column. */
+.fi-header.fi-content-shell-header {
+    @apply m-0 flex w-full min-h-16 flex-row items-center justify-between gap-4 py-0 sm:flex-row sm:items-center;
+    padding-inline: var(--fi-shell-inline);
+    background-color: var(--fi-shell-header-bg);
+    border-bottom: 1px solid var(--fi-shell-header-stroke);
+}
+
+.fi-page-header-title-row {
+    @apply flex min-w-0 items-center gap-3;
+}
+
+.fi-page-header-titles {
+    @apply min-w-0;
+}
+
+.fi-page-header-back {
+    @apply inline-flex shrink-0 items-center justify-center rounded-md p-1 text-white/70 transition hover:bg-white/10 hover:text-white;
+}
+
+.fi-page-header-back-icon {
+    @apply size-6 text-current;
+}
+
+/* Page Title — Geist Mono Regular 18 / uppercase (Figma Page Title) */
+.fi-content-shell-header .fi-header-heading {
+    margin: 0;
+    font-family: var(--fi-font-mono);
+    font-size: var(--fi-text-title-size);
+    font-weight: 400;
+    line-height: var(--fi-text-title-leading);
+    letter-spacing: var(--fi-text-title-tracking);
+    text-transform: uppercase;
+    color: #ffffff;
+}
+
+.fi-content-shell-header .fi-header-subheading {
+    margin-top: 0.25rem;
+    font-family: var(--fi-font-sans);
+    font-size: var(--fi-text-xs-size);
+    font-weight: 400;
+    line-height: var(--fi-text-xs-leading);
+    letter-spacing: var(--fi-text-xs-tracking);
+    text-transform: none;
+    color: rgb(255 255 255 / 0.5);
+}
+
+.fi-content-shell-header .fi-header-actions-ctn {
+    @apply shrink-0;
+}
+
+/* Main CTA — Text/sm, uppercase (Figma Main Button of the Page) */
+.fi-content-shell-header .fi-btn {
+    font-family: var(--fi-font-sans);
+    font-size: var(--fi-text-sm-size);
+    font-weight: 400;
+    line-height: var(--fi-text-sm-leading);
+    letter-spacing: var(--fi-text-sm-tracking);
+    text-transform: uppercase;
+}
+
+/* Keep page body inset under the full-bleed header — Figma Content Container. */
+.fi-page-header-main-ctn:has(.fi-content-shell-header) > .fi-page-main {
+    padding-inline: var(--fi-shell-inline);
+    padding-block: var(--fi-shell-block);
+}
+
+/* Danger zone: Delete lives in the form footer, not the header main CTA. */
+.fi-form-actions:has(.fi-color-danger),
+.fi-sc-actions:has(.fi-color-danger) {
+    @apply mt-8 border-t border-[#20252d] pt-6;
+}
+
+/*
+ * Admin scrollbars: thin + hidden until hover (Firefox + WebKit).
+ * Applies to vertical page/sidebar scroll AND horizontal table overflow.
+ */
+.fi-body,
+.fi-body * {
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+}
+
+.fi-body:hover,
+.fi-body:focus-within,
+.fi-body *:hover,
+.fi-body *:focus-within {
+    scrollbar-color: rgb(156 163 175 / 0.45) transparent;
+}
+
+.fi-body::-webkit-scrollbar,
+.fi-body *::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+.fi-body::-webkit-scrollbar-track,
+.fi-body *::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.fi-body::-webkit-scrollbar-thumb,
+.fi-body *::-webkit-scrollbar-thumb {
+    background-color: transparent;
+    border-radius: 9999px;
+}
+
+.fi-body:hover::-webkit-scrollbar-thumb,
+.fi-body:focus-within::-webkit-scrollbar-thumb,
+.fi-body *:hover::-webkit-scrollbar-thumb,
+.fi-body *:focus-within::-webkit-scrollbar-thumb {
+    background-color: rgb(156 163 175 / 0.45);
+}
+
+.fi-body:hover::-webkit-scrollbar-thumb:hover,
+.fi-body *:hover::-webkit-scrollbar-thumb:hover {
+    background-color: rgb(156 163 175 / 0.7);
+}

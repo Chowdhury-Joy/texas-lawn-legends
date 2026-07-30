@@ -89,6 +89,9 @@ class DemoHubTest extends TestCase
 
         $this->assertSame('Treatments', niche_label('suite_create'));
         $this->assertSame('Protect', niche_label('suite_care'));
+        $this->assertSame('home sq ft', niche_label('size_unit'));
+        $this->assertSame('What needs treatment?', niche_label('estimate_step_1_title'));
+        $this->assertSame('Home size', niche_label('estimate_progress_2'));
         $this->assertSame('ShieldBug Pest', setting('site_name'));
         $this->assertSame('PestControlService', niche()->schemaOrgType());
     }

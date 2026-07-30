@@ -36,12 +36,23 @@ final class PressurePack implements NichePack
         return [
             'suite_create' => 'Projects',
             'suite_care' => 'Maintain',
-            'size_unit' => 'sq ft',
+            'size_unit' => 'surface sq ft',
             'size_field' => 'Approx. surface area',
             'area_field' => 'Service area',
             'job_noun' => 'property',
             'job_noun_plural' => 'properties',
             'tagline_fallback' => 'Residential & Commercial Wash',
+            'estimate_progress_1' => 'Scope',
+            'estimate_progress_2' => 'Surface',
+            'estimate_progress_3' => 'Details',
+            'estimate_progress_4' => 'Your Estimate',
+            'estimate_step_1_title' => 'What are we washing?',
+            'estimate_step_1_body' => 'Choose the surfaces to wash and tell us where the property is.',
+            'estimate_step_2_title' => 'Surface area & access',
+            'estimate_step_2_body' => 'Drag to estimate the washable area, then tell us how involved the job looks.',
+            'complexity_simple_desc' => 'Open driveway or patio, easy hose access.',
+            'complexity_standard_desc' => 'Mixed surfaces, some furniture to move.',
+            'complexity_complex_desc' => 'Two-story, delicate finishes, or heavy staining.',
         ];
     }
 

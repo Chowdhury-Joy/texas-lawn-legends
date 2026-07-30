@@ -42,6 +42,17 @@ final class GuttersPack implements NichePack
             'job_noun' => 'home',
             'job_noun_plural' => 'homes',
             'tagline_fallback' => 'Gutter Install & Seasonal Care',
+            'estimate_progress_1' => 'Scope',
+            'estimate_progress_2' => 'Length',
+            'estimate_progress_3' => 'Details',
+            'estimate_progress_4' => 'Your Estimate',
+            'estimate_step_1_title' => 'What gutter work do you need?',
+            'estimate_step_1_body' => 'Pick install, repair, or cleanout and tell us where the property is.',
+            'estimate_step_2_title' => 'Gutter length & access',
+            'estimate_step_2_body' => 'Drag to estimate linear feet, then tell us how involved the job looks.',
+            'complexity_simple_desc' => 'Single-story run, easy ladder access.',
+            'complexity_standard_desc' => 'Typical home, some corners and downspouts.',
+            'complexity_complex_desc' => 'Two-story, steep roof, or heavy fascia repair.',
         ];
     }
 

@@ -2,18 +2,13 @@
 
 namespace App\Filament\Resources\Crews\Pages;
 
+use App\Filament\Concerns\HasPrimarySaveAndDangerDelete;
 use App\Filament\Resources\Crews\CrewResource;
-use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 
 class EditCrew extends EditRecord
 {
-    protected static string $resource = CrewResource::class;
+    use HasPrimarySaveAndDangerDelete;
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            DeleteAction::make(),
-        ];
-    }
+    protected static string $resource = CrewResource::class;
 }

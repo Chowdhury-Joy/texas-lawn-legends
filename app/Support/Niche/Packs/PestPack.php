@@ -36,12 +36,23 @@ final class PestPack implements NichePack
         return [
             'suite_create' => 'Treatments',
             'suite_care' => 'Protect',
-            'size_unit' => 'sq ft',
+            'size_unit' => 'home sq ft',
             'size_field' => 'Approx. home size',
             'area_field' => 'Service area',
             'job_noun' => 'home',
             'job_noun_plural' => 'homes',
             'tagline_fallback' => 'Residential Pest Control',
+            'estimate_progress_1' => 'Scope',
+            'estimate_progress_2' => 'Home size',
+            'estimate_progress_3' => 'Details',
+            'estimate_progress_4' => 'Your Estimate',
+            'estimate_step_1_title' => 'What needs treatment?',
+            'estimate_step_1_body' => 'Choose a one-time treatment or protection plan and tell us where you live.',
+            'estimate_step_2_title' => 'Home size & access',
+            'estimate_step_2_body' => 'Drag to set your home size, then tell us how involved the job looks.',
+            'complexity_simple_desc' => 'Single-story, easy access, light activity.',
+            'complexity_standard_desc' => 'Typical home, some cluttered zones or crawl space.',
+            'complexity_complex_desc' => 'Multi-story, heavy infestation, or hard-to-reach entry points.',
         ];
     }
 

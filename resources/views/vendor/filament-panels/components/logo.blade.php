@@ -1,7 +1,5 @@
 @php
-    use App\Support\FilamentPageHeading;
-
-    $brandName = FilamentPageHeading::current() ?? filament()->getBrandName();
+    $brandName = filament()->getBrandName();
     $brandLogo = filament()->getBrandLogo();
     $brandLogoHeight = filament()->getBrandLogoHeight() ?? '1.5rem';
     $darkModeBrandLogo = filament()->getDarkModeBrandLogo();

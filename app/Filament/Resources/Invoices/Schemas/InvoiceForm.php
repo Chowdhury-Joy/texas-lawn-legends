@@ -28,7 +28,7 @@ class InvoiceForm
                             ->label('Invoice Number')
                             ->placeholder('Auto-generated (e.g. INV-2026-0001)')
                             ->disabled()
-                            ->degraded(),
+                            ->dehydrated(),
 
                         Select::make('status')
                             ->label('Status')
@@ -39,7 +39,7 @@ class InvoiceForm
                         Select::make('project_id')
                             ->label('Linked Project')
                             ->relationship('project', 'project_title')
-                            ->getOptionLabelFromRecordUsing(fn (\App\Models\Project $record) => $record->project_title ?: "Project #{$record->id}")
+                            ->getOptionLabelFromRecordUsing(fn (Project $record) => $record->project_title ?: "Project #{$record->id}")
                             ->searchable()
                             ->preload()
                             ->live()
@@ -55,7 +55,7 @@ class InvoiceForm
                         Select::make('lead_id')
                             ->label('Linked Lead')
                             ->relationship('lead', 'name')
-                            ->getOptionLabelFromRecordUsing(fn (\App\Models\Lead $record) => $record->name ?: "Lead #{$record->id}" . ($record->service_type ? " ({$record->service_type})" : ''))
+                            ->getOptionLabelFromRecordUsing(fn (Lead $record) => $record->name ?: "Lead #{$record->id}".($record->service_type ? " ({$record->service_type})" : ''))
                             ->searchable()
                             ->preload()
                             ->live()
@@ -125,7 +125,7 @@ class InvoiceForm
                                     ->numeric()
                                     ->prefix('$')
                                     ->disabled()
-                                    ->degraded()
+                                    ->dehydrated()
                                     ->columnSpan(2),
                             ])
                             ->defaultItems(1)
