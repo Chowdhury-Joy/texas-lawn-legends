@@ -170,3 +170,12 @@
  <root_cause>Token wiring stopped at four blocks; the remaining pre-made Blade blocks kept text-3xl / tracking-* / px-6 py-section as their type and spacing source of truth.</root_cause>
  <prevention_rule>When shipping a public design-token system, update every resources/views/blocks/*.blade.php in the same pass — never leave a subset of pre-made blocks on Tailwind type/spacing.</prevention_rule>
 </bug>
+
+## 2026-07-30
+
+<bug>
+ <category>Code</category>
+ <symptom>Filament Invoices list crashed with TypeError: InvoiceStatus::getIcon() must return string but returned Heroicon enum.</symptom>
+ <root_cause>Filament v4 HasIcon expects string | BackedEnum | Htmlable | null; InvoiceStatus declared getIcon(): string while returning Heroicon cases.</root_cause>
+ <prevention_rule>Enum getIcon() return types must match Filament's HasIcon contract — use Heroicon (or the full union), not string, when returning Heroicon cases.</prevention_rule>
+</bug>

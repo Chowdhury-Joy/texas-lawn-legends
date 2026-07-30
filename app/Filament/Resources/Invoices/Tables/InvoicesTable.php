@@ -14,6 +14,7 @@ use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreAction;
 use Filament\Actions\RestoreBulkAction;
 use Filament\Notifications\Notification;
+use Filament\Support\Enums\Size;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -74,6 +75,9 @@ class InvoicesTable
                     ->label('View / Print')
                     ->icon(Heroicon::OutlinedPrinter)
                     ->color('gray')
+                    ->button()
+                    ->outlined()
+                    ->size(Size::Small)
                     ->url(fn (Invoice $record): string => route('invoices.show', $record->unique_access_token))
                     ->openUrlInNewTab(),
 
@@ -81,6 +85,9 @@ class InvoicesTable
                     ->label('Mark Paid')
                     ->icon(Heroicon::OutlinedCheckCircle)
                     ->color('success')
+                    ->button()
+                    ->outlined()
+                    ->size(Size::Small)
                     ->visible(fn (Invoice $record): bool => $record->status !== InvoiceStatus::Paid && $record->status !== InvoiceStatus::Cancelled)
                     ->requiresConfirmation()
                     ->action(function (Invoice $record) {
@@ -91,10 +98,22 @@ class InvoicesTable
                             ->send();
                     }),
 
-                EditAction::make(),
-                DeleteAction::make(),
-                RestoreAction::make(),
-                ForceDeleteAction::make(),
+                EditAction::make()
+                    ->button()
+                    ->outlined()
+                    ->size(Size::Small),
+                DeleteAction::make()
+                    ->button()
+                    ->outlined()
+                    ->size(Size::Small),
+                RestoreAction::make()
+                    ->button()
+                    ->outlined()
+                    ->size(Size::Small),
+                ForceDeleteAction::make()
+                    ->button()
+                    ->outlined()
+                    ->size(Size::Small),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

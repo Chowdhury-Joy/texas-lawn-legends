@@ -37,7 +37,7 @@ enum InvoiceStatus: string implements HasColor, HasIcon, HasLabel
         };
     }
 
-    public function getIcon(): string
+    public function getIcon(): Heroicon
     {
         return match ($this) {
             self::Draft => Heroicon::OutlinedPencil,
