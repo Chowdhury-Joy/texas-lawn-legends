@@ -11,8 +11,6 @@ class WeeklyLeadTrend extends ChartWidget
 {
     use RestrictedWidget;
 
-    protected static bool $isLazy = false;
-
     protected ?string $heading = 'New Leads — Last 7 Days';
 
     protected static ?int $sort = 1;
@@ -31,9 +29,14 @@ class WeeklyLeadTrend extends ChartWidget
     {
         $days = collect(range(6, 0))->map(fn (int $ago) => now()->subDays($ago)->startOfDay());
 
-        $counts = $days->map(fn (Carbon $day) => Lead::query()
-            ->whereDate('created_at', $day)
-            ->count());
+        // One grouped query for the window instead of a count per day.
+        $countsByDay = Lead::query()
+            ->where('created_at', '>=', $days->first())
+            ->selectRaw('date(created_at) as day, count(*) as aggregate')
+            ->groupBy('day')
+            ->pluck('aggregate', 'day');
+
+        $counts = $days->map(fn (Carbon $day) => (int) ($countsByDay[$day->toDateString()] ?? 0));
 
         return [
             'datasets' => [

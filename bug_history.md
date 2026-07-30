@@ -1,5 +1,21 @@
 # Bug History
 
+## 2026-07-30 (efficiency audit)
+
+<bug>
+ <category>Code</category>
+ <symptom>Every absent setting key re-queried the database on each call, forever — no amount of cache warming helped.</symptom>
+ <root_cause>`Setting::get()` stored `null` via `Cache::rememberForever`, and Laravel treats a cached `null` as a cache miss, so the closure re-ran on every call.</root_cause>
+ <prevention_rule>Cache a payload that records existence (`['hit' => bool, 'value' => mixed]`) rather than the bare value, so a legitimately null value and a missing row stay distinguishable.</prevention_rule>
+</bug>
+
+<bug>
+ <category>Code</category>
+ <symptom>RecentActivity dashboard widget issued one extra query per visible row — the only genuine N+1 in the codebase, growing with data volume.</symptom>
+ <root_cause>The table column renders `causer.name` but the underlying `Activity::query()` had no eager load.</root_cause>
+ <prevention_rule>Any Filament table column using dot-notation relationship access must have a matching `->with()` on the widget/resource query.</prevention_rule>
+</bug>
+
 ## 2026-07-30 (audit fixes)
 
 <bug>

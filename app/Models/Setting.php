@@ -23,19 +23,56 @@ class Setting extends Model
     ];
 
     /**
+     * Per-request memo of resolved payloads, keyed by setting key.
+     *
+     * A single page render reads dozens of keys, often repeatedly. Without this
+     * every read is a cache-store round trip (the default store is the database).
+     *
+     * @var array<string, array{hit: bool, value: mixed}>
+     */
+    private static array $requestCache = [];
+
+    /**
      * Resolve a setting value by key, casting it according to its declared type.
      */
     public static function get(string $key, mixed $default = null): mixed
     {
+        $payload = static::$requestCache[$key] ??= static::resolvePayload($key);
+
+        return $payload['hit'] ? $payload['value'] : $default;
+    }
+
+    /**
+     * Load a key's payload from the persistent cache, falling back to the DB.
+     *
+     * The payload records whether the row exists so a legitimately null value is
+     * distinguishable from a missing key — otherwise misses are never cached and
+     * re-query on every call.
+     *
+     * @return array{hit: bool, value: mixed}
+     */
+    private static function resolvePayload(string $key): array
+    {
         // Cache the resolved (casted) value rather than the Eloquent model —
         // caching a full model instance breaks on unserialize across requests.
-        $value = Cache::rememberForever("setting.{$key}", function () use ($key) {
+        $payload = Cache::rememberForever("setting.{$key}", function () use ($key) {
             $setting = static::query()->where('key', $key)->first();
 
-            return $setting ? ['value' => $setting->castedValue()] : null;
+            return $setting
+                ? ['hit' => true, 'value' => $setting->castedValue()]
+                : ['hit' => false, 'value' => null];
         });
 
-        return $value === null ? $default : $value['value'];
+        // Payloads written by an older release stored either null or ['value' => x].
+        if (! is_array($payload) || ! array_key_exists('hit', $payload)) {
+            $payload = is_array($payload) && array_key_exists('value', $payload)
+                ? ['hit' => true, 'value' => $payload['value']]
+                : ['hit' => false, 'value' => null];
+
+            Cache::forever("setting.{$key}", $payload);
+        }
+
+        return $payload;
     }
 
     /**
@@ -50,9 +87,27 @@ class Setting extends Model
             ['value' => $encoded, 'type' => $type, 'group' => $group],
         );
 
-        Cache::forget("setting.{$key}");
+        static::forget($key);
 
         return $setting;
+    }
+
+    /**
+     * Drop a key from both the persistent cache and the per-request memo.
+     */
+    public static function forget(string $key): void
+    {
+        unset(static::$requestCache[$key]);
+
+        Cache::forget("setting.{$key}");
+    }
+
+    /**
+     * Clear the per-request memo (tests, queue workers, long-running processes).
+     */
+    public static function flushRequestCache(): void
+    {
+        static::$requestCache = [];
     }
 
     public function castedValue(): mixed
@@ -68,7 +123,7 @@ class Setting extends Model
 
     protected static function booted(): void
     {
-        static::saved(fn (Setting $setting) => Cache::forget("setting.{$setting->key}"));
-        static::deleted(fn (Setting $setting) => Cache::forget("setting.{$setting->key}"));
+        static::saved(fn (Setting $setting) => static::forget($setting->key));
+        static::deleted(fn (Setting $setting) => static::forget($setting->key));
     }
 }

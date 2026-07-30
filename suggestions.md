@@ -1,5 +1,5 @@
 # Suggestions Backlog
-Last Updated: 2026-07-30T03:35:00+06:00
+Last Updated: 2026-07-30T04:05:00+06:00
 
 > **Purpose:** Track known bugs, security hardening, and product improvements that are **not** decided or scheduled yet.  
 > **Not the same as `decisions.md`** — nothing here is locked in. When an item is approved and implemented, move the outcome to `decisions.md` / `bug_history.md` and remove or mark it done here.
@@ -135,6 +135,45 @@ These break QA or CRO even on localhost.
 
 ---
 
+## Performance (efficiency audit 2026-07-30)
+
+Measured with a query-log harness before and after. Counts are steady-state (warm cache).
+
+| Path | Before | After |
+|------|--------|-------|
+| `GET /` | 50 | 1 |
+| `GET /estimate` | 44 | 4 |
+| Estimator steps 1→3 | 48 | 26 |
+| `GET /admin` | 38 | 6 |
+
+| ID | Status | Notes |
+|----|--------|-------|
+| P-01 | **Done** | `Setting::get()` caches misses via `['hit' => bool, 'value' => mixed]` payload |
+| P-02 | **Done** | Per-request memo in `Setting`; flushed in `TestCase::setUp()` |
+| P-03 | **Done** | `calculateMany()` settings reads collapse for free via P-02 |
+| P-04 | **Done** | `CACHE_STORE=file` (session + queue stay `database`) |
+| P-05 | **Done** | Estimator resolves services once per step via `selectedServices()` |
+| P-06 | **Done** | `RecentActivity` eager-loads `causer` (was the only true N+1) |
+| P-07 | **Done** | Widget loops replaced with grouped queries (funnel, weekly trend, revenue, conversion, snapshot, financial) |
+| P-08 | **Done** | Charts/tables lazy-load; the two stats widgets stay inline (cheap + above the fold) |
+| P-09 | **Done** | Site-version poll 2s → 10s; `SiteVersion::withoutBumping()` gives restore one bump instead of one per row |
+| P-10 | **Done** | Indexes on `leads`, `projects`, `invoices`, `activity_log` hot filter/sort columns |
+
+### Deliberately not changed
+
+| Item | Reason |
+|------|--------|
+| `BookingMatrix::isOfferedSlot()` rebuilds grid | 3 queries, once per booking; this path caused F-05/F-06/F-08 — not worth reopening |
+| `PageBlockData::live()` loads all three sets | 3 queries; the class docblock documents the tradeoff, fixing it changes every block template contract |
+| Stalled-lead job `everyMinute()` + sync notify | 1 query/min idle; sync notify is deliberate (no queue worker on cPanel) |
+| Estimator slider `.live` binding | Costs ~1 query per tick after P-02; add `.debounce` only if it still feels chatty |
+
+### P-11 — SQLite carrying cache + session + queue + app data (open, pre-trial)
+
+Cache now uses the file driver, but session, queue, and app data still share one SQLite file, and SQLite serialises writes. Fine for local prototype and likely fine for a single low-traffic client site. **Revisit before the 7-day trial sandbox ships** (T-01+): concurrent estimator submissions plus admin polling will contend on the write lock. Likely direction is MySQL for app data on any multi-tenant/trial host.
+
+---
+
 ## Defer until production (security & hardening)
 
 Safe to ignore on solo local dev; **launch checklist** for public client sites.
@@ -189,3 +228,4 @@ Safe to ignore on solo local dev; **launch checklist** for public client sites.
 | 2026-07-30 | Fixed F-01–F-08 functional bugs (referrals, homepage publish, proposals, booking validation/race, reserved slugs, BookingMatrix cursor) |
 | 2026-07-30 | Logged 7-day self-serve trial product: demo sandbox, Site Settings+Content view-only, Operations open; backlog T-01–T-07 |
 | 2026-07-30 | Locked trial details: Part 3, niche picker, expiry=no login+banner, email/Google signup, 3-submit cap, start-fresh convert, getwebfield.com/trial/{slug}; build timing still TBD |
+| 2026-07-30 | Efficiency audit implemented (P-01–P-10): settings cache/memo, file cache driver, widget query consolidation, lazy widgets, poll interval, indexes. P-11 (SQLite triple duty) open for trial prep |

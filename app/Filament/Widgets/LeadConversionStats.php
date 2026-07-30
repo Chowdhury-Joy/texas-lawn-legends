@@ -20,11 +20,18 @@ class LeadConversionStats extends StatsOverviewWidget
         $convertedLeads = Project::whereNotNull('lead_id')->count();
         $conversionRate = $totalLeads > 0 ? round(($convertedLeads / $totalLeads) * 100, 1) : 0;
 
+        // One grouped query for the 7-day sparkline instead of a count per day.
+        $trendStart = now()->subDays(6)->startOfDay();
+        $convertedByDay = Project::whereNotNull('lead_id')
+            ->where('created_at', '>=', $trendStart)
+            ->selectRaw('date(created_at) as day, count(*) as aggregate')
+            ->groupBy('day')
+            ->pluck('aggregate', 'day');
+
         $trend = [];
         for ($i = 6; $i >= 0; $i--) {
-            $trend[] = Project::whereNotNull('lead_id')
-                ->whereDate('created_at', now()->subDays($i))
-                ->count();
+            $day = now()->subDays($i)->toDateString();
+            $trend[] = (int) ($convertedByDay[$day] ?? 0);
         }
 
         return [

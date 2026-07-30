@@ -6,7 +6,7 @@ use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\ProposalController;
 use App\Models\Page;
-use Illuminate\Support\Facades\Cache;
+use App\Support\SiteVersion;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [PageController::class, 'home'])->name('home');
@@ -60,7 +60,7 @@ Route::get('/sitemap.xml', function () {
 */
 
 Route::get('/api/site-version', function () {
-    return response()->json(['version' => Cache::get('site_version', 1)]);
+    return response()->json(['version' => SiteVersion::current()]);
 })->name('api.site-version');
 
 /*

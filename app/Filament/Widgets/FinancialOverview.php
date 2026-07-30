@@ -8,12 +8,12 @@ use App\Models\Invoice;
 use App\Models\Project;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
-use Illuminate\Support\Facades\DB;
 
 class FinancialOverview extends StatsOverviewWidget
 {
     use RestrictedWidget;
 
+    /** Above-the-fold headline numbers, and now two queries — render inline. */
     protected static bool $isLazy = false;
 
     protected static ?int $sort = -2;
@@ -25,23 +25,25 @@ class FinancialOverview extends StatsOverviewWidget
 
     protected function getStats(): array
     {
-        $totalBookedRevenue = Project::query()->sum('contract_value');
+        // Contract total and average margin in one pass over projects.
+        $projectTotals = Project::query()
+            ->selectRaw('SUM(contract_value) as booked_revenue')
+            ->selectRaw('AVG('.Project::getProfitMarginSql().') as avg_margin')
+            ->first();
 
-        $paidInvoicesTotal = Invoice::query()
-            ->where('status', InvoiceStatus::Paid)
-            ->sum('total');
+        $totalBookedRevenue = $projectTotals->booked_revenue ?? 0;
+        $avgMargin = (float) ($projectTotals->avg_margin ?? 0);
 
-        $outstandingInvoicesTotal = Invoice::query()
-            ->whereIn('status', [InvoiceStatus::Sent, InvoiceStatus::Overdue])
-            ->sum('total');
+        // Paid / outstanding / overdue in one pass over invoices.
+        $invoiceTotals = Invoice::query()
+            ->selectRaw('SUM(CASE WHEN status = ? THEN total ELSE 0 END) as paid_total', [InvoiceStatus::Paid->value])
+            ->selectRaw('SUM(CASE WHEN status IN (?, ?) THEN total ELSE 0 END) as outstanding_total', [InvoiceStatus::Sent->value, InvoiceStatus::Overdue->value])
+            ->selectRaw('SUM(CASE WHEN status = ? THEN 1 ELSE 0 END) as overdue_count', [InvoiceStatus::Overdue->value])
+            ->first();
 
-        $overdueCount = Invoice::query()
-            ->where('status', InvoiceStatus::Overdue)
-            ->count();
-
-        $avgMargin = (float) Project::query()->avg(
-            DB::raw(Project::getProfitMarginSql())
-        );
+        $paidInvoicesTotal = $invoiceTotals->paid_total ?? 0;
+        $outstandingInvoicesTotal = $invoiceTotals->outstanding_total ?? 0;
+        $overdueCount = (int) ($invoiceTotals->overdue_count ?? 0);
 
         return [
             Stat::make('Total Booked Revenue', '$'.number_format((float) $totalBookedRevenue))

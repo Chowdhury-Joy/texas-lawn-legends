@@ -2,13 +2,13 @@
 
 namespace App\Models\Traits;
 
-use Illuminate\Support\Facades\Cache;
+use App\Support\SiteVersion;
 
 trait TriggersSiteReload
 {
     protected static function bootTriggersSiteReload()
     {
-        static::saved(fn () => Cache::put('site_version', time()));
-        static::deleted(fn () => Cache::put('site_version', time()));
+        static::saved(fn () => SiteVersion::bump());
+        static::deleted(fn () => SiteVersion::bump());
     }
 }

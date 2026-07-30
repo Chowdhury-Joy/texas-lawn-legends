@@ -366,7 +366,7 @@
 
     @auth
         <div x-data="{
-            version: '{{ \Illuminate\Support\Facades\Cache::get('site_version', 1) }}',
+            version: '{{ \App\Support\SiteVersion::current() }}',
             init() {
                 setInterval(() => {
                     fetch('/api/site-version')
@@ -376,7 +376,7 @@
                                 window.location.reload();
                             }
                         });
-                }, 2000);
+                }, 10000);
             }
         }"></div>
     @endauth

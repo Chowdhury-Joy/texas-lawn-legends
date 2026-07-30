@@ -1,5 +1,28 @@
 # Decisions
 
+## 2026-07-30 (efficiency audit)
+
+<decision>
+ <category>Code</category>
+ <context>Settings drive nearly all copy/pricing/branding, so a page render read 40-50 keys. With CACHE_STORE=database every read was a DB round trip, and Setting::get() cached null for missing keys — indistinguishable from a miss, so absent keys re-queried forever.</context>
+ <action>Cache a `['hit' => bool, 'value' => mixed]` payload so misses are cacheable, and add a per-request static memo in `Setting` (flushed in `TestCase::setUp()` and via `Setting::flushRequestCache()`). Legacy payload shapes are upgraded on read. Switch `CACHE_STORE` to `file`; session and queue stay on `database`.</action>
+ <reason>Measured `GET /` 50 → 1 query, `GET /estimate` 44 → 4, estimator steps 1→3 48 → 26. File cache avoids routing settings reads through the same SQLite file as app data; session stays on database because file sessions are riskier under concurrent Livewire requests, and queue stays put since there is no Redis on cPanel hosting.</reason>
+</decision>
+
+<decision>
+ <category>Code</category>
+ <context>Dashboard widgets each looped one query per day/status/month — 38 queries on /admin — and RecentActivity rendered `causer.name` without eager loading (a true N+1 that scales with data).</context>
+ <action>Replace the loops with single grouped/conditional-aggregate queries across LeadFunnel, WeeklyLeadTrend, RevenueChart, LeadConversionStats, BusinessSnapshot, and FinancialOverview; eager-load `causer` on RecentActivity. RevenueChart resolves its month bucket expression per driver (sqlite/pgsql/mysql) so grouping is not SQLite-only.</action>
+ <reason>Measured /admin 38 → 6 queries with identical widget output. Chart and table widgets now lazy-load; the two stats overview widgets stay inline because they are above-the-fold headline numbers and cost two queries each after consolidation.</reason>
+</decision>
+
+<decision>
+ <category>UI/UX</category>
+ <context>Authenticated pages polled /api/site-version every 2 seconds (1,800 requests/hour per open tab), and every CMS-ish model save bumped the version — so a niche pack restore fired one bump per seeded row and reloaded every open admin tab repeatedly mid-restore.</context>
+ <action>Move version state into `App\Support\SiteVersion` and poll every 10 seconds. `NicheLoader` wraps restore in `SiteVersion::withoutBumping()` and fires a single `bumpNow()` at the end.</action>
+ <reason>Auto-reload still feels immediate for an admin editing content, at a fifth of the request volume, and a restore now triggers exactly one reload instead of hundreds.</reason>
+</decision>
+
 ## 2026-07-30 (industry packs expansion)
 
 <decision>

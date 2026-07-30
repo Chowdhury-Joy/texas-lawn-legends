@@ -11,8 +11,6 @@ class LeadFunnel extends ChartWidget
 {
     use RestrictedWidget;
 
-    protected static bool $isLazy = false;
-
     protected ?string $heading = 'Lead Funnel — Last 30 Days';
 
     protected static ?int $sort = 0;
@@ -33,11 +31,15 @@ class LeadFunnel extends ChartWidget
 
         $statuses = LeadStatus::cases();
 
+        // One grouped query instead of a count per status.
+        $countsByStatus = Lead::query()
+            ->where('created_at', '>=', $since)
+            ->selectRaw('status, count(*) as aggregate')
+            ->groupBy('status')
+            ->pluck('aggregate', 'status');
+
         $counts = collect($statuses)->map(
-            fn (LeadStatus $status) => Lead::query()
-                ->where('status', $status)
-                ->where('created_at', '>=', $since)
-                ->count()
+            fn (LeadStatus $status) => (int) ($countsByStatus[$status->value] ?? 0)
         );
 
         $colors = [

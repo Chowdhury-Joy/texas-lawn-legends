@@ -20,9 +20,9 @@ use App\Models\Setting;
 use App\Models\Testimonial;
 use App\Models\TimeEntry;
 use App\Models\User;
+use App\Support\SiteVersion;
 use Database\Seeders\AccessCodesSeeder;
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 use RuntimeException;
@@ -62,27 +62,33 @@ final class NicheLoader
         /** @var NichePack $pack */
         $pack = app($packs[$nicheId]);
 
-        DB::transaction(function () use ($pack, $nicheId, $demoMode) {
-            $this->wipeModelHomeContent();
-            $this->resetShowcaseUploadSettings();
-            $this->applySettings($pack);
-            Setting::set('active_niche', $nicheId, 'string', 'product');
-            Setting::set('demo_mode', $demoMode ? '1' : '0', 'boolean', 'product');
-        });
+        // A restore rewrites hundreds of rows; one version bump at the end keeps
+        // open admin tabs from reloading once per seeded record.
+        SiteVersion::withoutBumping(function () use ($pack, $nicheId, $demoMode) {
+            DB::transaction(function () use ($pack, $nicheId, $demoMode) {
+                $this->wipeModelHomeContent();
+                $this->resetShowcaseUploadSettings();
+                $this->applySettings($pack);
+                Setting::set('active_niche', $nicheId, 'string', 'product');
+                Setting::set('demo_mode', $demoMode ? '1' : '0', 'boolean', 'product');
+            });
 
-        NicheResolver::flush();
+            NicheResolver::flush();
 
-        foreach ($pack->contentSeeders() as $seeder) {
+            foreach ($pack->contentSeeders() as $seeder) {
+                Artisan::call('db:seed', [
+                    '--class' => $seeder,
+                    '--force' => true,
+                ]);
+            }
+
             Artisan::call('db:seed', [
-                '--class' => $seeder,
+                '--class' => AccessCodesSeeder::class,
                 '--force' => true,
             ]);
-        }
+        });
 
-        Artisan::call('db:seed', [
-            '--class' => AccessCodesSeeder::class,
-            '--force' => true,
-        ]);
+        SiteVersion::bumpNow();
 
         NicheResolver::flush();
 
@@ -170,7 +176,7 @@ final class NicheLoader
     {
         foreach (self::SHOWCASE_UPLOAD_SETTING_KEYS as $key) {
             Setting::query()->where('key', $key)->delete();
-            Cache::forget("setting.{$key}");
+            Setting::forget($key);
         }
     }
 

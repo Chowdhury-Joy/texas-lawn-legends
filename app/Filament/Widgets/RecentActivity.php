@@ -12,8 +12,6 @@ class RecentActivity extends TableWidget
 {
     use RestrictedWidget;
 
-    protected static bool $isLazy = false;
-
     protected static ?int $sort = 2;
 
     protected int|string|array $columnSpan = 'full';
@@ -25,6 +23,7 @@ class RecentActivity extends TableWidget
         return $table
             ->query(
                 Activity::query()
+                    ->with('causer')
                     ->whereIn('log_name', ['lead', 'project'])
                     ->latest()
             )

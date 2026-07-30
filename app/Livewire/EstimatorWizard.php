@@ -8,6 +8,7 @@ use App\Models\Service;
 use App\Services\BookingMatrix;
 use App\Services\EstimatePricingEngine;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Computed;
@@ -124,13 +125,35 @@ class EstimatorWizard extends Component
     {
         $this->validate($this->rulesForStep($this->step));
 
+        // Resolved once and shared: computeEstimate() and persistLead() both need
+        // the same rows, and a step advance should not query them twice.
+        $services = $this->selectedServices();
+
         if ($this->step === 2) {
-            $this->computeEstimate();
+            $this->computeEstimate($services);
         }
 
-        $this->persistLead();
+        $this->persistLead($services);
 
         $this->step = min($this->step + 1, $this->totalSteps);
+    }
+
+    /**
+     * Services backing the current selection, in either estimator mode.
+     *
+     * @return Collection<int, Service>
+     */
+    protected function selectedServices(): Collection
+    {
+        if ($this->estimatorMode === 'full') {
+            return Service::query()->findMany($this->service_ids);
+        }
+
+        if (! $this->service_id) {
+            return collect();
+        }
+
+        return Service::query()->findMany([$this->service_id]);
     }
 
     public function previousStep(): void
@@ -153,27 +176,21 @@ class EstimatorWizard extends Component
         }
     }
 
-    protected function computeEstimate(): void
+    /**
+     * @param  Collection<int, Service>|null  $services
+     */
+    protected function computeEstimate(?Collection $services = null): void
     {
         $engine = app(EstimatePricingEngine::class);
+        $services ??= $this->selectedServices();
 
-        if ($this->estimatorMode === 'full') {
-            $services = Service::query()->findMany($this->service_ids);
-
-            if ($services->isEmpty()) {
-                return;
-            }
-
-            $result = $engine->calculateMany($services, $this->sqft, $this->neighborhood, $this->complexity);
-        } else {
-            $service = Service::find($this->service_id);
-
-            if (! $service) {
-                return;
-            }
-
-            $result = $engine->calculate($service, $this->sqft, $this->neighborhood, $this->complexity);
+        if ($services->isEmpty()) {
+            return;
         }
+
+        $result = $this->estimatorMode === 'full'
+            ? $engine->calculateMany($services, $this->sqft, $this->neighborhood, $this->complexity)
+            : $engine->calculate($services->first(), $this->sqft, $this->neighborhood, $this->complexity);
 
         $this->estimateLow  = $result['low'];
         $this->estimateHigh = $result['high'];
@@ -182,17 +199,16 @@ class EstimatorWizard extends Component
 
     /**
      * Persist / update the lead on every step forward so abandoned funnels are captured.
+     *
+     * @param  Collection<int, Service>|null  $services
      */
-    protected function persistLead(): void
+    protected function persistLead(?Collection $services = null): void
     {
-        if ($this->estimatorMode === 'full') {
-            $serviceLabel = Service::query()
-                ->findMany($this->service_ids)
-                ->pluck('title')
-                ->join(', ');
-        } else {
-            $serviceLabel = $this->service_id ? optional(Service::find($this->service_id))->title : null;
-        }
+        $services ??= $this->selectedServices();
+
+        $serviceLabel = $services->isEmpty()
+            ? null
+            : $services->pluck('title')->join(', ');
 
         $status = match (true) {
             $this->booked => LeadStatus::Booked,

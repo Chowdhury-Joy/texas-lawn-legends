@@ -1,5 +1,5 @@
 # Architecture Overview
-Last Updated: 2026-07-30T03:10:00+06:00
+Last Updated: 2026-07-30T04:05:00+06:00
 
 ## Overview
 
@@ -37,7 +37,7 @@ php artisan serve
 | `APP_NICHE` | Default industry pack (`lawn`, `cleaning`, `roofing`, `pressure`, `windows`, `gutters`, `fence`, `pest`) |
 | `APP_DEMO_HUB` | Enables public `/demo` hub for pack switching |
 | `DB_CONNECTION` (+ host/database/user/password) | Database (SQLite default in dev) |
-| `SESSION_DRIVER`, `CACHE_STORE`, `QUEUE_CONNECTION` | Session, cache, queue backends |
+| `SESSION_DRIVER`, `CACHE_STORE`, `QUEUE_CONNECTION` | Session, cache, queue backends. `CACHE_STORE=file` is the default so heavy settings reads stay off the database; session and queue remain `database` |
 | `MAIL_*` | Outbound mail (log driver in dev) |
 | `AWS_*` | Optional S3 storage |
 | `VITE_APP_NAME` | Frontend build label |
@@ -82,7 +82,10 @@ php artisan serve
 ## Key Components
 
 ### Settings & CMS layer
-Nearly all site copy, branding, pricing math, and ops config lives in the `settings` table (key/value, typed). Global helpers `setting()` and `setting_image()` resolve values with per-key caching via `App\Models\Setting`. Filament settings pages (`ManageBranding`, `ManageSeo`, `ManageContact`, `ManageHomepage`, `ManagePricing`, `ManageOperations`, `ManageProductParts`, `ManageIndustryPacks`) edit these keys through forms. A generic `SettingResource` is the escape hatch for raw keys.
+Nearly all site copy, branding, pricing math, and ops config lives in the `settings` table (key/value, typed). Global helpers `setting()` and `setting_image()` resolve values via `App\Models\Setting`, which caches each key in two layers: a per-request static memo and the persistent cache store. Cached payloads are shaped `['hit' => bool, 'value' => mixed]` so a missing key is cacheable and stays distinguishable from a null value. `Setting::set()` / `Setting::forget()` bust both layers; `Setting::flushRequestCache()` clears the memo (called in `TestCase::setUp()`). Filament settings pages (`ManageBranding`, `ManageSeo`, `ManageContact`, `ManageHomepage`, `ManagePricing`, `ManageOperations`, `ManageProductParts`, `ManageIndustryPacks`) edit these keys through forms. A generic `SettingResource` is the escape hatch for raw keys.
+
+### Site version / admin live reload
+`App\Support\SiteVersion` owns the `site_version` cache value that authenticated pages poll (every 10s via `/api/site-version`) to auto-reload after content changes. The `TriggersSiteReload` trait bumps it on save/delete for `Setting`, `Page`, `Service`, `Testimonial`, `Project`, and `ProgressPhoto`. Bulk operations wrap in `SiteVersion::withoutBumping()` and call `bumpNow()` once at the end — `NicheLoader` restore uses this so a reseed triggers one reload, not one per row.
 
 ### Page builder (Part 1 — Website + CMS)
 The `pages` table stores block JSON. `App\Support\PageBlocks` defines block types, Filament form schemas, and labels. `App\Support\ReservedPageSlugs` lists URL segments reserved by static routes so CMS slugs cannot collide. `PageController` renders `resources/views/pages/show.blade.php`, which includes matching `resources/views/blocks/*` partials. Homepage is the page where `is_home = true`; unpublished homepage records 404 (fresh installs without a row still render an empty home).
@@ -111,7 +114,7 @@ Three tiers controlled by `product_part` setting:
 Token-based public URLs: `/proposals/{token}`, `/invoices/{token}`. Accept/decline flows on proposals trigger `ProposalAccepted` → ops notification. Decline is blocked once a proposal is accepted.
 
 ### Admin panel (`/admin`)
-Filament panel via `AdminPanelProvider`. Auto-discovers Resources, custom Pages, and Widgets (lead funnel, revenue chart, needs attention). Role-based access via `UserRole` enum + `AccessPermissions` registry + per-user permission overrides. Admin topbar shows current page heading via Livewire hook.
+Filament panel via `AdminPanelProvider`. Auto-discovers Resources, custom Pages, and Widgets (lead funnel, revenue chart, needs attention). Role-based access via `UserRole` enum + `AccessPermissions` registry + per-user permission overrides. Admin topbar shows current page heading via Livewire hook. Widgets aggregate with grouped queries rather than per-day/per-status loops; charts and table widgets lazy-load, while the two stats overview widgets (`BusinessSnapshot`, `FinancialOverview`) render inline since they are above-the-fold and cost two queries each.
 
 ### Operations alerting
 `OperationsNotifier::dispatch()` — logs + optional webhook POST. Triggers:
