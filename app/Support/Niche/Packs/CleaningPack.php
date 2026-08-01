@@ -42,6 +42,7 @@ final class CleaningPack implements NichePack
             'job_noun' => 'home',
             'job_noun_plural' => 'homes',
             'tagline_fallback' => 'Residential & Office Cleaning',
+            'timeline_heading' => 'Service Timeline',
             'estimate_progress_1' => 'Scope',
             'estimate_progress_2' => 'Area',
             'estimate_progress_3' => 'Details',

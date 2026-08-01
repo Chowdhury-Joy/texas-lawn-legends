@@ -1,5 +1,5 @@
 # Site Map
-Last Updated: 2026-08-01T19:44:18+06:00
+Last Updated: 2026-08-01T20:27:54+0600
 
 ## Full Site Map
 
@@ -78,9 +78,15 @@ Routes below reflect `routes/web.php` and the Filament admin panel. CMS pages (`
 | Step | Page / action | Goal | CTA / next step |
 |---|---|---|---|
 | 1 | Staff sends link | Client opens unique URL | `/dashboard/{hash}` |
-| 2 | Dashboard | View milestones, status, progress photos | Read-only — no login required |
+| 2 | Header card | See overall progress and the full step track in one block | Scroll to current step |
+| 3 | "Happening now" callout | See which step is underway and what follows it | Scroll to timeline |
+| 4 | Timeline | Walk the dated steps on a connected rail, open progress photos in a lightbox | Referral CTA below |
+| 5 | Referral banner | Copy a personal referral link for a $100 credit | `/estimate?ref={code}` |
+| 6 | Invoices | View or print any issued invoice | `/invoices/{token}` |
 
-**Data touched:** `projects`, `milestones`, `progress_photos` (read only on public side).
+**Data touched:** `projects`, `milestones` (incl. `completed_at`), `progress_photos`, `invoices` (read only on public side).
+
+**Note:** the referral banner sits below the timeline by design — placing it between the progress bar and the step track split the status narrative in half.
 
 ---
 

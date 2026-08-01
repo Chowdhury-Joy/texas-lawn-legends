@@ -42,6 +42,7 @@ final class GuttersPack implements NichePack
             'job_noun' => 'home',
             'job_noun_plural' => 'homes',
             'tagline_fallback' => 'Gutter Install & Seasonal Care',
+            'timeline_heading' => 'Service Timeline',
             'estimate_progress_1' => 'Scope',
             'estimate_progress_2' => 'Length',
             'estimate_progress_3' => 'Details',

@@ -42,6 +42,7 @@ final class FencePack implements NichePack
             'job_noun' => 'property',
             'job_noun_plural' => 'properties',
             'tagline_fallback' => 'Fence Install & Deck Repair',
+            'timeline_heading' => 'Build Timeline',
             'estimate_progress_1' => 'Scope',
             'estimate_progress_2' => 'Length',
             'estimate_progress_3' => 'Details',

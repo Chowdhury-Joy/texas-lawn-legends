@@ -56,10 +56,19 @@ class SampleProjectSeeder extends Seeder
             ['Sod & Final Cleanup', 'Roll new climate-resilient sod and complete final walkthrough.', MilestoneStatus::Pending],
         ];
 
-        foreach ($milestones as [$title, $description, $status]) {
+        foreach ($milestones as $i => [$title, $description, $status]) {
             Milestone::query()->updateOrCreate(
                 ['project_id' => $project->id, 'title' => $title],
-                ['description' => $description, 'status' => $status],
+                [
+                    'description' => $description,
+                    'status' => $status,
+                    // Stagger demo completions off the project start so the
+                    // client timeline reads as real dated progress, not a
+                    // stack of steps all finished in the same second.
+                    'completed_at' => $status === MilestoneStatus::Completed
+                        ? $project->started_at?->copy()->addDays($i)->setTime(11, 30)
+                        : null,
+                ],
             );
         }
 

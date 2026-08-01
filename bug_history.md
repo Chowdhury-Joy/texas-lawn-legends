@@ -231,3 +231,10 @@
  <root_cause>`EditUser::getDangerDeleteAction()` called `parent::getDangerDeleteAction()` to extend the base action, but that method is defined in the `HasPrimarySaveAndDangerDelete` **trait**, not in a parent class. PHP flattens traits into the using class, so `parent::` resolved to Filament's `EditRecord` — which has no such method — and fell through to Livewire's `__call`.</root_cause>
  <prevention_rule>Never use `parent::` to reach a trait method you are overriding — alias it in the `use` statement (`use T { m as protected baseM; }`) and call the alias.</prevention_rule>
 </bug>
+
+<bug>
+ <category>UI/UX</category>
+ <symptom>The client dashboard timeline heading read "Build Timeline" on every industry — including a Move-In Deep Clean, a pest treatment, and a window cleaning job, none of which are builds.</symptom>
+ <root_cause>The heading was hardcoded in `resources/views/dashboard.blade.php` instead of going through the `niche_label()` vocabulary system that the rest of the product uses.</root_cause>
+ <prevention_rule>Any client- or customer-facing noun that describes the work itself must come from `niche_label()` with a fallback — never a literal string in a Blade view, because every pack renders the same view.</prevention_rule>
+</bug>

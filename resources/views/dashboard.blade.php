@@ -15,6 +15,18 @@
     $completedCount = $milestones->where('status', MilestoneStatus::Completed)->count();
     $totalCount = max($milestones->count(), 1);
     $pct = (int) round($completedCount / $totalCount * 100);
+
+    // The step the client actually opened this page to check on. Falls back to
+    // the first unfinished step so a project between stages still reads as
+    // moving rather than showing nothing as current.
+    $currentMilestone = $milestones->firstWhere('status', MilestoneStatus::InProgress)
+        ?? $milestones->firstWhere('status', MilestoneStatus::Pending);
+
+    $nextMilestone = $currentMilestone
+        ? $milestones->skipUntil(fn ($m) => $m->is($currentMilestone))->skip(1)->first()
+        : null;
+
+    $timelineHeading = niche_label('timeline_heading', 'Project Timeline');
 @endphp
 
 @section('content')
@@ -38,76 +50,114 @@
                     ])>{{ $project->status->getLabel() }}</span>
                 </div>
 
-                {{-- Overall progress bar --}}
+                {{--
+                    Progress bar + step track are one block on purpose. They tell
+                    the same story, so splitting them (or letting anything sit
+                    between them) makes the page read as a list of widgets rather
+                    than a tracked journey.
+                --}}
                 <div class="mt-6">
                     <div class="flex items-center justify-between text-xs font-black uppercase tracking-widest text-slate-500">
                         <span>Overall Progress</span>
                         <span>{{ $completedCount }} / {{ $totalCount }} milestones · {{ $pct }}%</span>
                     </div>
                     <div class="mt-2 h-4 w-full border-2 border-slate-950 bg-white">
-                        <div class="h-full bg-yellow-400" style="width: {{ $pct }}%"></div>
+                        <div class="h-full bg-yellow-400 transition-[width] duration-700" style="width: {{ $pct }}%"></div>
                     </div>
                 </div>
-            </div>
 
-            {{-- ============== CLIENT REFERRAL CARD ============== --}}
-            <div data-reveal class="mt-8 box-brutal" x-data="{ copied: false }">
-                <div class="bg-slate-950 p-6 text-white">
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                        <div>
-                            <span class="inline-block bg-yellow-400 px-2.5 py-1 text-[10px] font-black uppercase tracking-widest text-slate-950">🎁 Client Referral Reward</span>
-                            <h3 class="mt-2 text-xl font-black uppercase tracking-tight text-white">Refer a Neighbor & Get $100 Credit</h3>
-                            <p class="mt-1 text-xs text-slate-300">Share your custom referral link with a neighbor. When they request an estimate, you both receive a $100 project credit.</p>
-                        </div>
-                        <div class="shrink-0">
-                            @php $refUrl = url('/estimate?ref='.$project->referral_code); @endphp
-                            <button type="button"
-                                    @click="navigator.clipboard.writeText('{{ $refUrl }}'); copied = true; setTimeout(() => copied = false, 3000)"
-                                    class="btn-brutal bg-yellow-400 px-5 py-3 text-xs font-black uppercase tracking-wider text-slate-950 hover:bg-yellow-300">
-                                <span x-text="copied ? '✓ Link Copied!' : '📋 Copy Referral Link'"></span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-
-            {{-- ============== HORIZONTAL PROGRESS TRACK ============== --}}
-            <div data-reveal class="mt-8 overflow-x-auto">
-                <div class="flex min-w-max items-start gap-0">
-                    @foreach ($milestones as $i => $milestone)
-                        @php $meta = $statusMeta[$milestone->status->value] ?? $statusMeta['pending']; @endphp
-                        <div class="flex items-start">
-                            <div class="flex w-36 flex-col items-center text-center">
-                                <div @class([
-                                    'flex h-11 w-11 items-center justify-center border-2 border-slate-950 text-sm font-black',
-                                    'bg-emerald-900 text-yellow-400' => $milestone->status === MilestoneStatus::Completed,
-                                    'bg-yellow-400 text-slate-950' => $milestone->status === MilestoneStatus::InProgress,
-                                    'bg-white text-slate-400' => $milestone->status === MilestoneStatus::Pending,
-                                ])>
-                                    @if ($milestone->status === MilestoneStatus::Completed)
-                                        <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg>
+                {{-- ============== HORIZONTAL STEP TRACK ============== --}}
+                <div class="mt-7 overflow-x-auto pb-1">
+                    <div class="flex min-w-max items-start gap-0">
+                        @foreach ($milestones as $i => $milestone)
+                            @php
+                                $meta = $statusMeta[$milestone->status->value] ?? $statusMeta['pending'];
+                                $isCurrent = $currentMilestone && $milestone->is($currentMilestone);
+                            @endphp
+                            <div class="flex items-start">
+                                <div @class(['flex flex-col items-center text-center', 'w-32 sm:w-36' => ! $isCurrent, 'w-36 sm:w-40' => $isCurrent])>
+                                    {{--
+                                        Every step gets the same h-14 slot even
+                                        though the current marker is bigger, so
+                                        the title/date/badge rows below line up
+                                        straight across the whole track.
+                                    --}}
+                                    <div class="flex h-14 items-center justify-center">
+                                        <div @class([
+                                            'flex items-center justify-center border-2 border-slate-950 font-black',
+                                            'h-11 w-11 text-sm' => ! $isCurrent,
+                                            // The current step is deliberately larger and ringed — it is
+                                            // the one thing the client came here to look at.
+                                            'h-14 w-14 text-base ring-4 ring-yellow-400/40' => $isCurrent,
+                                            'bg-emerald-900 text-yellow-400' => $milestone->status === MilestoneStatus::Completed,
+                                            'bg-yellow-400 text-slate-950' => $milestone->status === MilestoneStatus::InProgress,
+                                            'bg-white text-slate-400' => $milestone->status === MilestoneStatus::Pending,
+                                        ])>
+                                            @if ($milestone->status === MilestoneStatus::Completed)
+                                                <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg>
+                                            @else
+                                                {{ $i + 1 }}
+                                            @endif
+                                        </div>
+                                    </div>
+                                    {{--
+                                        Fixed two-line box: step titles wrap to
+                                        different line counts ("Baths & Floors"
+                                        vs "Arrival & Walkthrough"), which would
+                                        otherwise leave the date/badge row below
+                                        sitting at ragged heights across the track.
+                                    --}}
+                                    <span @class([
+                                        'mt-2 flex min-h-[2.1rem] items-start justify-center px-1 text-[11px] font-black uppercase leading-tight tracking-wide',
+                                        'text-slate-900' => ! $isCurrent,
+                                        'text-slate-950' => $isCurrent,
+                                    ])>{{ $milestone->title }}</span>
+                                    @if ($milestone->completed_at)
+                                        <span class="mt-1 text-[10px] font-bold uppercase tracking-widest text-slate-500">{{ $milestone->completed_at->format('M j') }}</span>
                                     @else
-                                        {{ $i + 1 }}
+                                        <span @class(['mt-1 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-widest', $meta['badge']])>{{ $meta['label'] }}</span>
                                     @endif
                                 </div>
-                                <span class="mt-2 text-[11px] font-black uppercase leading-tight tracking-wide text-slate-900">{{ $milestone->title }}</span>
-                                <span @class(['mt-1 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-widest', $meta['badge']])>{{ $meta['label'] }}</span>
+                                @unless ($loop->last)
+                                    {{-- mt-7 = half the h-14 slot, so the connector meets every marker's centre line. --}}
+                                    <div @class([
+                                        'mt-7 h-1 w-8 sm:w-12',
+                                        'bg-emerald-900' => $milestone->status === MilestoneStatus::Completed,
+                                        'bg-slate-300' => $milestone->status !== MilestoneStatus::Completed,
+                                    ])></div>
+                                @endunless
                             </div>
-                            @unless ($loop->last)
-                                <div @class([
-                                    'mt-5 h-1 w-8 sm:w-12',
-                                    'bg-emerald-900' => $milestone->status === MilestoneStatus::Completed,
-                                    'bg-slate-300' => $milestone->status !== MilestoneStatus::Completed,
-                                ])></div>
-                            @endunless
-                        </div>
-                    @endforeach
+                        @endforeach
+                    </div>
                 </div>
             </div>
 
+            {{-- ============== CURRENT STATUS CALLOUT ============== --}}
+            @if ($currentMilestone)
+                <div data-reveal class="mt-8 box-brutal border-l-8 border-l-yellow-400 p-6">
+                    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                        <div>
+                            <span class="text-[10px] font-black uppercase tracking-widest text-slate-500">
+                                {{ $currentMilestone->status === MilestoneStatus::InProgress ? 'Happening now' : 'Up next' }}
+                            </span>
+                            <h2 class="mt-1 text-2xl font-black uppercase tracking-tight text-slate-900">{{ $currentMilestone->title }}</h2>
+                            @if ($currentMilestone->description)
+                                <p class="mt-1 text-sm text-slate-600">{{ $currentMilestone->description }}</p>
+                            @endif
+                        </div>
+                        @if ($nextMilestone)
+                            <div class="shrink-0 border-l-0 sm:border-l-2 sm:border-slate-200 sm:pl-5">
+                                <span class="text-[10px] font-black uppercase tracking-widest text-slate-500">Then</span>
+                                <p class="mt-1 text-sm font-bold text-slate-900">{{ $nextMilestone->title }}</p>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            @endif
+
             {{-- ============== MILESTONE TIMELINE ============== --}}
-            <div class="mt-12 space-y-6"
+            {{-- No space-y here: sibling margins would cut visible gaps into the rail. --}}
+            <div class="mt-12"
                  x-data="{
                      open: false,
                      activeUrl: '',
@@ -123,25 +173,63 @@
                       }
                  }"
                  @keydown.escape.window="open = false">
-                <h2 data-reveal class="text-2xl font-black uppercase tracking-tight text-slate-900">Build Timeline</h2>
+                <h2 data-reveal class="mb-6 text-2xl font-black uppercase tracking-tight text-slate-900">{{ $timelineHeading }}</h2>
 
+                {{--
+                    A continuous rail threads every step so the page reads as one
+                    journey. The rail is drawn per-row (not as a single absolute
+                    element) so it survives cards of wildly different heights —
+                    a step with six photos next to one with none.
+                --}}
                 @foreach ($milestones as $milestone)
                     @php
                         $meta = $statusMeta[$milestone->status->value] ?? $statusMeta['pending'];
                         $stepPhotos = $photosByStep->get($milestone->title, collect());
+                        $isCurrent = $currentMilestone && $milestone->is($currentMilestone);
                     @endphp
-                    <div data-stagger style="--stagger-i: {{ $loop->index }}" class="box-brutal p-6">
-                        <div class="flex flex-wrap items-center justify-between gap-3">
-                            <div class="flex items-center gap-3">
-                                <span @class(['h-3 w-3 border border-slate-950', $meta['dot']])></span>
-                                <h3 class="text-xl font-medium tracking-tighter text-slate-900">{{ $milestone->title }}</h3>
+                    <div data-stagger style="--stagger-i: {{ $loop->index }}" class="relative flex gap-4 sm:gap-6">
+                        {{-- Rail column: node + connecting line to the next step --}}
+                        <div class="flex w-8 shrink-0 flex-col items-center sm:w-10" aria-hidden="true">
+                            <div @class([
+                                'flex items-center justify-center border-2 border-slate-950 text-[11px] font-black',
+                                'h-8 w-8' => ! $isCurrent,
+                                'h-10 w-10 ring-4 ring-yellow-400/40' => $isCurrent,
+                                'bg-emerald-900 text-yellow-400' => $milestone->status === MilestoneStatus::Completed,
+                                'bg-yellow-400 text-slate-950' => $milestone->status === MilestoneStatus::InProgress,
+                                'bg-white text-slate-400' => $milestone->status === MilestoneStatus::Pending,
+                            ])>
+                                @if ($milestone->status === MilestoneStatus::Completed)
+                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg>
+                                @else
+                                    {{ $loop->iteration }}
+                                @endif
                             </div>
-                            <span @class(['border-2 border-slate-950 px-2.5 py-1 text-[10px] font-black uppercase tracking-widest', $meta['badge']])>{{ $meta['label'] }}</span>
+                            @unless ($loop->last)
+                                <div @class([
+                                    'w-1 flex-1',
+                                    'bg-emerald-900' => $milestone->status === MilestoneStatus::Completed,
+                                    'bg-slate-300' => $milestone->status !== MilestoneStatus::Completed,
+                                ])></div>
+                            @endunless
                         </div>
 
-                        @if ($milestone->description)
-                            <p class="mt-3 text-sm leading-relaxed text-slate-600">{{ $milestone->description }}</p>
-                        @endif
+                        <div @class(['box-brutal mb-6 flex-1 p-6', 'border-l-4 border-l-yellow-400' => $isCurrent])>
+                            <div class="flex flex-wrap items-center justify-between gap-3">
+                                <div class="flex items-center gap-3">
+                                    <span @class(['h-3 w-3 border border-slate-950', $meta['dot']])></span>
+                                    <h3 class="text-xl font-medium tracking-tighter text-slate-900">{{ $milestone->title }}</h3>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    @if ($milestone->completed_at)
+                                        <span class="text-[10px] font-bold uppercase tracking-widest text-slate-500">{{ $milestone->completed_at->format('M j, Y') }}</span>
+                                    @endif
+                                    <span @class(['border-2 border-slate-950 px-2.5 py-1 text-[10px] font-black uppercase tracking-widest', $meta['badge']])>{{ $meta['label'] }}</span>
+                                </div>
+                            </div>
+
+                            @if ($milestone->description)
+                                <p class="mt-3 text-sm leading-relaxed text-slate-600">{{ $milestone->description }}</p>
+                            @endif
 
                         @if ($stepPhotos->isNotEmpty())
                             <div class="mt-5 grid grid-cols-2 gap-4 sm:grid-cols-3">
@@ -173,6 +261,7 @@
                         @elseif ($milestone->status === MilestoneStatus::Pending)
                             <p class="mt-4 border-2 border-dashed border-slate-300 px-4 py-3 text-xs font-bold uppercase tracking-widest text-slate-400">Upcoming — progress media will appear here</p>
                         @endif
+                        </div>
                     </div>
                 @endforeach
 
@@ -198,6 +287,33 @@
                         <div class="flex flex-col justify-between gap-2 border-t-2 border-slate-950 bg-brand-paper p-4 sm:flex-row sm:items-center">
                             <p class="text-sm font-bold text-slate-900" x-text="activeCaption"></p>
                             <span class="text-xs font-bold uppercase tracking-widest text-emerald-800" x-text="activeDate"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{--
+                ============== CLIENT REFERRAL CARD ==============
+                Deliberately below the timeline. It used to sit between the
+                progress bar and the step track, which split the status story in
+                half and made the page read as stacked widgets. It stays above
+                invoices so it is still well inside the fold on a normal project.
+            --}}
+            <div data-reveal class="mt-12 box-brutal" x-data="{ copied: false }">
+                <div class="bg-slate-950 p-6 text-white">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div>
+                            <span class="inline-block bg-yellow-400 px-2.5 py-1 text-[10px] font-black uppercase tracking-widest text-slate-950">🎁 Client Referral Reward</span>
+                            <h3 class="mt-2 text-xl font-black uppercase tracking-tight text-white">Refer a Neighbor & Get $100 Credit</h3>
+                            <p class="mt-1 text-xs text-slate-300">Share your custom referral link with a neighbor. When they request an estimate, you both receive a $100 project credit.</p>
+                        </div>
+                        <div class="shrink-0">
+                            @php $refUrl = url('/estimate?ref='.$project->referral_code); @endphp
+                            <button type="button"
+                                    @click="navigator.clipboard.writeText('{{ $refUrl }}'); copied = true; setTimeout(() => copied = false, 3000)"
+                                    class="btn-brutal bg-yellow-400 px-5 py-3 text-xs font-black uppercase tracking-wider text-slate-950 hover:bg-yellow-300">
+                                <span x-text="copied ? '✓ Link Copied!' : '📋 Copy Referral Link'"></span>
+                            </button>
                         </div>
                     </div>
                 </div>

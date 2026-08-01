@@ -42,6 +42,7 @@ final class LawnPack implements NichePack
             'job_noun' => 'yard',
             'job_noun_plural' => 'yards',
             'tagline_fallback' => 'Landscape Design & Hardscaping',
+            'timeline_heading' => 'Build Timeline',
             'estimate_progress_1' => 'Scope',
             'estimate_progress_2' => 'Yard size',
             'estimate_progress_3' => 'Details',

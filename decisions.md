@@ -395,3 +395,19 @@
  <action>Added a `Filter::make('issue_date')` range filter (`issued_from` / `issued_until`) to `InvoicesTable`, laid out on one row beside the existing status filter via `filtersFormColumns(3)` (range spans 2 of 3 columns). Added `ListInvoices::getTabs()` presets — All / Today / This Week / This Month / Overdue — each with a live count badge. Renamed the `issue_date` column label from "Issued" to "Invoice Date". Covered by `InvoiceListFilterTest`.</action>
  <reason>Three deliberate departures from the request. (1) **All is the default tab, not Today** — this business does not invoice every day, so a Today-first page would open empty on a quiet day and read as broken or as data loss, especially in a sales demo; Today is still one click. (2) **Date pickers, not text inputs** — typed dates are ambiguous between DD/MM and MM/DD, and a misread date fails silently as an empty result set with nothing to explain it; the picker still allows typing, so nothing is lost. From/To are cross-bounded (`maxDate`/`minDate`) so an inverted range cannot be entered at all. (3) **No new "invoice type" column** — confirmed with the owner that "type" meant the existing Draft/Sent/Paid/Overdue/Cancelled status, so status was moved beside the dates instead of adding a redundant field and migration. Filters are independent and AND-ed, so status alone, dates alone, or both together all work.</reason>
 </decision>
+
+## 2026-08-01 (client dashboard milestone redesign)
+
+<decision>
+ <category>UI/UX</category>
+ <context>The client project dashboard did not read as a milestone page. Four structural problems: the referral banner sat between the overall-progress bar and the step track, splitting the status story in half; progress was stated twice in two visual languages; the "timeline" was `space-y-6` stacked cards with no connecting rail, so each step was an isolated island; and nothing marked which step was current, even though that is the only thing a client opens the page to check.</context>
+ <action>Merged the progress bar and step track into one uninterrupted block inside the header card. Added a "Happening now / Then" callout naming the current and next step, with the current step's marker enlarged and ringed in both the track and the timeline. Rebuilt the timeline with a real per-row vertical rail (node + connecting line drawn per row rather than one absolute element, so it survives cards of very different heights). Added a `completed_at` column so completed steps carry real dates. Moved the referral banner below the timeline. Every step marker sits in a fixed `h-14` slot and every title in a fixed two-line box so titles, dates, and badges align straight across the track. Covered by `ClientDashboardTimelineTest`.</action>
+ <reason>`updated_at` was rejected as a completion date because any later edit to a milestone would silently move the date shown to the client. The rail is drawn per row rather than as a single absolute line so a step with six photos next to one with none cannot break it. `space-y-6` was removed from the timeline container because sibling margins would cut visible gaps into the rail.</reason>
+</decision>
+
+<decision>
+ <category>Business_Logic</category>
+ <context>Staff should not have to hand-maintain a completion date on top of setting a milestone's status.</context>
+ <action>`Milestone::booted()` stamps `completed_at` when status becomes Completed and clears it when a step is reopened. An explicitly supplied date always wins, which is how the demo seeders stagger dates off `started_at`. The Filament form exposes `completed_at` only while status is Completed, as a correction field.</action>
+ <reason>Two sources of truth for "when was this done" drift immediately. Clearing on reopen matters most: a stale completion date left showing on a reopened step actively misinforms the client.</reason>
+</decision>

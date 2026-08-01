@@ -1,5 +1,5 @@
 # Architecture Overview
-Last Updated: 2026-08-01T19:55:26+0600
+Last Updated: 2026-08-01T20:27:27+0600
 
 ## Overview
 
@@ -116,6 +116,8 @@ The homepage Instant Valuation popup (Alpine in `layouts/app.blade.php`) is a se
 ### Client dashboard (Part 3)
 `/dashboard/{hash}` — auth via `Project.unique_dashboard_hash` (no login). Shows milestones and progress photos grouped by step. Photo `<img>` URLs go through `public_url()` (root-relative `/storage/...`) so they keep working when `APP_URL`'s host/port differs from the request.
 
+Page order is deliberate and reads as one status narrative: header card (title, status, overall progress bar, horizontal step track — the bar and track are one uninterrupted block), then a "Happening now / Then" callout naming the current and next step, then the timeline, then the referral banner, then invoices. The current step is the first `in_progress` milestone, falling back to the first `pending` one; it is enlarged and ringed in both the track and the timeline. The timeline draws its vertical rail per row (node plus connecting line inside each row) rather than as one absolute element, so steps with wildly different card heights cannot break it — and the container carries no `space-y`, since sibling margins would cut gaps into the rail. Completed steps show `Milestone.completed_at`, which `Milestone::booted()` stamps on the transition to Completed and clears when a step is reopened; an explicitly supplied date wins, which is how the niche seeders stagger demo dates off `Project.started_at`. The timeline heading comes from the pack's `timeline_heading` label (Build / Service / Treatment Timeline), not a literal string.
+
 ### Member portal (Part 3)
 `/portal` — `PortalGate` Livewire component. `MonthlyCodeAuthenticator` validates month-scoped access codes. Unlocked state shows add-on grid; orders dispatch `AddonOrdered` event.
 
@@ -151,6 +153,7 @@ Estimator: form steps → persistLead() → leads table
 
 Sales win: staff creates Project in Filament → unique_dashboard_hash
          → milestones + progress_photos → client dashboard
+         → milestone marked Completed → completed_at stamped → dated step on client timeline
 
 Portal: monthly code → session unlock → AddonOrdered event → OperationsNotifier
 

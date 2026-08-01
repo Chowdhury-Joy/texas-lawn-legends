@@ -42,6 +42,7 @@ final class WindowsPack implements NichePack
             'job_noun' => 'home',
             'job_noun_plural' => 'homes',
             'tagline_fallback' => 'Residential & Storefront Windows',
+            'timeline_heading' => 'Service Timeline',
             'estimate_progress_1' => 'Scope',
             'estimate_progress_2' => 'Panes',
             'estimate_progress_3' => 'Details',

@@ -42,6 +42,7 @@ final class PestPack implements NichePack
             'job_noun' => 'home',
             'job_noun_plural' => 'homes',
             'tagline_fallback' => 'Residential Pest Control',
+            'timeline_heading' => 'Treatment Timeline',
             'estimate_progress_1' => 'Scope',
             'estimate_progress_2' => 'Home size',
             'estimate_progress_3' => 'Details',

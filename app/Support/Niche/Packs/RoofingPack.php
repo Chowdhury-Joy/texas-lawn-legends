@@ -42,6 +42,7 @@ final class RoofingPack implements NichePack
             'job_noun' => 'roof',
             'job_noun_plural' => 'roofs',
             'tagline_fallback' => 'Roof Install & Storm Repair',
+            'timeline_heading' => 'Build Timeline',
             'estimate_progress_1' => 'Scope',
             'estimate_progress_2' => 'Roof size',
             'estimate_progress_3' => 'Details',

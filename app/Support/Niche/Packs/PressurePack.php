@@ -42,6 +42,7 @@ final class PressurePack implements NichePack
             'job_noun' => 'property',
             'job_noun_plural' => 'properties',
             'tagline_fallback' => 'Residential & Commercial Wash',
+            'timeline_heading' => 'Service Timeline',
             'estimate_progress_1' => 'Scope',
             'estimate_progress_2' => 'Surface',
             'estimate_progress_3' => 'Details',
