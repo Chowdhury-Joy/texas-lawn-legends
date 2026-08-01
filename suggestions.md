@@ -187,7 +187,7 @@ Cache now uses the file driver, but session, queue, and app data still share one
 
 | ID | Status | Notes |
 |----|--------|-------|
-| X-01 | **Required / not built · Track A only** | **Full data export** — Track A admin can download all operational + content data (leads, projects, milestones, photos + files, proposals, invoices, services, pages, settings snapshot, crews, etc.) without asking Getwebfield. Format TBD (likely ZIP of CSVs + uploads). **Track B:** no self-serve export — super-admin consent only; after buy-out to Track A, self-serve applies. Documented in `docs/pricing-master.md`. |
+| X-01 | **Built · Track A only** | **Full data export** — Admin → Data Export (`/admin/manage-data-export`) builds one ZIP: one CSV per business table (leads, proposals, invoices + items, projects, milestones, progress photos, crews, time entries, equipment, maintenance logs, pages, services, testimonials, addons, access codes, settings, users, permissions, activity log) plus `uploads/`, `manifest.json`, and a README. Gated by `APP_LICENSE_TRACK` (`LicenseTrack`) and the Admin-only `settings.data_export` permission key; password hashes are stripped. **Track B:** page shows a buy-out explanation instead of the button and `DataExportService::generate()` refuses server-side. See `decisions.md` 2026-08-01 (X-01 full data export). |
 
 ---
 
@@ -253,3 +253,4 @@ Safe to ignore on solo local dev; **launch checklist** for public client sites.
 | 2026-08-01 | S-03/S-04 rate limits deferred — not required for V2 (owner) |
 | 2026-08-01 | Linked Current stage to `product-stages.md` (V1–V4 scoreboard) |
 | 2026-08-01 | Model-home restore also clears pitch-era `color_slate` (washes out `text-slate-800`); see bug_history.md |
+| 2026-08-01 | X-01 built: ZIP of CSVs + uploads, Admin-only permission, `APP_LICENSE_TRACK` gate (Track A) |

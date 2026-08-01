@@ -1,5 +1,5 @@
 # Architecture Overview
-Last Updated: 2026-08-01T20:27:27+0600
+Last Updated: 2026-08-01T20:57:40+06:00
 
 ## Overview
 
@@ -36,6 +36,7 @@ php artisan serve
 | `APP_NAME`, `APP_ENV`, `APP_KEY`, `APP_DEBUG`, `APP_URL` | Core Laravel app config |
 | `APP_NICHE` | Default industry pack (`lawn`, `cleaning`, `roofing`, `pressure`, `windows`, `gutters`, `fence`, `pest`) |
 | `APP_DEMO_HUB` | Enables public `/demo` hub for pack switching |
+| `APP_LICENSE_TRACK` | How the install was sold: `a` = Track A "Own it" (self-serve full data export), `b` = Track B "Rent it" (export by Getwebfield consent only). Defaults to `a` in local, `b` everywhere else |
 | `DB_CONNECTION` (+ host/database/user/password) | Database (SQLite default in dev) |
 | `SESSION_DRIVER`, `CACHE_STORE`, `QUEUE_CONNECTION` | Session, cache, queue backends. `CACHE_STORE=file` is the default so heavy settings reads stay off the database; session and queue remain `database` |
 | `MAIL_*` | Outbound mail (log driver in dev) |
@@ -62,13 +63,14 @@ php artisan serve
 | `app/Http/Middleware/` | `RequireProductPart` — gates public routes by product tier |
 | `app/Livewire/` | `EstimatorWizard`, `PortalGate` |
 | `app/Filament/` | Admin panel: Resources, Pages (settings), Widgets, Auth |
-| `app/Services/` | `EstimatePricingEngine`, `BookingMatrix`, `OperationsNotifier`, `MonthlyCodeAuthenticator` |
+| `app/Services/` | `EstimatePricingEngine`, `BookingMatrix`, `OperationsNotifier`, `MonthlyCodeAuthenticator`, `DataExportService` |
 | `app/Support/` | `PageBlocks`, `ProductFeatures`, `AccessPermissions`, `FilamentContentHeader`, `ColorContrast`, `Niche/*` packs |
-| `app/Enums/` | `ProductPart`, `LeadStatus`, `ProjectStatus`, `UserRole`, etc. |
+| `app/Enums/` | `ProductPart`, `LicenseTrack`, `LeadStatus`, `ProjectStatus`, `UserRole`, etc. |
 | `app/Events/` + `app/Listeners/` | `AddonOrdered`, `ProposalAccepted` → ops notifications |
 | `app/Console/Commands/` | `leads:escalate-stalled`, `app:escalate-overdue-invoices`, `niche:load` |
-| `app/helpers.php` | Global helpers: `setting()`, `setting_image()`, `public_url()`, `body_ink()`, `product_part()`, `niche_label()`, `niche_favicon()`, etc. |
+| `app/helpers.php` | Global helpers: `setting()`, `setting_image()`, `public_url()`, `body_ink()`, `product_part()`, `license_track()`, `niche_label()`, `niche_favicon()`, etc. |
 | `config/niche.php` | Registered industry packs and demo hub flag |
+| `config/license.php` | Licence track for this install (drives self-serve data export) |
 | `database/migrations/` | Schema (settings, pages, leads, projects, ops tables, permissions) |
 | `database/seeders/Niches/` | Per-pack content seeders (pages, services, testimonials, sample project + ops demo data) |
 | `database/seeders/assets/progress-photos/` | Compressed Unsplash JPEGs copied into public storage when seeding progress photos |
@@ -129,6 +131,13 @@ The admin invoice list (`/admin/invoices`) is date-first: `ListInvoices::getTabs
 ### Admin panel (`/admin`)
 Filament panel via `AdminPanelProvider`. Auto-discovers Resources, custom Pages, and Widgets (lead funnel, revenue chart, needs attention). Role-based access via `UserRole` enum + `AccessPermissions` registry + per-user permission overrides. Panel favicon comes from `niche_favicon()`. Global topbar is off: brand lives in the sidebar; each page opens with a Figma-style dark content header (`fi-content-shell-header` + `FilamentContentHeader`) — page title left, ← back on Create/Edit only, primary Save/Create actions right (Delete is danger-zoned in the form footer). That footer layout comes from the `HasPrimarySaveAndDangerDelete` concern, applied to all 16 `Edit*` resource pages: Save becomes the sole header action, and `getFormActions()` returns Cancel + an outlined danger `DeleteAction`. The delete action binds its record explicitly (`->record($this->getRecord())`) because the custom Page create/edit Blade views echo each form action directly instead of going through Filament's `Actions` schema component, which is what would normally inject it. `EditUser` narrows the action to hide Delete on your own account, reaching the base version through a trait alias (`baseDangerDeleteAction`) — `parent::` cannot reach a trait method. Admin theme loads Geist Sans + Geist Mono, applies Figma Text/sm, Text/xs, and mono title styles, and sets `--fi-shell-inline` padding (16 / 40 / 80px by breakpoint). Ungrouped table row actions are panel-wide `button()->outlined()` so View/Edit read as real controls. Widgets aggregate with grouped queries rather than per-day/per-status loops; charts and table widgets lazy-load, while the two stats overview widgets (`BusinessSnapshot`, `FinancialOverview`) render inline since they are above-the-fold and cost two queries each.
 
+### Full data export (X-01 — Track A)
+`App\Services\DataExportService` builds one ZIP the client admin downloads from **Admin → Data Export** (`ManageDataExport`): `data/<table>.csv` per business table (leads, proposals, invoices + items, projects, milestones, progress photos, crews, time entries, equipment, maintenance logs, pages, services, testimonials, addons, access codes, settings, users, permissions, activity log), `uploads/` mirroring the `public` disk (dotfiles like Laravel's `.gitignore` skipped, so the count matches what the owner actually uploaded), plus `manifest.json` (row counts, upload totals, site snapshot) and a plain-text `README.txt`. The archive is named and titled from `setting('site_name')`, falling back to `config('app.name')` — the same pattern the admin panel's `brandName()` uses. Rows stream via `lazy()` into a temp stream, so a long leads table never sits in memory as one string. `users.password` and `users.remember_token` are stripped — credentials, not records. Framework scratch tables (cache, jobs, sessions) are skipped.
+
+Availability is a licence fact, not a CMS setting: `App\Enums\LicenseTrack` reads `config('license.track')` ← `APP_LICENSE_TRACK`, defaulting to Track B (locked) for anything but local, so a rented install cannot grant itself an export from the admin panel. `generate()` throws on Track B regardless of who calls it; the page is visible on both tracks but swaps the download action for a buy-out explanation. Access needs the Admin-only `settings.data_export` permission key. Each export is written to `storage/app/private/exports`, streamed with `deleteFileAfterSend()`, and recorded in the activity log.
+
+**Scoped exports (resource list pages):** Most Operations and Site Content list pages expose an **Export CSV** header action via the `ExportsResourceData` concern. One table → a single CSV; related tables (invoices + `invoice_items`, equipment + `maintenance_logs`) → a small ZIP. The export uses `getTableQueryForExport()` so it respects the active tab, filters, search, and sort — staff get the rows they are looking at, not a silent full-table dump. Gated to Track A like the full export, but permission comes from the resource (`resource.leads`, `resource.invoices`, etc.): if you can open the list, you can export it. Users, Settings, and Access Codes deliberately have no scoped export — those stay at the full-export trust level.
+
 ### Operations alerting
 `OperationsNotifier::dispatch()` — logs + optional webhook POST. Triggers:
 - Event-driven: addon orders, proposal acceptance
@@ -162,6 +171,14 @@ Proposals: staff creates → public token URL → accept/decline → ProposalAcc
 Invoice lookup: staff opens /admin/invoices → tab preset (All default / Today / week / month / Overdue)
          → optional issue_date From–To + status filter (AND-ed, each usable alone)
          → row actions: View/Print token URL, Mark Paid
+
+Data export: admin opens /admin/manage-data-export (Track A) → confirm → DataExportService
+         → CSV per table + uploads/ + manifest + README → ZIP streamed, then deleted
+         → activity_log entry
+
+Scoped export: staff on /admin/leads (etc.) → Export CSV → DataExportService::generateScoped()
+         → filtered rows as CSV (or small ZIP when related tables ship together)
+         → activity_log entry
 
 Admin edits: Filament form → Setting::set() / model save → cache bust → site_version bump
 ```

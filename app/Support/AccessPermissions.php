@@ -143,6 +143,11 @@ final class AccessPermissions
                 'group' => 'Site Settings',
                 'roles' => [UserRole::Admin, UserRole::Marketing],
             ],
+            'settings.data_export' => [
+                'label' => 'Full Data Export',
+                'group' => 'Site Settings',
+                'roles' => [UserRole::Admin],
+            ],
             'settings.advanced_layout' => [
                 'label' => 'Advanced Block Layout & Grid Controls',
                 'group' => 'Site Settings',

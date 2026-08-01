@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Invoices\Pages;
 
 use App\Enums\InvoiceStatus;
+use App\Filament\Concerns\ExportsResourceData;
 use App\Filament\Resources\Invoices\InvoiceResource;
 use App\Models\Invoice;
 use Filament\Actions\CreateAction;
@@ -12,12 +13,25 @@ use Illuminate\Database\Eloquent\Builder;
 
 class ListInvoices extends ListRecords
 {
+    use ExportsResourceData;
+
     protected static string $resource = InvoiceResource::class;
 
     protected function getHeaderActions(): array
     {
-        return [
+        return $this->mergeExportHeaderActions([
             CreateAction::make(),
+        ]);
+    }
+
+    /**
+     * @return array<string, callable(ListRecords): Builder|\Illuminate\Database\Query\Builder|null>
+     */
+    protected function exportTables(): array
+    {
+        return [
+            'invoices' => fn (ListRecords $livewire) => $livewire->getTableQueryForExport(),
+            'invoice_items' => fn (ListRecords $livewire) => $livewire->relatedTableQuery('invoice_items', 'invoice_id', 'invoices'),
         ];
     }
 

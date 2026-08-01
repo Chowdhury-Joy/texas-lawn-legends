@@ -43,7 +43,7 @@ Routes below reflect `routes/web.php` and the Filament admin panel. CMS pages (`
 | Dashboard | `/admin` | Ops widgets (leads, revenue, needs attention) | Admin login |
 | **Site Content** | `/admin/pages`, `/admin/services`, `/admin/testimonials`, `/admin/addons` | CMS pages, services, social proof, portal add-ons | Admin login + role/permission + Product Part |
 | **Operations** | `/admin/leads`, `/admin/projects`, `/admin/milestones`, `/admin/progress-photos`, `/admin/proposals`, `/admin/invoices`, `/admin/crews`, `/admin/equipment`, `/admin/time-entries`, `/admin/access-codes`, `/admin/manage-schedule` | Leads through billing and field ops | Admin login + role/permission + **Product Part 2–3** (varies) |
-| **Site Settings** | `/admin/manage-branding`, `/admin/manage-seo`, `/admin/manage-contact`, `/admin/manage-homepage`, `/admin/manage-pricing`, `/admin/manage-operations`, `/admin/manage-product-parts`, `/admin/manage-industry-packs` | Branding, SEO, contact, homepage legacy settings, pricing, ops alerts, product tier, niche packs | Admin login + permission |
+| **Site Settings** | `/admin/manage-branding`, `/admin/manage-seo`, `/admin/manage-contact`, `/admin/manage-homepage`, `/admin/manage-pricing`, `/admin/manage-operations`, `/admin/manage-product-parts`, `/admin/manage-industry-packs`, `/admin/manage-data-export` | Branding, SEO, contact, homepage legacy settings, pricing, ops alerts, product tier, niche packs, full data export | Admin login + permission |
 | **Configuration** | `/admin/users`, `/admin/settings` | Staff accounts, raw settings escape hatch | Admin login (admin role) |
 
 > **Product Part gating:** Part 1 = site + CMS only. Part 2 adds leads/estimate. Part 3 adds full ops (projects, portal, invoices, etc.). Sidebar items hide when the active part is lower.
@@ -236,3 +236,35 @@ Routes below reflect `routes/web.php` and the Filament admin panel. CMS pages (`
 | 3 | System | Public routes gated by `RequireProductPart` middleware | `/estimate`, `/portal`, etc. appear or 404 |
 
 **Success criteria:** Admin menu and public routes match the new tier immediately after save + redirect.
+
+---
+
+### Journey: Export all business data (X-01, Track A)
+
+**Trigger:** Owner wants a backup, is handing records to an accountant, or is moving off our hosting.
+
+| Step | Who | Action | Data / systems |
+|---|---|---|---|
+| 1 | Admin | `/admin/manage-data-export` → read what the archive contains (row counts + upload totals) | `DataExportService::summary()` |
+| 2 | Admin | **Download export (.zip)** → confirm modal | Needs `settings.data_export` + Track A |
+| 3 | System | Builds `data/*.csv` + `uploads/` + `manifest.json` + `README.txt` | `DataExportService::generate()` |
+| 4 | System | Streams the ZIP, deletes it, writes an activity-log entry | `storage/app/private/exports`, `activity_log` |
+
+**Track B:** no Download button — the page explains that Getwebfield runs the export on request and that a buy-out to Track A makes it self-serve. `generate()` refuses server-side.
+
+**Success criteria:** One download, openable in Excel/Sheets, with every uploaded file alongside the records that reference it.
+
+---
+
+### Journey: Export data from a list page (scoped, Track A)
+
+**Trigger:** Bookkeeper wants this month's invoices; ops wants the filtered leads list; content editor wants a CSV of services.
+
+| Step | Who | Action | Data / systems |
+|---|---|---|---|
+| 1 | Staff | Open a resource list (e.g. `/admin/invoices`) → narrow with tabs/filters/search | `getTableQueryForExport()` |
+| 2 | Staff | **Export CSV** (or **Export (.zip)** when line items ride along) | Needs Track A + resource permission |
+| 3 | System | Builds CSV or small ZIP for the filtered rows | `DataExportService::generateScoped()` |
+| 4 | System | Streams the file, deletes it, writes an activity-log entry | `storage/app/private/exports`, `activity_log` |
+
+**Track B:** button hidden (same licence gate as full export). Users, Settings, and Access Codes have no scoped export.

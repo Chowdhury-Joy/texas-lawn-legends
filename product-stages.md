@@ -72,7 +72,7 @@ V4 ░░░░░░░░░░░░  after V2 sales proof + V3 trial
 | Rate limits on estimate + portal | **Not required for V2** (deferred — owner decision 2026-08-01) |
 | Production `.env` defaults (debug off, demo hub false, session encrypt) | Open (S-11, S-14) |
 | Written upload / handoff checklist (what we do vs what client does) | Not written yet |
-| **Business can export all their data** (admin self-serve download) | **Required for V2 · Track A only** — not built (**X-01**). Track B: no self-serve export (super-admin consent only; unlocks after buy-out to Track A) |
+| **Business can export all their data** (admin self-serve download) | **Done · Track A only** (**X-01**) — Admin → Data Export streams a ZIP of CSVs + uploads; enabled by `APP_LICENSE_TRACK=a`. Track B: no self-serve export (super-admin consent only; unlocks after buy-out to Track A) |
 | Stripe / full Email-SMS / negotiation engine | **Not required for V2 exit** — stay manual/offline-friendly |
 
 ### V3 — SaaS demo / trial (our site)
@@ -130,3 +130,4 @@ V4 ░░░░░░░░░░░░  after V2 sales proof + V3 trial
 | 2026-08-01 | V2 exit: client self-serve **full data export** required (X-01). Conflicts with Track B “no export” pricing line — pending confirm. |
 | 2026-08-01 | V2: rate limits (S-03/S-04) marked not required for exit — owner deferred. |
 | 2026-08-01 | Created file. Locked V1–V4 intent. Current position: V1 nearly done, V2 next, V3 rules-only, V4 future. |
+| 2026-08-01 | X-01 built — self-serve export shipped for Track A; `APP_LICENSE_TRACK` added to the handoff checklist. |

@@ -7,6 +7,7 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
@@ -31,6 +32,8 @@ class MilestonesTable
                     ->dateTime('M j, Y g:i A')
                     ->sortable(),
             ])
+            ->deferFilters(false)
+            ->filtersFormColumns(2)
             ->filters([
                 SelectFilter::make('status')
                     ->options(MilestoneStatus::class),
@@ -38,7 +41,7 @@ class MilestonesTable
                     ->relationship('project', 'project_title')
                     ->searchable()
                     ->preload(),
-            ])
+            ], layout: FiltersLayout::AboveContent)
             ->recordActions([
                 EditAction::make(),
             ])

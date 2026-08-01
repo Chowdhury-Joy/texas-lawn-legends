@@ -61,7 +61,7 @@ Note: the 40% "handover" milestone is a **payment-schedule label only** — it d
 
 **All plans non-refundable once the site is built.**
 
-**Data export:** Track A admins get **self-serve full data export** (download their leads, jobs, invoices, content, uploads, etc.) — required for V2 client installs. See `product-stages.md` / suggestions **X-01**.
+**Data export:** Track A admins get **self-serve full data export** (download their leads, jobs, invoices, content, uploads, etc.) — required for V2 client installs. **Built:** Admin → Data Export downloads one ZIP (a CSV per table plus every uploaded file); switched on per install with `APP_LICENSE_TRACK=a`. See `product-stages.md` / suggestions **X-01**.
 
 ---
 

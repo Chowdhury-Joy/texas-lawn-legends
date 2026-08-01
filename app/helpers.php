@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\LicenseTrack;
 use App\Enums\ProductPart;
 use App\Models\Setting;
 use App\Support\ColorContrast;
@@ -70,6 +71,16 @@ if (! function_exists('product_part_at_least')) {
             : (ProductPart::tryFrom($minimum) ?? ProductPart::Ops);
 
         return product_part()->atLeast($required);
+    }
+}
+
+if (! function_exists('license_track')) {
+    /**
+     * Licence track this install was sold on (A = own it, B = rent it).
+     */
+    function license_track(): LicenseTrack
+    {
+        return LicenseTrack::current();
     }
 }
 

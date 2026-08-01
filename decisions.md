@@ -411,3 +411,44 @@
  <action>`Milestone::booted()` stamps `completed_at` when status becomes Completed and clears it when a step is reopened. An explicitly supplied date always wins, which is how the demo seeders stagger dates off `started_at`. The Filament form exposes `completed_at` only while status is Completed, as a correction field.</action>
  <reason>Two sources of truth for "when was this done" drift immediately. Clearing on reopen matters most: a stale completion date left showing on a reopened step actively misinforms the client.</reason>
 </decision>
+
+## 2026-08-01 (X-01 full data export)
+
+<decision>
+ <category>Business_Logic</category>
+ <context>X-01 left two things TBD at build time: the export format (CSV ZIP vs JSON) and who may click Export.</context>
+ <action>Ship one ZIP: `data/<table>.csv` per business table, `uploads/` mirroring the public disk, `manifest.json` (row counts, upload totals, site snapshot), and a plain-text `README.txt`. Built synchronously by `DataExportService` and streamed with `deleteFileAfterSend()`. Clicking Export needs the new Admin-only permission key `settings.data_export`, so a Bookkeeper or Ops manager only gets it if an admin grants it deliberately.</action>
+ <reason>CSV is what the promise actually means — the owner can open it in Excel, hand it to an accountant, or import it elsewhere; a SQL dump only helps a developer. Uploads ride in the same archive so photo/logo paths in the CSVs still resolve. Synchronous keeps it working on cPanel hosting with no persistent queue worker, matching how escalations already run. Export is the whole business in one file, so it sits at the same trust level as Users and Settings.</reason>
+</decision>
+
+<decision>
+ <category>Business_Logic</category>
+ <context>Self-serve export is Track A only, but the codebase had no notion of which track an install was sold on.</context>
+ <action>Add `App\Enums\LicenseTrack` + `config/license.php` + `APP_LICENSE_TRACK` (documented in `.env.example`). Default is Track A in local (so demos and dev can walk the feature) and Track B everywhere else, so a production install must opt in at handoff. Deliberately environment-driven, never a `settings` row.</action>
+ <reason>If the track lived in the CMS settings table, a Track B client could switch their own export on from the admin panel — that is exactly the leverage the rent-it pricing protects. Failing closed on non-local environments makes a forgotten env var a support call, not a data walkout.</reason>
+</decision>
+
+<decision>
+ <category>UI/UX</category>
+ <context>Track B installs have no self-serve export. The options were to hide the admin page entirely or show it in a locked state.</context>
+ <action>Show Admin → Data Export on both tracks. Track A gets the Download button; Track B gets an amber panel saying the records are still theirs, that Getwebfield will run the export on request, and that buying out to Track A turns it into a one-click download. The contents list renders either way. `DataExportService::generate()` throws on Track B regardless of the UI.</action>
+ <reason>A missing menu item reads as "the product cannot do this"; a locked one reads as "this is what buying out unlocks" — an honest answer to a real question and a buy-out prompt at the exact moment it is being asked. Hiding the button is presentation; the server-side guard is the actual boundary.</reason>
+</decision>
+
+## 2026-08-01 (scoped resource exports)
+
+<decision>
+ <category>Business_Logic</category>
+ <context>Staff asked for a way to pull just the data on the page they are looking at — e.g. this week's invoices for the bookkeeper — without downloading the whole business.</context>
+ <action>Add `DataExportService::generateScoped()` and an `ExportsResourceData` Filament concern. Resource list pages for Operations and Site Content get an **Export CSV** header action (ZIP when related tables ship together, e.g. invoices + line items). The export uses Filament's `getTableQueryForExport()` so tabs, filters, search, and sort carry through. Track A only, same as X-01; permission is the resource key (`resource.invoices`), not `settings.data_export`. Users, Settings, and Access Codes are excluded.</action>
+ <reason>Day-to-day exports are a different job from a full backup — a Bookkeeper with invoice access should not need Admin-level full-export permission to hand a CSV to an accountant. Respecting the active filters avoids the "I exported leads but got everyone including deleted" surprise. Sensitive configuration tables stay on the full-export path only.</reason>
+</decision>
+
+## 2026-08-01 (milestones filters always visible)
+
+<decision>
+ <category>UI/UX</category>
+ <context>On /admin/milestones, Status and Project filters were tucked behind the funnel icon, so staff had an extra click before they could narrow a growing multi-project list.</context>
+ <action>Set `MilestonesTable` filters to `FiltersLayout::AboveContent` with `filtersFormColumns(2)` and `deferFilters(false)`, so both dropdowns sit above the table and apply as soon as they change.</action>
+ <reason>Two filters do not need a modal. Showing them up front matches how staff actually use this screen — pick a project or status first, then scan the rows.</reason>
+</decision>

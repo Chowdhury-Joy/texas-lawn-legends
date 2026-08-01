@@ -34,6 +34,26 @@ class FilamentThemeCompilesCustomAdminClassesTest extends TestCase
         ];
     }
 
+    /**
+     * Same contract for manage-data-export.blade.php (X-01): the licence
+     * banner and the two-column contents list are plain Tailwind, so an
+     * un-rebuilt theme collapses the row counts onto the next column.
+     *
+     * @return list<string>
+     */
+    private function requiredDataExportClasses(): array
+    {
+        return [
+            'max-w-3xl',
+            'border-emerald-300',
+            'dark:bg-emerald-950/40',
+            'sm:grid-cols-2',
+            'gap-x-6',
+            'divide-y',
+            'tracking-wide',
+        ];
+    }
+
     private function filamentThemeCss(): ?string
     {
         $manifest = public_path('build/manifest.json');
@@ -51,7 +71,10 @@ class FilamentThemeCompilesCustomAdminClassesTest extends TestCase
         return file_get_contents(public_path('build/'.$entry));
     }
 
-    public function test_crew_schedule_tailwind_classes_are_present_in_filament_theme(): void
+    /**
+     * @param  list<string>  $classes
+     */
+    private function assertClassesCompiled(array $classes, string $page): void
     {
         $css = $this->filamentThemeCss();
 
@@ -61,7 +84,7 @@ class FilamentThemeCompilesCustomAdminClassesTest extends TestCase
 
         $missing = [];
 
-        foreach ($this->requiredScheduleClasses() as $class) {
+        foreach ($classes as $class) {
             $selector = preg_replace('/([^a-zA-Z0-9_-])/', '\\\\$1', $class);
 
             if (! str_contains($css, '.'.$selector)) {
@@ -72,9 +95,20 @@ class FilamentThemeCompilesCustomAdminClassesTest extends TestCase
         $this->assertSame(
             [],
             $missing,
-            'Crew Schedule utilities missing from the Filament theme. Ensure '
-            .'resources/css/filament/admin/theme.css @source includes resources/views/filament '
-            .'and AdminPanelProvider registers ->viteTheme(): '.implode(', ', $missing)
+            $page.' utilities missing from the Filament theme. Ensure '
+            .'resources/css/filament/admin/theme.css @source includes resources/views/filament, '
+            .'AdminPanelProvider registers ->viteTheme(), and `npm run build` ran after the page '
+            .'was added: '.implode(', ', $missing)
         );
+    }
+
+    public function test_crew_schedule_tailwind_classes_are_present_in_filament_theme(): void
+    {
+        $this->assertClassesCompiled($this->requiredScheduleClasses(), 'Crew Schedule');
+    }
+
+    public function test_data_export_tailwind_classes_are_present_in_filament_theme(): void
+    {
+        $this->assertClassesCompiled($this->requiredDataExportClasses(), 'Data Export');
     }
 }
