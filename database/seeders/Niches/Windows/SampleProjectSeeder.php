@@ -8,7 +8,6 @@ use App\Enums\MilestoneStatus;
 use App\Enums\ProjectStatus;
 use App\Models\Lead;
 use App\Models\Milestone;
-use App\Models\ProgressPhoto;
 use App\Models\Project;
 use Database\Seeders\Niches\Concerns\SeedsDemoOps;
 use Illuminate\Database\Seeder;
@@ -64,21 +63,11 @@ class SampleProjectSeeder extends Seeder
             );
         }
 
-        ProgressPhoto::query()->where('project_id', $project->id)->delete();
-
-        foreach ([
+        $this->seedDemoProgressPhotos($project, [
             ['Arrival & Count', 'Pane count confirmed'],
             ['Exterior Panes', 'Front elevation complete'],
             ['Interior & Tracks', 'Living room in progress'],
-        ] as $i => [$step, $caption]) {
-            ProgressPhoto::query()->create([
-                'project_id' => $project->id,
-                'image_path' => null,
-                'caption' => $caption,
-                'milestone_step' => $step,
-                'created_at' => now()->subHours(8 - $i),
-            ]);
-        }
+        ]);
 
         $this->seedDemoOps($project, $lead, [
             'crew_name' => 'West 7th Glass Team',
@@ -101,6 +90,8 @@ class SampleProjectSeeder extends Seeder
             ],
             'labor_rate' => 27.00,
             'material_share' => 0.06,
+            'funnel_service_type' => 'Move-Out Window Detail',
+            'funnel_neighborhoods' => ['West 7th', 'Near Southside', 'Cultural District', 'Tanglewood', 'Arlington Heights', 'Como', 'Fairmount', 'Ryan Place', 'Berkeley Place', 'Mistletoe Heights'],
         ]);
     }
 }

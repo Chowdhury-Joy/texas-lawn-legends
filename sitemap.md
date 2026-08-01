@@ -1,5 +1,5 @@
 # Site Map
-Last Updated: 2026-07-30T00:26:00+06:00
+Last Updated: 2026-08-01T19:44:18+06:00
 
 ## Full Site Map
 
@@ -183,8 +183,10 @@ Routes below reflect `routes/web.php` and the Filament admin panel. CMS pages (`
 | 2 | Bookkeeper | Send `/invoices/{token}` link to client | Email/manual |
 | 3 | Scheduler | `app:escalate-overdue-invoices` runs daily | Reads overdue `invoices` |
 | 4 | System | Ops notifier fires for overdue items | Webhook, logs |
+| 5 | Bookkeeper | Find invoices by date: tab preset (All / Today / This Week / This Month / Overdue) or Invoice Date From–To + status filter | Reads `invoices.issue_date`, `invoices.status` |
+| 6 | Bookkeeper | Mark Paid from the row action once payment clears | Writes `invoices.status` |
 
-**Success criteria:** Overdue invoices escalated once; client can view invoice via token URL.
+**Success criteria:** Overdue invoices escalated once; client can view invoice via token URL; staff can retrieve any invoice by issue-date range, by status, or by both together.
 
 ---
 

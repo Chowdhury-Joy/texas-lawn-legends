@@ -13,13 +13,17 @@ use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreAction;
 use Filament\Actions\RestoreBulkAction;
+use Filament\Forms\Components\DatePicker;
 use Filament\Notifications\Notification;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Support\Enums\Size;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class InvoicesTable
 {
@@ -49,7 +53,7 @@ class InvoicesTable
                     ->sortable(),
 
                 TextColumn::make('issue_date')
-                    ->label('Issued')
+                    ->label('Invoice Date')
                     ->date('M j, Y')
                     ->sortable(),
 
@@ -64,10 +68,43 @@ class InvoicesTable
                     ->sortable()
                     ->weight('bold'),
             ])
-            ->defaultSort('created_at', 'desc')
+            ->defaultSort('issue_date', 'desc')
+            ->filtersFormColumns(3)
             ->filters([
+                // From / To / Status sit on one row: the date range spans two of
+                // the three filter-form columns, leaving the third for status.
+                Filter::make('issue_date')
+                    ->label('Invoice Date')
+                    ->columns(2)
+                    ->columnSpan(2)
+                    ->schema([
+                        DatePicker::make('issued_from')
+                            ->label('From date')
+                            ->native(false)
+                            ->maxDate(fn (Get $get) => $get('issued_until')),
+                        DatePicker::make('issued_until')
+                            ->label('To date')
+                            ->native(false)
+                            ->minDate(fn (Get $get) => $get('issued_from')),
+                    ])
+                    ->query(fn (Builder $query, array $data) => $query
+                        ->when($data['issued_from'] ?? null, fn (Builder $q, $date) => $q->whereDate('issue_date', '>=', $date))
+                        ->when($data['issued_until'] ?? null, fn (Builder $q, $date) => $q->whereDate('issue_date', '<=', $date)))
+                    ->indicateUsing(function (array $data): array {
+                        $indicators = [];
+                        if ($data['issued_from'] ?? null) {
+                            $indicators[] = 'From '.$data['issued_from'];
+                        }
+                        if ($data['issued_until'] ?? null) {
+                            $indicators[] = 'Until '.$data['issued_until'];
+                        }
+
+                        return $indicators;
+                    }),
+
                 SelectFilter::make('status')
                     ->options(InvoiceStatus::class),
+
                 TrashedFilter::make(),
             ])
             ->recordActions([

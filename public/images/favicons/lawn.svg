@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Lawn &amp; landscaping">
+  <rect width="64" height="64" rx="14" fill="#1b4332"/>
+  <g fill="#facc15">
+    <path d="M32 47Q20 39 15 21q12 6 17 26z" opacity=".78"/>
+    <path d="M32 47q12-8 17-26-12 6-17 26z" opacity=".78"/>
+    <path d="M32 47q-5-16 0-32 5 16 0 32z"/>
+    <rect x="13" y="45" width="38" height="7" rx="3.5"/>
+  </g>
+</svg>

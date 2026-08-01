@@ -37,6 +37,16 @@ if (! function_exists('accent_ink')) {
     }
 }
 
+if (! function_exists('body_ink')) {
+    /**
+     * Dark body/caption ink for white surfaces. Rejects light CMS slate picks.
+     */
+    function body_ink(string $hex, string $fallback = ColorContrast::DEFAULT_SLATE): string
+    {
+        return ColorContrast::bodyInk($hex, $fallback);
+    }
+}
+
 if (! function_exists('product_part')) {
     /**
      * Active product package level (1 = Website+CMS, 2 = +Booking, 3 = +Ops).
@@ -80,6 +90,31 @@ if (! function_exists('niche_label')) {
     function niche_label(string $key, ?string $fallback = null): string
     {
         return NicheResolver::label($key, $fallback);
+    }
+}
+
+if (! function_exists('niche_favicon')) {
+    /**
+     * Browser-tab icon: the uploaded branding favicon when one exists, otherwise
+     * the shipped icon for the active industry pack (public/images/favicons).
+     */
+    function niche_favicon(): string
+    {
+        $uploaded = setting_image('favicon');
+
+        if ($uploaded) {
+            return $uploaded;
+        }
+
+        $id = niche()->id();
+
+        // A pack registered without a shipped icon falls back to the lawn mark
+        // rather than emitting a 404 <link rel="icon">.
+        if (! is_file(public_path("images/favicons/{$id}.svg"))) {
+            $id = 'lawn';
+        }
+
+        return asset("images/favicons/{$id}.svg");
     }
 }
 

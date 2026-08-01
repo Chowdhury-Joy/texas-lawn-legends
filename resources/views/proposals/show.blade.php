@@ -76,7 +76,7 @@
                             @if(isset($block['data']['images']) && is_array($block['data']['images']))
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     @foreach($block['data']['images'] as $image)
-                                        <img src="{{ Storage::url($image) }}" class="object-cover w-full h-64 border-2 border-slate-950" alt="Showcase Image">
+                                        <img src="{{ public_url($image) }}" class="object-cover w-full h-64 border-2 border-slate-950" alt="Showcase Image">
                                     @endforeach
                                 </div>
                             @endif

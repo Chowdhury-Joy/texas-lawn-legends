@@ -29,6 +29,18 @@ class ColorContrastTest extends TestCase
         $this->assertSame('#facc15', ColorContrast::accentInk('#facc15', '#2d6a4f'));
     }
 
+    public function test_body_ink_rejects_light_slate_on_white(): void
+    {
+        $this->assertSame(ColorContrast::DEFAULT_SLATE, ColorContrast::bodyInk('#d6d6d6'));
+        $this->assertSame(ColorContrast::DEFAULT_SLATE, body_ink('#eee'));
+    }
+
+    public function test_body_ink_keeps_dark_slate(): void
+    {
+        $this->assertSame('#334155', ColorContrast::bodyInk('#334155'));
+        $this->assertSame('#1e293b', body_ink('#1e293b'));
+    }
+
     public function test_unreadable_accent_on_card_falls_back_to_surface_ink(): void
     {
         $this->assertSame(

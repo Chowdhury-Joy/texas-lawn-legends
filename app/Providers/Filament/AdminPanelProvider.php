@@ -11,6 +11,7 @@ use App\Filament\Widgets\RecentActivity;
 use App\Filament\Widgets\RevenueChart;
 use App\Filament\Widgets\UpcomingSiteVisits;
 use App\Filament\Widgets\WeeklyLeadTrend;
+use Filament\Actions\Action;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -20,6 +21,7 @@ use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\Width;
+use Filament\Tables\Table;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
@@ -36,6 +38,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->brandName(fn () => setting('site_name') ?: config('app.name'))
+            ->favicon(fn () => niche_favicon())
             ->login(Login::class)
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->topbar(false)
@@ -79,6 +82,15 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ]);
+            ])
+            ->bootUsing(function (): void {
+                // Row actions (View / Edit / etc.) default to naked links — give them
+                // padding + stroke so they read as real buttons, matching Invoices.
+                Table::configureUsing(function (Table $table): void {
+                    $table->modifyUngroupedRecordActionsUsing(
+                        fn (Action $action): Action => $action->button()->outlined(),
+                    );
+                });
+            });
     }
 }

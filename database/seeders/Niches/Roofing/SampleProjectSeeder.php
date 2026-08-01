@@ -8,7 +8,6 @@ use App\Enums\MilestoneStatus;
 use App\Enums\ProjectStatus;
 use App\Models\Lead;
 use App\Models\Milestone;
-use App\Models\ProgressPhoto;
 use App\Models\Project;
 use Database\Seeders\Niches\Concerns\SeedsDemoOps;
 use Illuminate\Database\Seeder;
@@ -64,21 +63,11 @@ class SampleProjectSeeder extends Seeder
             );
         }
 
-        ProgressPhoto::query()->where('project_id', $project->id)->delete();
-
-        foreach ([
+        $this->seedDemoProgressPhotos($project, [
             ['Tear-Off & Deck Inspect', 'Old layers removed'],
             ['Underlayment & Ice Shield', 'Dry-in complete'],
             ['Shingle Install', 'Field shingles in progress'],
-        ] as $i => [$step, $caption]) {
-            ProgressPhoto::query()->create([
-                'project_id' => $project->id,
-                'image_path' => null,
-                'caption' => $caption,
-                'milestone_step' => $step,
-                'created_at' => now()->subDays(3 - $i),
-            ]);
-        }
+        ]);
 
         $this->seedDemoOps($project, $lead, [
             'crew_name' => 'Summit Install Crew',
@@ -105,6 +94,8 @@ class SampleProjectSeeder extends Seeder
             ],
             'labor_rate' => 42.00,
             'material_share' => 0.45,
+            'funnel_service_type' => 'Full Tear-Off & Install',
+            'funnel_neighborhoods' => ['Alamo Heights', 'Terrell Hills', 'Olmos Park', 'Monte Vista', 'Mahncke Park', 'Beacon Hill', 'Tobin Hill', 'King William', 'Southtown', 'Pearl'],
         ]);
     }
 }

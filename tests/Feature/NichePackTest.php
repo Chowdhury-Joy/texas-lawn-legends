@@ -51,6 +51,34 @@ class NichePackTest extends TestCase
         $response->assertSee('"@type": "LandscapingBusiness"', false);
     }
 
+    public function test_every_registered_pack_ships_a_favicon(): void
+    {
+        foreach (array_keys(config('niche.packs')) as $id) {
+            $this->assertFileExists(
+                public_path("images/favicons/{$id}.svg"),
+                "Industry pack [{$id}] is missing public/images/favicons/{$id}.svg.",
+            );
+        }
+    }
+
+    public function test_favicon_follows_active_pack_and_yields_to_an_upload(): void
+    {
+        NicheResolver::flush();
+
+        $this->get('/')->assertSee('/images/favicons/lawn.svg', false);
+
+        Setting::set('active_niche', 'roofing', 'string', 'product');
+        NicheResolver::flush();
+
+        $this->get('/')->assertSee('/images/favicons/roofing.svg', false);
+
+        Setting::set('favicon', 'branding/custom-favicon.png', 'string', 'branding');
+
+        $response = $this->get('/');
+        $response->assertSee('/storage/branding/custom-favicon.png', false);
+        $response->assertDontSee('/images/favicons/roofing.svg', false);
+    }
+
     public function test_all_registered_packs_expose_hub_blurbs(): void
     {
         $cards = \App\Support\Niche\NicheLoader::hubCards();

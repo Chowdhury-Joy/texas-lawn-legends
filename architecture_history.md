@@ -10,5 +10,18 @@
 - Admin Filament theme now self-hosts Geist Sans + Geist Mono (Fontsource) and applies Figma Text/sm, Text/xs, and mono page-title styles; see decisions.md 2026-07-30 (admin figma typography).
 - Restyled public invoice page layout (flat document, notes at bottom, primary print CTA); see decisions.md 2026-07-30 (invoice public page).
 
+## 2026-07-31
+- Extended SeedsDemoOps with funnel filler leads, Unsplash progress-photo assets under database/seeders/assets/progress-photos, and three demo staff users; see decisions.md 2026-07-31 (demo funnel leads, photos, staff).
+- Added per-industry favicons under public/images/favicons plus the niche_favicon() helper wired into the SEO partial and Filament panel; see decisions.md 2026-07-31 (per-industry favicons).
+- Admin shell horizontal padding reduced via `--fi-shell-inline` (16/40/80px); see decisions.md 2026-07-31 (admin shell padding).
+- Panel-wide Filament table row actions use button()->outlined(); see decisions.md 2026-07-31 (admin row action buttons).
+- Homepage Instant Valuation Maintain vs Projects now multiplies into the teaser range; see decisions.md / bug_history.md 2026-07-31 (estimate modal).
+
 ## 2026-08-01
+- Homepage Instant Valuation teaser rates moved to admin pricing settings (`estimate_teaser_*`) on ManagePricing; pack defaults seeded; see decisions.md 2026-08-01 (admin-editable popup teaser rates).
+- Site Settings + Homepage Content forms use full content shell width (removed max-w-5xl); see decisions.md 2026-08-01 (settings forms full width).
+- Structural slate (`color_slate` → `--color-slate-800`) is clamped with `body_ink()` so light CMS picks cannot wash out captions; niche restore clears `color_slate`; see bug_history.md 2026-08-01 (unreadable structural slate captions).
+- Fixed public progress-photo / proposal showcase image URLs to use public_url() instead of Storage::url() so APP_URL port mismatches do not break images; see bug_history.md 2026-08-01 (dashboard progress photo URLs).
 - Added `product-stages.md` (V1–V4 stage scoreboard) plus always-apply `.cursor/rules/product-stages.mdc`; see decisions.md 2026-08-01 (product stages).
+- Invoices list gained an `issue_date` From/To range filter beside the status filter plus All/Today/Week/Month/Overdue tab presets (All default), and its defaultSort moved from `created_at` to the displayed `issue_date`; see decisions.md / bug_history.md 2026-08-01 (invoice date-range search).
+- Fixed the footer danger-zone Delete action on all Edit screens: the record is now bound explicitly in `HasPrimarySaveAndDangerDelete` (custom Blade views bypass Filament's record injection), and `EditUser` reaches the base action via a trait alias instead of `parent::`; see bug_history.md 2026-08-01 (danger-zone delete).

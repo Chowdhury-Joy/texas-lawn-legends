@@ -40,6 +40,8 @@ final class NicheLoader
         'favicon',
         'og_image',
         'hero_media_image',
+        // Pitch-era light slate washed out text-slate-800 sitewide; packs do not set this key.
+        'color_slate',
     ];
 
     /** Staff logins preserved across restore (seeded admin). */

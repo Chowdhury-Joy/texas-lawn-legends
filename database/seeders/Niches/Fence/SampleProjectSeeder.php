@@ -8,7 +8,6 @@ use App\Enums\MilestoneStatus;
 use App\Enums\ProjectStatus;
 use App\Models\Lead;
 use App\Models\Milestone;
-use App\Models\ProgressPhoto;
 use App\Models\Project;
 use Database\Seeders\Niches\Concerns\SeedsDemoOps;
 use Illuminate\Database\Seeder;
@@ -64,21 +63,11 @@ class SampleProjectSeeder extends Seeder
             );
         }
 
-        ProgressPhoto::query()->where('project_id', $project->id)->delete();
-
-        foreach ([
+        $this->seedDemoProgressPhotos($project, [
             ['Layout & Posts', 'Post line set'],
             ['Frame & Pickets', 'Rear elevation framed'],
             ['Gate & Hardware', 'Gate hang in progress'],
-        ] as $i => [$step, $caption]) {
-            ProgressPhoto::query()->create([
-                'project_id' => $project->id,
-                'image_path' => null,
-                'caption' => $caption,
-                'milestone_step' => $step,
-                'created_at' => now()->subHours(8 - $i),
-            ]);
-        }
+        ]);
 
         $this->seedDemoOps($project, $lead, [
             'crew_name' => 'Frisco Build Crew',
@@ -105,6 +94,8 @@ class SampleProjectSeeder extends Seeder
             ],
             'labor_rate' => 36.00,
             'material_share' => 0.40,
+            'funnel_service_type' => 'Cedar Privacy Fence',
+            'funnel_neighborhoods' => ['Starwood', 'Phillips Creek Ranch', 'Newman Village', 'Frisco Lakes', 'Richwoods', 'Plantation Resort', 'Craig Ranch', 'The Trails', 'Panther Creek', 'Hills of Kingswood'],
         ]);
     }
 }

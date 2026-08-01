@@ -2,7 +2,6 @@
 
 @php
     use App\Enums\MilestoneStatus;
-    use Illuminate\Support\Facades\Storage;
 
     $seoTitle = $project->project_title.' — Project Dashboard';
     $noindex = true; // private client page
@@ -149,7 +148,8 @@
                                 @foreach ($stepPhotos as $photo)
                                     @php
                                         $hasImage = filled($photo->image_path);
-                                        $photoUrl = $hasImage ? Storage::disk('public')->url($photo->image_path) : '';
+                                        // Root-relative so APP_URL host/port mismatches (e.g. :8123) do not break images.
+                                        $photoUrl = $hasImage ? public_url($photo->image_path) : '';
                                     @endphp
                                     <figure @if ($hasImage) @click="showPhoto('{{ $photoUrl }}', @js($photo->caption), @js($milestone->title), '{{ $photo->created_at?->format('M j, Y') }}')" @endif
                                             @class([
@@ -164,8 +164,8 @@
                                             </div>
                                         @endif
                                         <figcaption class="border-t-2 border-slate-950 bg-white px-3 py-2">
-                                            <p class="text-xs font-bold text-slate-800">{{ $photo->caption }}</p>
-                                            <p class="mt-0.5 text-[10px] uppercase tracking-widest text-slate-400">{{ $photo->created_at?->format('M j, Y') }}</p>
+                                            <p class="text-xs font-bold text-slate-900">{{ $photo->caption }}</p>
+                                            <p class="mt-0.5 text-[10px] uppercase tracking-widest text-slate-600">{{ $photo->created_at?->format('M j, Y') }}</p>
                                         </figcaption>
                                     </figure>
                                 @endforeach

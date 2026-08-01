@@ -27,7 +27,7 @@
         $colorPrimary = setting('color_primary', '#1b4332');
         $colorPrimaryLight = setting('color_primary_light', '#2d6a4f');
         $colorAccent = setting('color_accent', '#facc15');
-        $colorSlate = setting('color_slate', '#334155');
+        $colorSlate = body_ink((string) setting('color_slate', \App\Support\ColorContrast::DEFAULT_SLATE));
         $onPrimary = contrast_ink($colorPrimary);
         $onPrimaryLight = contrast_ink($colorPrimaryLight);
         $onAccent = contrast_ink($colorAccent);
@@ -296,12 +296,19 @@
                  x-transition:leave-end="opacity-0"
                  @click.self="estimateModalOpen = false">
 
+                @php
+                    $teaserLow = (float) setting('estimate_teaser_low_per_unit', 0.85);
+                    $teaserHigh = (float) setting('estimate_teaser_high_per_unit', 1.45);
+                    $teaserMaintain = (float) setting('estimate_teaser_maintain_multiplier', 0.62);
+                @endphp
                 <div class="box-brutal w-full max-w-xl overflow-hidden bg-white p-6 sm:p-8" @click.stop
                      x-data="{
                          sqft: 1200,
                          serviceScope: 'design_build',
-                         low() { return Math.round(this.sqft * 0.85); },
-                         high() { return Math.round(this.sqft * 1.45); }
+                         // Rates from Admin → Estimator & Pricing (homepage popup teaser).
+                         scopeRate() { return this.serviceScope === 'maintenance' ? {{ $teaserMaintain }} : 1; },
+                         low() { return Math.round(this.sqft * {{ $teaserLow }} * this.scopeRate()); },
+                         high() { return Math.round(this.sqft * {{ $teaserHigh }} * this.scopeRate()); }
                      }">
                     <div class="flex items-start justify-between gap-4 border-b-2 border-slate-950 pb-4">
                         <div>
@@ -350,7 +357,7 @@
                     </div>
 
                     <div class="mt-6 flex flex-col gap-3 sm:flex-row">
-                        <a :href="'{{ url('/estimate') }}?neighborhood=' + encodeURIComponent(modalLocation) + '&sqft=' + sqft"
+                        <a :href="'{{ url('/estimate') }}?neighborhood=' + encodeURIComponent(modalLocation) + '&sqft=' + sqft + '&scope=' + encodeURIComponent(serviceScope)"
                            class="btn-brutal btn-primary bg-yellow-400 flex-1 px-6 py-3.5 text-center text-xs font-black uppercase tracking-wider">
                             Lock In Free Site Visit →
                         </a>

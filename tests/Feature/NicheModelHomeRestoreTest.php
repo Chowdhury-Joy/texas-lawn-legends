@@ -13,6 +13,7 @@ use App\Models\Equipment;
 use App\Models\Invoice;
 use App\Models\Lead;
 use App\Models\Page;
+use App\Models\ProgressPhoto;
 use App\Models\Project;
 use App\Models\Proposal;
 use App\Models\Service;
@@ -193,5 +194,22 @@ class NicheModelHomeRestoreTest extends TestCase
         $this->assertGreaterThan(0, (float) $project->material_cost);
         $this->assertGreaterThan(20, $project->profit_margin_percent, 'Demo profit margin should not look implausibly high.');
         $this->assertLessThan(70, $project->profit_margin_percent, 'Demo profit margin should not look implausibly high.');
+
+        // Funnel/chart filler: 3 Partial + 3 Qualified + 3 Contacted + 1 Lost (+ booked sample).
+        $this->assertGreaterThanOrEqual(3, Lead::query()->where('status', LeadStatus::Partial)->count());
+        $this->assertGreaterThanOrEqual(3, Lead::query()->where('status', LeadStatus::Qualified)->count());
+        $this->assertGreaterThanOrEqual(3, Lead::query()->where('status', LeadStatus::Contacted)->count());
+        $this->assertGreaterThanOrEqual(1, Lead::query()->where('status', LeadStatus::Lost)->count());
+        $this->assertGreaterThanOrEqual(1, Lead::query()->where('status', LeadStatus::Booked)->count());
+
+        $this->assertTrue(User::query()->where('email', 'sales@demo.local')->exists());
+        $this->assertTrue(User::query()->where('email', 'ops@demo.local')->exists());
+        $this->assertTrue(User::query()->where('email', 'books@demo.local')->exists());
+
+        $photosWithImages = ProgressPhoto::query()
+            ->where('project_id', $project->id)
+            ->whereNotNull('image_path')
+            ->count();
+        $this->assertGreaterThanOrEqual(3, $photosWithImages, 'Demo progress photos should use seeded Unsplash assets.');
     }
 }

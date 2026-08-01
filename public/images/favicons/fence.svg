@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Fence &amp; deck">
+  <rect width="64" height="64" rx="14" fill="#92400e"/>
+  <g fill="#fcd34d">
+    <path d="M12 22l5.5-8 5.5 8v30H12z"/>
+    <path d="M26.5 22l5.5-8 5.5 8v30h-11z"/>
+    <path d="M41 22l5.5-8 5.5 8v30H41z"/>
+  </g>
+  <g fill="#92400e">
+    <rect x="8" y="27" width="48" height="4" rx="2"/>
+    <rect x="8" y="41" width="48" height="4" rx="2"/>
+  </g>
+</svg>

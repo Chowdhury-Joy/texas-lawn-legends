@@ -8,7 +8,6 @@ use App\Enums\MilestoneStatus;
 use App\Enums\ProjectStatus;
 use App\Models\Lead;
 use App\Models\Milestone;
-use App\Models\ProgressPhoto;
 use App\Models\Project;
 use Database\Seeders\Niches\Concerns\SeedsDemoOps;
 use Illuminate\Database\Seeder;
@@ -64,21 +63,11 @@ class SampleProjectSeeder extends Seeder
             );
         }
 
-        ProgressPhoto::query()->where('project_id', $project->id)->delete();
-
-        foreach ([
+        $this->seedDemoProgressPhotos($project, [
             ['Exterior Inspection', 'Perimeter walk complete'],
             ['Perimeter Application', 'Foundation barrier applied'],
             ['Interior Targeted Treat', 'Kitchen treatment in progress'],
-        ] as $i => [$step, $caption]) {
-            ProgressPhoto::query()->create([
-                'project_id' => $project->id,
-                'image_path' => null,
-                'caption' => $caption,
-                'milestone_step' => $step,
-                'created_at' => now()->subHours(8 - $i),
-            ]);
-        }
+        ]);
 
         $this->seedDemoOps($project, $lead, [
             'crew_name' => 'Teravista Route Team',
@@ -101,6 +90,8 @@ class SampleProjectSeeder extends Seeder
             ],
             'labor_rate' => 29.00,
             'material_share' => 0.14,
+            'funnel_service_type' => 'Whole-Home Perimeter Treatment',
+            'funnel_neighborhoods' => ['Teravista', 'Paloma Lake', 'Forest Creek', 'Old Town', 'University Heights', 'Brushy Creek', 'Cat Hollow', 'Round Rock West', 'Lake Creek', 'Walsh Ranch'],
         ]);
     }
 }

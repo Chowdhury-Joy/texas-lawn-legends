@@ -59,7 +59,7 @@ Without restore, four roofing calls stack four sets of demo projects and the sho
 
 - Clears pitch-mutable ops data: leads, projects, milestones, progress photos, crews, equipment, maintenance logs, time entries, proposals, invoices (+ items), services, add-ons, testimonials, pages, access codes, activity log, notifications
 - Removes pitch-added staff (keeps `admin@admin.com`)
-- Clears uploaded branding keys (`logo_image`, `favicon`, `og_image`, `hero_media_image`) then re-applies pack settings defaults
+- Clears uploaded branding keys (`logo_image`, `favicon`, `og_image`, `hero_media_image`) and pitch-era `color_slate`, then re-applies pack settings defaults
 - Re-runs pack content seeders + `AccessCodesSeeder`
 - Blocked when `APP_DEMO_HUB=false` (except in unit tests)
 
@@ -69,10 +69,13 @@ UI labels: **Restore model home** on `/demo` and Admin → Industry Packs.
 
 All eight packs' `SampleProjectSeeder`s call the shared [`SeedsDemoOps`](database/seeders/Niches/Concerns/SeedsDemoOps.php) trait, so a restored model home also stocks admin **Operations**: one crew (assigned to the sample project), a sent proposal, a sent invoice with line items, two equipment rows, and 2–3 time entries. Money is derived from each pack's `contract_value`, and material/labour cost are set together so the projects table shows a believable 34–62% profit margin.
 
+Also seeded for camera-ready demos: funnel filler leads (3 Partial / 3 Qualified / 3 Contacted / 1 Lost), compressed Unsplash progress photos, and three staff users (Sales / Operations / Bookkeeper).
+
 | ID | Status | Notes |
 |----|--------|-------|
 | D-01 | **Done** | Full wipe + reseed; see `NicheModelHomeRestoreTest` |
 | D-03 | **Done** | Ops demo data (crew, proposal, invoice, equipment, time entries) seeded for all 8 niches |
+| D-04 | **Done** | Funnel leads + Unsplash progress photos + demo staff users in `SeedsDemoOps` |
 | D-02 | **Partial / enough for now** | Separate host+domain per paying client already isolates Restore; keep `APP_DEMO_HUB=false` on client deploys |
 
 ---
@@ -236,10 +239,6 @@ Safe to ignore on solo local dev; **launch checklist** for public client sites.
 
 | Date | Change |
 |------|--------|
-| 2026-08-01 | X-01 data export locked **Track A only**; Track B remains consent-only until buy-out |
-| 2026-08-01 | V2 **X-01** full data export required; flagged conflict with Track B pricing “no export” line |
-| 2026-08-01 | S-03/S-04 rate limits deferred — not required for V2 (owner) |
-| 2026-08-01 | Linked Current stage to `product-stages.md` (V1–V4 scoreboard) |
 | 2026-07-30 | Initial backlog from security/bug audit + demo reset product discussion |
 | 2026-07-30 | Reframed demo reset as per-niche model-home snapshot restore for sales calls; added D-01 (full restore scope) and D-02 (demo-install gating) |
 | 2026-07-30 | Implemented D-01 in `NicheLoader` — full model-home restore + tests; UI renamed to Restore model home |
@@ -248,3 +247,9 @@ Safe to ignore on solo local dev; **launch checklist** for public client sites.
 | 2026-07-30 | Locked trial details: Part 3, niche picker, expiry=no login+banner, email/Google signup, 3-submit cap, start-fresh convert, getwebfield.com/trial/{slug}; build timing still TBD |
 | 2026-07-30 | Efficiency audit implemented (P-01–P-10): settings cache/memo, file cache driver, widget query consolidation, lazy widgets, poll interval, indexes. P-11 (SQLite triple duty) open for trial prep |
 | 2026-07-30 | Added D-03 ops demo data — shared `SeedsDemoOps` seeder concern stocks crew/proposal/invoice/equipment/time entries in all 8 niche model homes |
+| 2026-07-31 | D-04 — funnel leads, Unsplash progress photos, demo staff users for admin walkthrough |
+| 2026-08-01 | X-01 data export locked **Track A only**; Track B remains consent-only until buy-out |
+| 2026-08-01 | V2 **X-01** full data export required; flagged conflict with Track B pricing “no export” line |
+| 2026-08-01 | S-03/S-04 rate limits deferred — not required for V2 (owner) |
+| 2026-08-01 | Linked Current stage to `product-stages.md` (V1–V4 scoreboard) |
+| 2026-08-01 | Model-home restore also clears pitch-era `color_slate` (washes out `text-slate-800`); see bug_history.md |

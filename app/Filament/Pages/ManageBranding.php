@@ -82,11 +82,11 @@ class ManageBranding extends BaseSettingsPage
                         ->directory('branding')
                         ->disk('public')
                         ->visibility('public')
-                        ->helperText('Square PNG/ICO shown in the browser tab.')
+                        ->helperText('Square PNG/ICO shown in the browser tab. Leave empty to use the icon that ships with the active industry pack.')
                         ->columnSpanFull(),
                 ]),
             Section::make('Color Tokens')
-                ->description('These are background colors only. Text on top is chosen automatically as near-black or near-white for contrast.')
+                ->description('Primary and accent fills are backgrounds — label ink flips automatically to near-black or near-white. Structural slate is body text on white and must stay dark.')
                 ->columns(2)
                 ->schema([
                     ColorPicker::make('color_primary')
@@ -99,7 +99,8 @@ class ManageBranding extends BaseSettingsPage
                         ->label('Accent (safety yellow)')
                         ->helperText('Primary button / highlight fill. Label text flips automatically to near-black or near-white.'),
                     ColorPicker::make('color_slate')
-                        ->label('Structural slate'),
+                        ->label('Structural slate')
+                        ->helperText('Used for secondary body text (e.g. captions). Must contrast on white — light picks fall back to default slate (#334155).'),
                 ]),
         ];
     }

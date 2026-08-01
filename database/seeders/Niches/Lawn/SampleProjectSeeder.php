@@ -8,7 +8,6 @@ use App\Enums\MilestoneStatus;
 use App\Enums\ProjectStatus;
 use App\Models\Lead;
 use App\Models\Milestone;
-use App\Models\ProgressPhoto;
 use App\Models\Project;
 use Database\Seeders\Niches\Concerns\SeedsDemoOps;
 use Illuminate\Database\Seeder;
@@ -64,30 +63,14 @@ class SampleProjectSeeder extends Seeder
             );
         }
 
-        // Proof-of-work photos tagged to the milestone step they document.
-        // image_path is left null for the demo — the dashboard renders a styled
-        // placeholder for these, and real uploads (via the CMS) show as images.
-        $photos = [
+        $this->seedDemoProgressPhotos($project, [
             ['Site Prep & Demolition', 'Existing turf cleared and hauled off'],
             ['Site Prep & Demolition', 'Slope graded and compacted'],
             ['Retaining Wall Build', 'Concrete footing poured and cured'],
             ['Retaining Wall Build', 'First natural-stone course set and leveled'],
             ['Retaining Wall Build', 'Wall topped out along the back line'],
             ['Flagstone Patio Install', 'Premium flagstone staged on site'],
-        ];
-
-        // Reset then reseed photos so re-running stays idempotent.
-        ProgressPhoto::query()->where('project_id', $project->id)->delete();
-
-        foreach ($photos as $i => [$step, $caption]) {
-            ProgressPhoto::query()->create([
-                'project_id' => $project->id,
-                'image_path' => null,
-                'caption' => $caption,
-                'milestone_step' => $step,
-                'created_at' => now()->subDays(6 - $i),
-            ]);
-        }
+        ]);
 
         $this->seedDemoOps($project, $lead, [
             'crew_name' => 'North Dallas Crew',
@@ -114,6 +97,8 @@ class SampleProjectSeeder extends Seeder
             ],
             'labor_rate' => 34.00,
             'material_share' => 0.42,
+            'funnel_service_type' => 'Full Yard Renovation',
+            'funnel_neighborhoods' => ['Kessler Park', 'Oak Cliff', 'Lakewood', 'Bishop Arts', 'East Dallas', 'M Streets', 'Knox-Henderson', 'Design District', 'Lower Greenville', 'Uptown'],
         ]);
     }
 }

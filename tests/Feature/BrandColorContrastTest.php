@@ -36,4 +36,27 @@ class BrandColorContrastTest extends TestCase
 
         $this->assertStringContainsString('--color-on-accent: '.ColorContrast::NEAR_BLACK, $html);
     }
+
+    public function test_layout_falls_back_when_structural_slate_is_too_light(): void
+    {
+        Setting::set('color_slate', '#d6d6d6', 'string', 'branding');
+        Setting::set('site_name', 'Demo Site', 'string', 'general');
+        Setting::set('logo_text', 'Demo Site', 'string', 'branding');
+
+        $html = $this->get('/')->assertOk()->getContent();
+
+        $this->assertStringContainsString('--color-slate-800: '.ColorContrast::DEFAULT_SLATE, $html);
+        $this->assertStringNotContainsString('--color-slate-800: #d6d6d6', $html);
+    }
+
+    public function test_layout_keeps_dark_structural_slate(): void
+    {
+        Setting::set('color_slate', '#1e293b', 'string', 'branding');
+        Setting::set('site_name', 'Demo Site', 'string', 'general');
+        Setting::set('logo_text', 'Demo Site', 'string', 'branding');
+
+        $html = $this->get('/')->assertOk()->getContent();
+
+        $this->assertStringContainsString('--color-slate-800: #1e293b', $html);
+    }
 }

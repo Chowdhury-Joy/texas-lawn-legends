@@ -14,6 +14,11 @@ final class ColorContrast
     /** Minimum contrast ratio before accent-as-ink is considered readable on a surface. */
     private const ACCENT_INK_MIN_RATIO = 3.0;
 
+    /** WCAG AA for normal text on white (body / caption ink). */
+    private const BODY_INK_MIN_RATIO = 4.5;
+
+    public const DEFAULT_SLATE = '#334155';
+
     /**
      * Near-black or near-white ink that reads on the given background.
      */
@@ -25,6 +30,26 @@ final class ColorContrast
         $whiteContrast = self::contrastRatioFromLuminance($bg, self::relativeLuminance(self::NEAR_WHITE));
 
         return $whiteContrast >= $blackContrast ? self::NEAR_WHITE : self::NEAR_BLACK;
+    }
+
+    /**
+     * Keep CMS "structural slate" dark enough to use as body text on white.
+     * Light picks (often mistaken for a soft UI fill) fall back to the default slate.
+     */
+    public static function bodyInk(string $hex, string $fallback = self::DEFAULT_SLATE): string
+    {
+        $normalized = self::normalizeHex($hex);
+        $safeFallback = self::normalizeHex($fallback) ?? self::DEFAULT_SLATE;
+
+        if ($normalized === null) {
+            return $safeFallback;
+        }
+
+        if (self::contrastRatio($normalized, '#ffffff') >= self::BODY_INK_MIN_RATIO) {
+            return $normalized;
+        }
+
+        return $safeFallback;
     }
 
     /**

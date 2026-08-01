@@ -41,21 +41,21 @@
     --fi-text-title-leading: 22px;
     --fi-text-title-tracking: -0.02em;
 
-    /* Content Container: px 160 / py 48 on 1160px main */
-    --fi-shell-inline: 1rem;
+    /* Content Container: mobile 16 / tablet 40 / desktop 80 · py 48 on desktop */
+    --fi-shell-inline: 16px;
     --fi-shell-block: 1.5rem;
 }
 
 @media (min-width: 768px) {
     :root {
-        --fi-shell-inline: 1.5rem;
+        --fi-shell-inline: 40px;
         --fi-shell-block: 2rem;
     }
 }
 
 @media (min-width: 1200px) {
     :root {
-        --fi-shell-inline: 160px;
+        --fi-shell-inline: 80px;
         --fi-shell-block: 48px;
     }
 }

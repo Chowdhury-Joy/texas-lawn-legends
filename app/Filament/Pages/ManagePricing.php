@@ -36,6 +36,9 @@ class ManagePricing extends BaseSettingsPage
             'estimate_min_sqft' => 'integer',
             'estimate_max_sqft' => 'integer',
             'estimate_custom_threshold' => 'decimal',
+            'estimate_teaser_low_per_unit' => 'decimal',
+            'estimate_teaser_high_per_unit' => 'decimal',
+            'estimate_teaser_maintain_multiplier' => 'decimal',
             'neighborhood_modifiers' => 'json',
             'complexity_modifiers' => 'json',
             'booking_days_offered' => 'integer',
@@ -79,6 +82,23 @@ class ManagePricing extends BaseSettingsPage
                     TextInput::make('estimate_max_sqft')
                         ->label(fn () => 'Maximum '.niche_label('size_unit').' (slider cap)')
                         ->numeric()->suffix(fn () => niche_label('size_unit'))->required(),
+                ]),
+            Section::make('Homepage popup teaser (Instant Valuation)')
+                ->description('Rough “from–to” numbers in the quick popup — not the full estimator. Think of this as the sticker price on the window, not the checkout total.')
+                ->columns(3)
+                ->schema([
+                    TextInput::make('estimate_teaser_low_per_unit')
+                        ->label(fn () => 'Projects — low $ per '.niche_label('size_unit'))
+                        ->numeric()->prefix('$')->step(0.01)->default(0.85)->required()
+                        ->helperText(fn () => 'Example: $0.85 × 1,500 '.niche_label('size_unit').' ≈ $1,275 low end.'),
+                    TextInput::make('estimate_teaser_high_per_unit')
+                        ->label(fn () => 'Projects — high $ per '.niche_label('size_unit'))
+                        ->numeric()->prefix('$')->step(0.01)->default(1.45)->required()
+                        ->helperText(fn () => 'Example: $1.45 × 1,500 '.niche_label('size_unit').' ≈ $2,175 high end.'),
+                    TextInput::make('estimate_teaser_maintain_multiplier')
+                        ->label(fn () => niche_label('suite_care').' vs '.niche_label('suite_create').' (0–1)')
+                        ->numeric()->step(0.01)->minValue(0.01)->maxValue(1)->default(0.62)->required()
+                        ->helperText('0.62 means Maintain shows about 62% of the Projects range. Lower = cheaper recurring preview.'),
                 ]),
             Section::make(fn () => niche_label('area_field').' Modifiers')
                 ->description(fn () => 'Per-'.strtolower(niche_label('area_field')).' price multipliers applied to the estimate.')

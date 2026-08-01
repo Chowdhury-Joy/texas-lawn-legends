@@ -2,7 +2,11 @@
 
 namespace Tests\Feature;
 
+use App\Enums\MilestoneStatus;
+use App\Models\Milestone;
 use App\Models\Page;
+use App\Models\ProgressPhoto;
+use App\Models\Project;
 use App\Models\Testimonial;
 use App\Support\PageBlockData;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -25,6 +29,39 @@ class BugFixesTest extends TestCase
         $response = $this->get('/test-page');
         $response->assertStatus(200);
         $response->assertSee('/storage/pages/share.jpg', false);
+    }
+
+    public function test_dashboard_progress_photos_use_root_relative_public_urls(): void
+    {
+        $project = Project::factory()->create([
+            'client_name' => 'Ava Morales',
+            'project_title' => 'Hyde Park Deep Clean',
+            'neighborhood' => 'Hyde Park',
+            'contract_value' => 2400.00,
+            'started_at' => now(),
+        ]);
+
+        Milestone::create([
+            'project_id' => $project->id,
+            'title' => 'Arrival & Walkthrough',
+            'description' => 'Kickoff',
+            'status' => MilestoneStatus::Completed,
+        ]);
+
+        ProgressPhoto::create([
+            'project_id' => $project->id,
+            'image_path' => 'progress-photos/demo-seed-01.jpg',
+            'caption' => 'Scope checklist signed',
+            'milestone_step' => 'Arrival & Walkthrough',
+            'created_at' => now(),
+        ]);
+
+        $response = $this->get('/dashboard/'.$project->unique_dashboard_hash);
+
+        $response->assertStatus(200);
+        $response->assertSee('src="/storage/progress-photos/demo-seed-01.jpg"', false);
+        $response->assertDontSee('src="http://localhost/storage/progress-photos/demo-seed-01.jpg"', false);
+        $response->assertSee('Scope checklist signed');
     }
 
     public function test_page_block_data_live_returns_all_testimonials(): void

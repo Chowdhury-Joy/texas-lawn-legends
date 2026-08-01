@@ -11,7 +11,15 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditUser extends EditRecord
 {
-    use HasPrimarySaveAndDangerDelete;
+    /**
+     * Aliased because `getDangerDeleteAction()` is overridden below. A trait
+     * method is flattened into this class, so `parent::` would resolve to
+     * EditRecord (which has no such method) rather than to the trait.
+     */
+    use HasPrimarySaveAndDangerDelete {
+        getDangerDeleteAction as protected baseDangerDeleteAction;
+    }
+
     use SyncsAccessPermissions;
 
     protected static string $resource = UserResource::class;
@@ -35,7 +43,7 @@ class EditUser extends EditRecord
 
     protected function getDangerDeleteAction(): DeleteAction
     {
-        return parent::getDangerDeleteAction()
+        return $this->baseDangerDeleteAction()
             ->visible(fn () => $this->getRecord()->id !== auth()->id());
     }
 }

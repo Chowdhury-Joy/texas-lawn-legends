@@ -38,9 +38,17 @@ trait HasPrimarySaveAndDangerDelete
         ];
     }
 
+    /**
+     * The record must be bound explicitly. Filament only injects it when an
+     * action is rendered through its `Actions` schema component; the custom
+     * page views that loop `getFormActions()` and echo each action directly
+     * bypass that, and `DeleteAction::setUp()` registers a `hidden()` closure
+     * that type-hints a non-null Model — so an unbound action fatals on render.
+     */
     protected function getDangerDeleteAction(): DeleteAction
     {
         return DeleteAction::make()
+            ->record($this->getRecord())
             ->color('danger')
             ->outlined();
     }

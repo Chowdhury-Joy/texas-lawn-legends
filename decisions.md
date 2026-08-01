@@ -288,6 +288,42 @@
  <reason>One shared helper instead of eight copies keeps the ops story consistent and cheap to extend; deriving money from `contract_value` keeps every niche's numbers believable without hard-coding amounts per pack.</reason>
 </decision>
 
+## 2026-07-31 (demo funnel leads, photos, staff)
+
+<decision>
+ <category>Business_Logic</category>
+ <context>Admin video walkthrough looked empty: funnel/charts had one booked lead, Progress Photos had caption-only placeholders, and Users showed only the admin account.</context>
+ <action>Extended `SeedsDemoOps` for all eight niches: seed 3 Partial + 3 Qualified + 3 Contacted + 1 Lost leads (staggered over 7 days, niche service/neighborhoods); copy compressed Unsplash JPEGs from `database/seeders/assets/progress-photos` into `storage/app/public/progress-photos` via `seedDemoProgressPhotos()`; seed three demo staff users (Sales, Operations, Bookkeeper) at `sales@demo.local` / `ops@demo.local` / `books@demo.local` with password `pass`. Covered by `NicheModelHomeRestoreTest`.</action>
+ <reason>Model-home restore already wipes and reseeds — putting chart filler, real photo paths, and role examples in the shared trait keeps every niche camera-ready without hand-editing eight packs.</reason>
+</decision>
+
+## 2026-07-31 (admin shell padding)
+
+<decision>
+ <category>UI/UX</category>
+ <context>Admin content shell used 160px horizontal padding on desktop, leaving too much empty space around list pages like Projects.</context>
+ <action>Set `--fi-shell-inline` to 16px (mobile), 40px (tablet 768px+), and 80px (desktop 1200px+) in `resources/css/filament/admin/theme.css`.</action>
+ <reason>Gives the table more usable width while keeping breathing room off the edges on each breakpoint.</reason>
+</decision>
+
+## 2026-07-31 (admin row action buttons)
+
+<decision>
+ <category>UI/UX</category>
+ <context>Admin table row actions (View, Edit, etc.) rendered as plain text links with no padding or border, so they did not read as clickable buttons.</context>
+ <action>In AdminPanelProvider, configure all Filament tables via `modifyUngroupedRecordActionsUsing` so ungrouped record actions use `->button()->outlined()` (padding + stroke). Header primary CTAs stay filled.</action>
+ <reason>One panel-wide default matches the Invoices table treatment without repeating button/outlined on every resource; row actions stay secondary to the main page CTA.</reason>
+</decision>
+
+## 2026-07-31 (estimate modal Projects vs Maintain pricing)
+
+<decision>
+ <category>CRO</category>
+ <context>The Instant Valuation popup let visitors pick Projects or Maintain, but both showed the same teaser range — so the toggle felt broken and undercut trust before the full estimator.</context>
+ <action>Apply a suite rate in the modal Alpine math so Maintain discounts vs Projects. Pass `scope` on the “Lock In Free Site Visit” link. Full `/estimate` wizard still uses real per-service multipliers.</action>
+ <reason>Matches the product story (one-time work costs more than recurring plans) without pretending the teaser is the final quote.</reason>
+</decision>
+
 ## 2026-08-01 (V2: data export Track A only)
 
 <decision>
@@ -322,4 +358,40 @@
  <context>Need one clear scoreboard for demo vs client install vs trial vs SaaS so agents and humans do not mix “video showcase,” “upload to their hosting,” and “self-serve trial.”</context>
  <action>Lock four stages in `product-stages.md`: V1 base demo (our site), V2 base client installment (their site), V3 SaaS demo/trial (our site), V4 SaaS client installment (their site). Current position: V1 nearly done, V2 next, V3 rules-only, V4 future. Agents must update that file whenever stage status or exit criteria change; enforced by `.cursor/rules/product-stages.mdc`.</action>
  <reason>Separates sales-demo work from production handoff and from later SaaS, matching the low-work client-upload business model before trial/multi-tenant build.</reason>
+</decision>
+
+## 2026-08-01 (settings forms full width)
+
+<decision>
+ <category>UI/UX</category>
+ <context>Site Settings pages (e.g. Estimator & Pricing) sat in a `max-w-5xl` column inside an already full-width admin shell, leaving a large empty band on the right.</context>
+ <action>Remove the `max-w-5xl` wrapper from `settings-form.blade.php` and `manage-homepage.blade.php` so Site Settings + Homepage Content use the full content shell width. Page builder Create/Edit keep their own `max-w-5xl` (longer reading line for block editors).</action>
+ <reason>Pricing, branding, and homepage section lists are multi-column / wide UI — they need horizontal room, not a prose-style max width.</reason>
+</decision>
+
+## 2026-08-01 (admin-editable popup teaser rates)
+
+<decision>
+ <category>CRO</category>
+ <context>Homepage Instant Valuation low/high $/unit rates and the Maintain-vs-Projects ratio were hard-coded in the layout Blade, so owners could not tune the sticker price without a developer.</context>
+ <action>Add three `pricing` settings — `estimate_teaser_low_per_unit`, `estimate_teaser_high_per_unit`, `estimate_teaser_maintain_multiplier` — edited under Admin → Estimator & Pricing → “Homepage popup teaser”. Layout modal reads them via `setting()` (defaults 0.85 / 1.45 / 0.62). Seed the same defaults in all eight niche packs. Covered by `CtaPopupModalTest`.</action>
+ <reason>Lets the business owner set the window-sticker range in admin; full estimator math stays on the real service multipliers.</reason>
+</decision>
+
+## 2026-07-31 (per-industry favicons)
+
+<decision>
+ <category>UI/UX</category>
+ <context>Every industry pack shared one hard-coded fallback favicon (an inline green "L" data-URI in `partials/seo.blade.php`), so a Summit Roof Co or ShieldBug Pest demo tab still showed the lawn mark — and the admin panel had no favicon at all. On a multi-tab sales pitch across `/demo` packs, every tab looked identical.</context>
+ <action>Shipped eight brand-matched SVG icons at `public/images/favicons/{lawn,cleaning,roofing,pressure,windows,gutters,fence,pest}.svg` — rounded-square badge in the pack's `color_primary` with a bold industry glyph in its `color_accent` (grass blades, sparkle, roof + house, spray wand, pane grid, gutter trough + droplet, pickets, shield + bug). New `niche_favicon()` helper in `app/helpers.php` returns the uploaded `favicon` branding setting when one exists, else the active pack's icon (falling back to `lawn.svg` if a pack ships without one). `partials/seo.blade.php` emits it as `rel="icon" type="image/svg+xml"` plus `/favicon.ico` as the legacy alternate, and `AdminPanelProvider` uses `->favicon(fn () => niche_favicon())`. Branding page helper text now says an empty upload falls back to the industry icon. Covered by `NichePackTest`.</action>
+ <reason>Icons live as static files under `public/`, not as seeded uploads, so switching packs needs no storage copy, no reseed, and no `storage:link` dependency — the tab icon follows `active_niche` instantly, while an uploaded client favicon still wins for real installs.</reason>
+</decision>
+
+## 2026-08-01 (invoice date-range search)
+
+<decision>
+ <category>UI/UX</category>
+ <context>Staff had no way to answer "which invoices went out today / this week / between these two dates" — the Invoices list only offered a status dropdown and a free-text search on invoice number and client name. The original request was for the page to open showing only today's invoices, with From/To as plain text inputs, plus a new "invoice type" dropdown next to them.</context>
+ <action>Added a `Filter::make('issue_date')` range filter (`issued_from` / `issued_until`) to `InvoicesTable`, laid out on one row beside the existing status filter via `filtersFormColumns(3)` (range spans 2 of 3 columns). Added `ListInvoices::getTabs()` presets — All / Today / This Week / This Month / Overdue — each with a live count badge. Renamed the `issue_date` column label from "Issued" to "Invoice Date". Covered by `InvoiceListFilterTest`.</action>
+ <reason>Three deliberate departures from the request. (1) **All is the default tab, not Today** — this business does not invoice every day, so a Today-first page would open empty on a quiet day and read as broken or as data loss, especially in a sales demo; Today is still one click. (2) **Date pickers, not text inputs** — typed dates are ambiguous between DD/MM and MM/DD, and a misread date fails silently as an empty result set with nothing to explain it; the picker still allows typing, so nothing is lost. From/To are cross-bounded (`maxDate`/`minDate`) so an inverted range cannot be entered at all. (3) **No new "invoice type" column** — confirmed with the owner that "type" meant the existing Draft/Sent/Paid/Overdue/Cancelled status, so status was moved beside the dates instead of adding a redundant field and migration. Filters are independent and AND-ed, so status alone, dates alone, or both together all work.</reason>
 </decision>
