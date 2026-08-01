@@ -9,3 +9,6 @@
 - Fixed F-01–F-08 functional bugs: Lead referral fillable, homepage publish guard, proposal decline guard, booking slot validation + lock, ReservedPageSlugs, BookingMatrix cursor copy; see bug_history.md 2026-07-30.
 - Admin Filament theme now self-hosts Geist Sans + Geist Mono (Fontsource) and applies Figma Text/sm, Text/xs, and mono page-title styles; see decisions.md 2026-07-30 (admin figma typography).
 - Restyled public invoice page layout (flat document, notes at bottom, primary print CTA); see decisions.md 2026-07-30 (invoice public page).
+
+## 2026-08-01
+- Added `product-stages.md` (V1–V4 stage scoreboard) plus always-apply `.cursor/rules/product-stages.mdc`; see decisions.md 2026-08-01 (product stages).

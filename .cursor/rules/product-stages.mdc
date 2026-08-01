@@ -1,0 +1,40 @@
+---
+description: Keep product-stages.md current for V1–V4 demo/client/SaaS roadmap
+alwaysApply: true
+---
+
+# Product Stages Roadmap
+
+Before proposing or implementing work that touches **demos**, **client handoff / production deploy**, **trial signup**, or **SaaS provisioning**, read `product-stages.md` in the project root.
+
+## Required workflow
+
+1. **Read** `product-stages.md` when the task could move stage status (even if the user did not mention V1–V4).
+2. **Flag** which stage the work belongs to — e.g. “This is **V2** handoff hardening (S-01), not V3 trial.”
+3. **Do not** jump stages without confirmation — e.g. do not build V3 trial or V4 SaaS while V2 exit criteria are still open, unless the user explicitly prioritizes that.
+4. **Precedence:** `decisions.md` > `product-stages.md` > `suggestions.md`. Stage *intent* in `product-stages.md` is locked unless a new decision changes it.
+
+## When to update `product-stages.md` (same task)
+
+Update in the **same task** (not later) when any of these happen:
+
+- A V1 demo / model-home / showcase item finishes or regresses
+- A V2 client-install / security / handoff checklist item ships or is deferred
+- V3 trial rules or engineering (T-01+) change
+- V4 SaaS provisioning / billing / multi-tenant scope changes
+- Overall “current position” or readiness bars need a new honest % 
+
+Also:
+
+- Refresh **Last Updated** from `date +"%Y-%m-%dT%H:%M:%S%z"`
+- Append a **Changelog** row (newest first)
+- Cross-link `suggestions.md` IDs (S-xx, T-xx, D-xx) when checking exit criteria on/off
+
+## Stage cheat sheet
+
+| Stage | Where | Job |
+|-------|-------|-----|
+| V1 | Our site | Video / sales demo |
+| V2 | Their site | One-client real production |
+| V3 | Our site | Self-serve trial |
+| V4 | Their site | SaaS-provisioned production |

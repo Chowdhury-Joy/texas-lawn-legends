@@ -287,3 +287,39 @@
  <action>Added shared `Database\Seeders\Niches\Concerns\SeedsDemoOps` trait, called from all eight niche `SampleProjectSeeder`s. Each model home now seeds one crew (assigned to the sample project), one sent proposal, one sent invoice with line items, two equipment rows, and two to three time entries. Amounts derive from the pack's existing `contract_value` (proposal total and invoice total both equal it); time entries use a per-niche labour rate capped so labour stays roughly a third of contract and no shift exceeds ~8 hours. Because time entries populate `labor_cost`, the helper also sets `material_cost` from a per-niche `material_share` — otherwise the projects table would report a ~90% profit margin on the bigger jobs. Seeding is idempotent via `updateOrCreate` on stable keys. Covered by `NicheModelHomeRestoreTest` across all eight packs.</action>
  <reason>One shared helper instead of eight copies keeps the ops story consistent and cheap to extend; deriving money from `contract_value` keeps every niche's numbers believable without hard-coding amounts per pack.</reason>
 </decision>
+
+## 2026-08-01 (V2: data export Track A only)
+
+<decision>
+ <category>Business_Logic</category>
+ <context>Needed to resolve whether self-serve full data export applies to Track A (Own it), Track B (Rent it), or both.</context>
+ <action>Self-serve full data export is **Track A only** (V2 **X-01**). Track B stays “no export without Getwebfield super-admin consent.” After Track B → Track A buy-out, self-serve export applies. Updated `docs/pricing-master.md`, `product-stages.md`, and `suggestions.md`.</action>
+ <reason>Owning the product includes owning the data dump; renting keeps leverage and chargeback protection until they buy out.</reason>
+</decision>
+
+## 2026-08-01 (V2: full client data export required)
+
+<decision>
+ <category>Business_Logic</category>
+ <context>V2 client installs must let the business take their records with them (backup, leave hosting, own their CRM data) without waiting on Getwebfield.</context>
+ <action>Require a self-serve admin **full data export** as a V2 exit criterion (`product-stages.md`, suggestions **X-01**). Default direction: one download package with business records (leads, projects, invoices, proposals, CMS/catalog, settings snapshot) plus uploaded files. Exact format (CSV ZIP vs JSON) and who can click Export still TBD at build time.</action>
+ <reason>Matches “upload to their hosting / own their business” — data portability is part of a real production handoff, not a SaaS-only luxury.</reason>
+</decision>
+
+## 2026-08-01 (V2: defer estimate/portal rate limits)
+
+<decision>
+ <category>Business_Logic</category>
+ <context>V2 client-install hardening list included rate limits on `/estimate` and `/portal` (S-03/S-04).</context>
+ <action>Do not require estimate or portal rate limits for V2 exit. Mark S-03/S-04 deferred in `suggestions.md` and `product-stages.md`.</action>
+ <reason>Owner priority is low-work handoff; spam throttles are optional later, not a go-live blocker for base client installs.</reason>
+</decision>
+
+## 2026-08-01 (product stages V1–V4)
+
+<decision>
+ <category>Business_Logic</category>
+ <context>Need one clear scoreboard for demo vs client install vs trial vs SaaS so agents and humans do not mix “video showcase,” “upload to their hosting,” and “self-serve trial.”</context>
+ <action>Lock four stages in `product-stages.md`: V1 base demo (our site), V2 base client installment (their site), V3 SaaS demo/trial (our site), V4 SaaS client installment (their site). Current position: V1 nearly done, V2 next, V3 rules-only, V4 future. Agents must update that file whenever stage status or exit criteria change; enforced by `.cursor/rules/product-stages.mdc`.</action>
+ <reason>Separates sales-demo work from production handoff and from later SaaS, matching the low-work client-upload business model before trial/multi-tenant build.</reason>
+</decision>

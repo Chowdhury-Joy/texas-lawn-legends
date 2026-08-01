@@ -1,5 +1,5 @@
 # Suggestions Backlog
-Last Updated: 2026-07-30T11:58:00+06:00
+Last Updated: 2026-08-01T18:04:11+0600
 
 > **Purpose:** Track known bugs, security hardening, and product improvements that are **not** decided or scheduled yet.  
 > **Not the same as `decisions.md`** — nothing here is locked in. When an item is approved and implemented, move the outcome to `decisions.md` / `bug_history.md` and remove or mark it done here.
@@ -17,8 +17,9 @@ Last Updated: 2026-07-30T11:58:00+06:00
 
 ## Current stage
 
-- **Environment:** Local prototype only — not production yet.
-- **Implication:** Most security items are **documented for launch**, not urgent today. Functional bugs still matter when testing flows locally.
+- **Stage scoreboard:** See [`product-stages.md`](product-stages.md) (V1 demo → V2 client install → V3 trial → V4 SaaS). Keep that file current when stage work ships.
+- **Environment:** Local prototype / V1 demo — not a paying client production install yet (V2).
+- **Implication:** Most security items are **documented for V2 launch**, not urgent for local V1 demos. Functional bugs still matter when testing flows locally.
 
 ---
 
@@ -179,6 +180,14 @@ Cache now uses the file driver, but session, queue, and app data still share one
 
 ---
 
+## V2 client features (required for base install)
+
+| ID | Status | Notes |
+|----|--------|-------|
+| X-01 | **Required / not built · Track A only** | **Full data export** — Track A admin can download all operational + content data (leads, projects, milestones, photos + files, proposals, invoices, services, pages, settings snapshot, crews, etc.) without asking Getwebfield. Format TBD (likely ZIP of CSVs + uploads). **Track B:** no self-serve export — super-admin consent only; after buy-out to Track A, self-serve applies. Documented in `docs/pricing-master.md`. |
+
+---
+
 ## Defer until production (security & hardening)
 
 Safe to ignore on solo local dev; **launch checklist** for public client sites.
@@ -187,8 +196,8 @@ Safe to ignore on solo local dev; **launch checklist** for public client sites.
 |----|--------|---------------|
 | S-01 | **Default admin seeder** — `admin@admin.com` / `pass` | Remove from seeder; require `make:filament-user` or random one-time password |
 | S-02 | **Guessable portal codes** — seeder patterns like `LEGENDS-yymd`, `MEMBER-MONTH` | Random codes per install; document in client handoff only |
-| S-03 | **No rate limit on portal unlock** | Throttle Livewire unlock (e.g. 5 attempts / 15 min / IP) |
-| S-04 | **No rate limit on estimate funnel** | Throttle `persistLead` / Livewire steps; optional honeypot or CAPTCHA on contact step |
+| S-03 | **Deferred (not V2)** | No rate limit on portal unlock — owner: not needed for base client install |
+| S-04 | **Deferred (not V2)** | No rate limit on estimate funnel — owner: not needed for base client install |
 | S-05 | **Lead UUID hijacking** — public Livewire `leadUuid` can overwrite another lead | Store lead id in signed session; authorize updates |
 | S-06 | **Token URL = full access** — dashboard, proposal, invoice links are secret-URL auth only | Optional PIN/email step; shorter proposal expiry; `Referrer-Policy: no-referrer` on sensitive pages |
 | S-07 | **Public demo load/reset when hub enabled** — unauthenticated POST can wipe catalog data | Admin-only or dedicated demo server; never on client production (see **D-02**) |
@@ -227,6 +236,10 @@ Safe to ignore on solo local dev; **launch checklist** for public client sites.
 
 | Date | Change |
 |------|--------|
+| 2026-08-01 | X-01 data export locked **Track A only**; Track B remains consent-only until buy-out |
+| 2026-08-01 | V2 **X-01** full data export required; flagged conflict with Track B pricing “no export” line |
+| 2026-08-01 | S-03/S-04 rate limits deferred — not required for V2 (owner) |
+| 2026-08-01 | Linked Current stage to `product-stages.md` (V1–V4 scoreboard) |
 | 2026-07-30 | Initial backlog from security/bug audit + demo reset product discussion |
 | 2026-07-30 | Reframed demo reset as per-niche model-home snapshot restore for sales calls; added D-01 (full restore scope) and D-02 (demo-install gating) |
 | 2026-07-30 | Implemented D-01 in `NicheLoader` — full model-home restore + tests; UI renamed to Restore model home |

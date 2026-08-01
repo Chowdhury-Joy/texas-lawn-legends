@@ -61,6 +61,8 @@ Note: the 40% "handover" milestone is a **payment-schedule label only** — it d
 
 **All plans non-refundable once the site is built.**
 
+**Data export:** Track A admins get **self-serve full data export** (download their leads, jobs, invoices, content, uploads, etc.) — required for V2 client installs. See `product-stages.md` / suggestions **X-01**.
+
 ---
 
 ## 4. Track B — Rent It (Monthly Subscription)
@@ -80,7 +82,7 @@ Note: the 40% "handover" milestone is a **payment-schedule label only** — it d
 
 **Dispute/chargeback filed:** access is **suspended immediately** on filing (not waiting for the dispute to resolve). Client data is retained either way — a dispute blocks access, it does not delete anything.
 
-**Data export:** not available at any time without super-admin consent.
+**Data export:** **not** self-serve on Track B — not available at any time without Getwebfield super-admin consent. After buy-out to Track A (§5), self-serve export applies like any Track A client.
 
 **Redesigns / new features:** always billed separately, never included in the monthly fee.
 
