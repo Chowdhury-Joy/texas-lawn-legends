@@ -452,3 +452,12 @@
  <action>Set `MilestonesTable` filters to `FiltersLayout::AboveContent` with `filtersFormColumns(2)` and `deferFilters(false)`, so both dropdowns sit above the table and apply as soon as they change.</action>
  <reason>Two filters do not need a modal. Showing them up front matches how staff actually use this screen — pick a project or status first, then scan the rows.</reason>
 </decision>
+
+## 2026-08-02 (admin light mode shell)
+
+<decision>
+ <category>UI/UX</category>
+ <context>Filament's theme switcher offers light mode, but the custom admin shell hardcoded dark Figma colors on `:root` — so light mode kept a charcoal sidebar and near-black page background while Filament rendered light-mode nav labels (dark gray text), producing unreadable contrast.</context>
+ <action>Split shell CSS variables: default `:root` uses light surfaces (white sidebar/header, gray-50 content, dark ink for logo/title/back); `html.dark` keeps the Lux charcoal shell. Logo, page title, subheading, back arrow, and danger-zone border all read from mode-aware `--fi-shell-*` tokens.</action>
+ <reason>Respects Filament's built-in light/dark toggle without rewriting every component — dark mode keeps the Figma look; light mode matches Filament's native surfaces so nav, tables, and forms stay legible.</reason>
+</decision>

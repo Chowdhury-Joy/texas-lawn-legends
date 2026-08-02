@@ -16,11 +16,19 @@
  */
 
 :root {
-    --fi-shell-sidebar-bg: #171717;
-    --fi-shell-header-bg: #171717;
-    --fi-shell-header-stroke: #20252d;
-    --fi-shell-sidebar-stroke: #20272d;
-    --fi-shell-content-bg: #0d0d0d;
+    /* Light shell — Filament default surfaces + content tokens */
+    --fi-shell-sidebar-bg: #ffffff;
+    --fi-shell-header-bg: #ffffff;
+    --fi-shell-header-stroke: #e5e7eb;
+    --fi-shell-sidebar-stroke: #e5e7eb;
+    --fi-shell-content-bg: #f9fafb;
+    --fi-shell-logo-color: #1f2937;
+    --fi-shell-heading-color: #1f2937;
+    --fi-shell-subheading-color: #6b7280;
+    --fi-shell-back-color: rgb(75 85 99 / 0.85);
+    --fi-shell-back-hover-bg: rgb(17 24 39 / 0.06);
+    --fi-shell-back-hover-color: #111827;
+    --fi-shell-danger-zone-border: #e5e7eb;
 
     /* Fonts — Figma Geist / Geist Mono */
     --fi-font-sans: 'Geist Sans', 'Geist', ui-sans-serif, system-ui, sans-serif;
@@ -60,6 +68,22 @@
     }
 }
 
+/* Dark shell — Lux Figma frame (only when Filament theme = dark) */
+html.dark {
+    --fi-shell-sidebar-bg: #171717;
+    --fi-shell-header-bg: #171717;
+    --fi-shell-header-stroke: #20252d;
+    --fi-shell-sidebar-stroke: #20272d;
+    --fi-shell-content-bg: #0d0d0d;
+    --fi-shell-logo-color: #ffffff;
+    --fi-shell-heading-color: #ffffff;
+    --fi-shell-subheading-color: rgb(255 255 255 / 0.5);
+    --fi-shell-back-color: rgb(255 255 255 / 0.7);
+    --fi-shell-back-hover-bg: rgb(255 255 255 / 0.1);
+    --fi-shell-back-hover-color: #ffffff;
+    --fi-shell-danger-zone-border: #20252d;
+}
+
 /* ---- Base admin type (replace Filament Inter defaults) ---- */
 .fi-body {
     background-color: var(--fi-shell-content-bg) !important;
@@ -91,7 +115,7 @@
     font-weight: 600 !important;
     line-height: var(--fi-text-title-leading) !important;
     letter-spacing: var(--fi-text-title-tracking) !important;
-    color: #ffffff !important;
+    color: var(--fi-shell-logo-color) !important;
 }
 
 /* Sidebar nav — Text/sm */
@@ -113,7 +137,7 @@
     @apply gap-y-0 py-0;
 }
 
-/* Full-width dark header bar — edge to edge of the main column. */
+/* Full-width content header bar — edge to edge of the main column. */
 .fi-header.fi-content-shell-header {
     @apply m-0 flex w-full min-h-16 flex-row items-center justify-between gap-4 py-0 sm:flex-row sm:items-center;
     padding-inline: var(--fi-shell-inline);
@@ -130,7 +154,13 @@
 }
 
 .fi-page-header-back {
-    @apply inline-flex shrink-0 items-center justify-center rounded-md p-1 text-white/70 transition hover:bg-white/10 hover:text-white;
+    @apply inline-flex shrink-0 items-center justify-center rounded-md p-1 transition;
+    color: var(--fi-shell-back-color);
+}
+
+.fi-page-header-back:hover {
+    background-color: var(--fi-shell-back-hover-bg);
+    color: var(--fi-shell-back-hover-color);
 }
 
 .fi-page-header-back-icon {
@@ -146,7 +176,7 @@
     line-height: var(--fi-text-title-leading);
     letter-spacing: var(--fi-text-title-tracking);
     text-transform: uppercase;
-    color: #ffffff;
+    color: var(--fi-shell-heading-color);
 }
 
 .fi-content-shell-header .fi-header-subheading {
@@ -157,7 +187,7 @@
     line-height: var(--fi-text-xs-leading);
     letter-spacing: var(--fi-text-xs-tracking);
     text-transform: none;
-    color: rgb(255 255 255 / 0.5);
+    color: var(--fi-shell-subheading-color);
 }
 
 .fi-content-shell-header .fi-header-actions-ctn {
@@ -183,7 +213,9 @@
 /* Danger zone: Delete lives in the form footer, not the header main CTA. */
 .fi-form-actions:has(.fi-color-danger),
 .fi-sc-actions:has(.fi-color-danger) {
-    @apply mt-8 border-t border-[#20252d] pt-6;
+    margin-top: 2rem;
+    border-top: 1px solid var(--fi-shell-danger-zone-border);
+    padding-top: 1.5rem;
 }
 
 /*

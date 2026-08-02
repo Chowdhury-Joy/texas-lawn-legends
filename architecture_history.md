@@ -28,3 +28,6 @@
 - Client project dashboard rebuilt as a milestone page: unified progress block, "Happening now / Then" callout, vertical timeline rail, `completed_at` column on milestones (auto-stamped by the model), per-niche `timeline_heading` label, and the referral banner moved below the timeline; see decisions.md / bug_history.md 2026-08-01 (client dashboard milestone redesign).
 - Added self-serve full data export (X-01): `DataExportService` (ZIP of one CSV per business table + `uploads/` + manifest + README), Admin → Data Export page, Admin-only `settings.data_export` permission key, and `LicenseTrack` / `config/license.php` / `APP_LICENSE_TRACK` gating it to Track A; see decisions.md 2026-08-01 (X-01 full data export).
 - Added scoped resource exports: `DataExportService::generateScoped()` + `ExportsResourceData` concern on Operations and Site Content list pages (CSV or small ZIP, respects active tab/filters/search); Track A + resource permission; see decisions.md 2026-08-01 (scoped resource exports).
+
+## 2026-08-02
+- Admin Filament shell colors are now mode-aware: light mode uses white/gray-50 surfaces with dark ink; dark mode keeps the Lux Figma charcoal shell via `html.dark` CSS vars; see decisions.md 2026-08-02 (admin light mode shell).
