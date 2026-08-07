@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Milestones;
 
+use App\Filament\Concerns\RoleRestricted;
 use App\Filament\Resources\Milestones\Pages\CreateMilestone;
 use App\Filament\Resources\Milestones\Pages\EditMilestone;
 use App\Filament\Resources\Milestones\Pages\ListMilestones;
@@ -16,11 +17,13 @@ use Filament\Tables\Table;
 
 class MilestoneResource extends Resource
 {
+    use RoleRestricted;
+
     protected static ?string $model = Milestone::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedFlag;
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Sales & Delivery';
+    protected static string|\UnitEnum|null $navigationGroup = 'Operations';
 
     protected static ?int $navigationSort = 3;
 

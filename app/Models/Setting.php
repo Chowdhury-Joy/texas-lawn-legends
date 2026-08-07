@@ -2,53 +2,109 @@
 
 namespace App\Models;
 
+use App\Models\Traits\BelongsToTrialWorkspace;
+use App\Support\Trial\TrialWorkspaceContext;
+use Database\Factories\SettingFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 
 class Setting extends Model
 {
-    /** @use HasFactory<\Database\Factories\SettingFactory> */
+    /** @use HasFactory<SettingFactory> */
     use HasFactory;
+
+    use BelongsToTrialWorkspace;
 
     protected $fillable = [
         'key',
         'value',
         'type',
         'group',
+        'trial_workspace_id',
     ];
 
     /**
-     * Resolve a setting value by key, casting it according to its declared type.
+     * Per-request memo of resolved payloads, keyed by cache key.
+     *
+     * @var array<string, array{hit: bool, value: mixed}>
      */
+    private static array $requestCache = [];
+
     public static function get(string $key, mixed $default = null): mixed
     {
-        // Cache the resolved (casted) value rather than the Eloquent model —
-        // caching a full model instance breaks on unserialize across requests.
-        $value = Cache::rememberForever("setting.{$key}", function () use ($key) {
-            $setting = static::query()->where('key', $key)->first();
+        $payload = static::$requestCache[static::cacheKey($key)] ??= static::resolvePayload($key);
 
-            return $setting ? ['value' => $setting->castedValue()] : null;
-        });
-
-        return $value === null ? $default : $value['value'];
+        return $payload['hit'] ? $payload['value'] : $default;
     }
 
     /**
-     * Persist a setting value, encoding arrays as JSON, and bust the cache.
+     * @return array{hit: bool, value: mixed}
      */
+    private static function resolvePayload(string $key): array
+    {
+        $cacheKey = static::cacheKey($key);
+
+        $payload = Cache::rememberForever($cacheKey, function () use ($key) {
+            $query = static::query()->where('key', $key);
+            $setting = $query->first();
+
+            return $setting
+                ? ['hit' => true, 'value' => $setting->castedValue()]
+                : ['hit' => false, 'value' => null];
+        });
+
+        if (! is_array($payload) || ! array_key_exists('hit', $payload)) {
+            $payload = is_array($payload) && array_key_exists('value', $payload)
+                ? ['hit' => true, 'value' => $payload['value']]
+                : ['hit' => false, 'value' => null];
+
+            Cache::forever($cacheKey, $payload);
+        }
+
+        return $payload;
+    }
+
     public static function set(string $key, mixed $value, string $type = 'string', string $group = 'general'): self
     {
         $encoded = in_array($type, ['json', 'array'], true) ? json_encode($value) : (string) $value;
 
+        $attributes = ['key' => $key];
+        $workspaceId = TrialWorkspaceContext::id();
+
+        if ($workspaceId !== null) {
+            $attributes['trial_workspace_id'] = $workspaceId;
+        }
+
         $setting = static::query()->updateOrCreate(
-            ['key' => $key],
+            $attributes,
             ['value' => $encoded, 'type' => $type, 'group' => $group],
         );
 
-        Cache::forget("setting.{$key}");
+        static::forget($key);
 
         return $setting;
+    }
+
+    public static function forget(string $key): void
+    {
+        unset(static::$requestCache[static::cacheKey($key)]);
+
+        Cache::forget(static::cacheKey($key));
+    }
+
+    public static function flushRequestCache(): void
+    {
+        static::$requestCache = [];
+    }
+
+    private static function cacheKey(string $key): string
+    {
+        $workspaceId = TrialWorkspaceContext::id();
+
+        return $workspaceId !== null
+            ? "setting.ws{$workspaceId}.{$key}"
+            : "setting.global.{$key}";
     }
 
     public function castedValue(): mixed
@@ -64,7 +120,7 @@ class Setting extends Model
 
     protected static function booted(): void
     {
-        static::saved(fn (Setting $setting) => Cache::forget("setting.{$setting->key}"));
-        static::deleted(fn (Setting $setting) => Cache::forget("setting.{$setting->key}"));
+        static::saved(fn (Setting $setting) => static::forget($setting->key));
+        static::deleted(fn (Setting $setting) => static::forget($setting->key));
     }
 }

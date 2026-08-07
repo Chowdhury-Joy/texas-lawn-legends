@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Leads;
 
+use App\Filament\Concerns\RoleRestricted;
 use App\Filament\Resources\Leads\Pages\CreateLead;
 use App\Filament\Resources\Leads\Pages\EditLead;
 use App\Filament\Resources\Leads\Pages\ListLeads;
@@ -13,14 +14,18 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class LeadResource extends Resource
 {
+    use RoleRestricted;
+
     protected static ?string $model = Lead::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedInboxArrowDown;
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Sales & Delivery';
+    protected static string|\UnitEnum|null $navigationGroup = 'Operations';
 
     protected static ?int $navigationSort = 1;
 
@@ -29,6 +34,14 @@ class LeadResource extends Resource
     public static function getNavigationBadge(): ?string
     {
         return (string) static::getModel()::query()->where('status', 'partial')->count() ?: null;
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->withoutGlobalScopes([
+                SoftDeletingScope::class,
+            ]);
     }
 
     public static function form(Schema $schema): Schema
@@ -44,7 +57,7 @@ class LeadResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\ActivitiesRelationManager::class,
         ];
     }
 

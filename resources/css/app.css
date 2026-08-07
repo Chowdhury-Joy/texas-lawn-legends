@@ -1,13 +1,38 @@
 @import 'tailwindcss';
+@import './design-tokens.css';
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 @source '../views';
 
+/* ---------------------------------------------------------------------------
+   Page-builder responsive layout safelist.
+
+   PageBlocks::layoutClasses() assembles these class names at runtime from
+   editor-chosen values, so they never appear as literals in any scanned file
+   and Tailwind would otherwise omit them from the build. The sets below must
+   stay in sync with the Select options in PageBlocks::layout() — anything an
+   editor can pick has to be listed here or it silently renders as a no-op.
+   --------------------------------------------------------------------------- */
+@source inline("{,tab:,desk:}{flex,grid}");
+@source inline("{,tab:,desk:}flex-{row,col,wrap,nowrap}");
+@source inline("{,tab:,desk:}grid-cols-{1,2,3,4,5,6}");
+/* The "auto" columns option — kept as separate literals since the value
+   itself contains commas, which would collide with the brace-expansion
+   syntax above. */
+@source inline("grid-cols-[repeat(auto-fit,minmax(200px,1fr))]");
+@source inline("tab:grid-cols-[repeat(auto-fit,minmax(200px,1fr))]");
+@source inline("desk:grid-cols-[repeat(auto-fit,minmax(200px,1fr))]");
+@source inline("{,tab:,desk:}gap-{2,4,6,8,10,12}");
+@source inline("{,tab:,desk:}justify-{start,center,end,between}");
+@source inline("{,tab:,desk:}items-{start,center,end}");
+@source inline("desk:{grid-cols-12,col-span-{5,7},items-center,mr-0}");
+
 @theme {
-    --font-sans: 'Montserrat', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
-    --font-display: 'Montserrat', ui-sans-serif, system-ui, sans-serif;
+    --font-display: 'Inter', ui-sans-serif, system-ui, sans-serif;
+    --font-mono: 'Inter', ui-monospace, monospace;
 
     /* Brand tokens — mapped from the Rugged Professional palette */
     --color-brand-forest: #1b4332;
@@ -17,9 +42,116 @@
     --color-brand-yellow: #facc15;
     --color-brand-orange: #ea580c;
     --color-brand-paper: #f8fafc;
+
+    /* Auto ink pairs (overridden inline from CMS backgrounds in the layout) */
+    --color-on-primary: #f2f2f2;
+    --color-on-primary-light: #f2f2f2;
+    --color-on-accent: #1a1a1a;
+    --color-on-accent-inverse: #f2f2f2;
+    --color-accent-ink: #facc15;
+    --color-brand-accent: #facc15;
+    --color-brand-on-accent: #1a1a1a;
+    --color-brand-on-primary: #f2f2f2;
+    --color-brand-on-primary-light: #f2f2f2;
+
+    /* Section rhythm — Figma Spacing/Section/Vertical (mobile 48 → desktop 96) */
+    --spacing-section: var(--space-section-y);
+
+    /* Device tiers from the Figma Token_device table: mobile 0, tablet 640,
+       desktop 1200. Public sections and the page-builder layout picker use
+       these two variants so type, spacing, and columns all flip together.
+       (Tailwind's own sm/md/lg still exist for one-off chrome tweaks.) */
+    --breakpoint-tab: 640px;
+    --breakpoint-desk: 1200px;
 }
 
-/* Hard block-shadow helpers referenced inline across sections */
+@utility py-section {
+    padding-top: var(--spacing-section);
+    padding-bottom: var(--spacing-section);
+}
+
+/* Card hover/focus lift for the soft themes (no-op under Bold/brutalist,
+   which already has its own pressed-shadow interaction). */
+html:not(.theme-bold) .box-brutal {
+    transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+    margin-right: 0;
+}
+html:not(.theme-bold) .box-brutal:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(15, 23, 42, 0.12);
+}
+/* The mr-[8px]/mr-[6px] offsets only make sense under Bold (hard shadow room). */
+html:not(.theme-bold) [class*="mr-[8px]"],
+html:not(.theme-bold) [class*="mr-[6px]"] {
+    margin-right: 0;
+}
+
+/* Subtle scroll-reveal (toggled by IntersectionObserver in app.js). Driven by
+   a single transition — no parallel @keyframes animation, since running both
+   on the same opacity/transform properties at once fights for control and
+   reads as janky rather than smooth. The cubic-bezier is an ease-out curve
+   (fast start, gentle settle) which feels smoother for elements arriving
+   into view than the linear-ish default `ease`. */
+[data-reveal] {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity .65s cubic-bezier(0.16, 1, 0.3, 1), transform .65s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: opacity, transform;
+}
+[data-reveal].is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+@media (prefers-reduced-motion: reduce) {
+    [data-reveal] {
+        opacity: 1;
+        transform: none;
+        transition: none;
+    }
+}
+
+/* Staggered child reveal — for cards/items inside a section that should
+   animate in one after another rather than as a single block. Each item is
+   observed on its own by the same IntersectionObserver in app.js (not just
+   the section wrapping it), so a card's fade only starts once *that card*
+   is actually in the viewport — not as soon as the top of a tall section
+   first pokes into view. `style="--stagger-i: N"` (the item's index within
+   its group) staggers items that end up entering the viewport together.
+
+   Most staggered items are also `.box-brutal` cards, which have their own
+   `transition` shorthand (transform/box-shadow/border-color) for their hover
+   lift. `transition` is a single property — whichever rule wins specificity
+   wins it *entirely*, silently dropping opacity from the list and resetting
+   the delay. The `html:not(.theme-bold) [data-stagger]:not(.is-visible)`
+   selector below matches box-brutal's own specificity so the reveal timing
+   actually applies; it's scoped to `:not(.is-visible)` so once revealed, the
+   rule stops matching and box-brutal's own quick hover transition takes back
+   over instead of staying hijacked at the slower reveal timing. */
+[data-stagger] {
+    opacity: 0;
+    transform: translateY(18px);
+    will-change: opacity, transform;
+}
+[data-stagger]:not(.is-visible),
+html:not(.theme-bold) [data-stagger]:not(.is-visible) {
+    transition: opacity .65s cubic-bezier(0.16, 1, 0.3, 1), transform .65s cubic-bezier(0.16, 1, 0.3, 1);
+    transition-delay: calc(min(var(--stagger-i, 0), 10) * 100ms);
+}
+[data-stagger].is-visible {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 0s !important;
+}
+@media (prefers-reduced-motion: reduce) {
+    [data-stagger] {
+        opacity: 1;
+        transform: none;
+        transition: none;
+        transition-delay: 0s;
+    }
+}
+
+/* Hard block-shadow helpers — only applied under the Bold theme */
 @utility shadow-brutal {
     box-shadow: 8px 8px 0px 0px rgba(15, 23, 42, 1);
 }
@@ -34,20 +166,202 @@
     display: none !important;
 }
 
+/* Auto-scrolling trust-bar marquee (duplicated badges loop seamlessly). */
+@keyframes marquee-scroll {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+}
+.marquee-track {
+    animation: marquee-scroll 28s linear infinite;
+}
+.marquee-track:hover {
+    animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+    .marquee-track {
+        animation: none;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+}
+
 @layer components {
+    /* Clean theme (default): flat — no shadows, no heavy borders.
+       Bold theme opts into the original neo-brutalist look. */
+
     /* Hard-edged neo-brutalist block button with pressed hover state */
     .btn-brutal {
-        @apply inline-flex items-center justify-center gap-2 border-2 border-slate-950 font-black uppercase tracking-wide transition-all;
+        @apply inline-flex items-center justify-center gap-2 transition-all;
+        font-family: var(--font-body);
+        font-weight: var(--font-weight-heading);
+        font-size: 14px;
+        line-height: 100%;
+        letter-spacing: 0;
+        text-transform: uppercase;
+    }
+    @media (min-width: 640px) {
+        .btn-brutal {
+            font-size: 15px;
+        }
+    }
+    .theme-bold .btn-brutal {
+        @apply border-2 border-slate-950;
         box-shadow: 4px 4px 0px 0px rgba(15, 23, 42, 1);
     }
-    .btn-brutal:hover {
+    .theme-bold .btn-brutal:hover {
         transform: translate(2px, 2px);
         box-shadow: 2px 2px 0px 0px rgba(15, 23, 42, 1);
     }
 
     /* Structural container: thick border + hard unblurred drop shadow */
     .box-brutal {
-        @apply border-4 border-slate-950 bg-white;
+        @apply bg-white;
+    }
+    .theme-bold .box-brutal {
+        @apply border-4 border-slate-950;
         box-shadow: 8px 8px 0px 0px rgba(15, 23, 42, 1);
     }
+
+    /* Bold-only shadows referenced inline via @apply utilities */
+    .theme-bold .shadow-brutal { box-shadow: 8px 8px 0px 0px rgba(15, 23, 42, 1); }
+    .theme-bold .shadow-brutal-sm { box-shadow: 4px 4px 0px 0px rgba(15, 23, 42, 1); }
+    .theme-bold .shadow-brutal-forest { box-shadow: 6px 6px 0px 0px rgba(27, 67, 50, 1); }
+}
+
+/* Brand surface inks — unlayered so they always win over soft-theme resets
+   and do not depend on Tailwind generating utilities from @theme tokens. */
+.btn-primary {
+    background-color: var(--color-yellow-400);
+    color: var(--color-on-accent);
+}
+.btn-primary:hover {
+    filter: brightness(0.95);
+}
+.chip-accent {
+    background-color: var(--color-yellow-400);
+    color: var(--color-on-accent);
+}
+/* Inverse control on an accent band: flipped B/W fill + B/W label (never accent-as-text) */
+.chip-on-accent {
+    background-color: var(--color-on-accent);
+    color: var(--color-on-accent-inverse);
+}
+.text-on-accent { color: var(--color-on-accent); }
+.text-on-primary { color: var(--color-on-primary); }
+.text-on-primary-light { color: var(--color-on-primary-light); }
+.text-on-primary-light\/80 { color: color-mix(in srgb, var(--color-on-primary-light) 80%, transparent); }
+.text-on-accent\/80 { color: color-mix(in srgb, var(--color-on-accent) 80%, transparent); }
+.text-accent-ink { color: var(--color-accent-ink); }
+.hover\:text-on-accent:hover { color: var(--color-on-accent); }
+
+/* Soft themes (everything except Bold): flatten the heavy structural borders
+   and neutralize hard box-shadows that the neo-brutalist look relies on.
+   Done globally so individual views don't need theme guards. */
+html:not(.theme-bold) [class*="border-slate-950"] {
+    border-color: rgb(226 232 240); /* slate-200 */
+    border-width: 1px;
+}
+html:not(.theme-bold) [class*="border-4"] {
+    border-width: 1px;
+}
+html:not(.theme-bold) [class*="border-2"] {
+    border-width: 1px;
+}
+html:not(.theme-bold) [style*="box-shadow"] {
+    box-shadow: none !important;
+}
+html:not(.theme-bold) .shadow-brutal,
+html:not(.theme-bold) .shadow-brutal-sm,
+html:not(.theme-bold) .shadow-brutal-forest {
+    box-shadow: none;
+}
+/* Keep section dividers as subtle hairlines rather than 4px slabs */
+html:not(.theme-bold) header,
+html:not(.theme-bold) footer,
+html:not(.theme-bold) section[class*="border-t-4"],
+html:not(.theme-bold) section[class*="border-b-4"],
+html:not(.theme-bold) section[class*="border-y-4"] {
+    border-color: rgb(226 232 240); /* slate-200 */
+    border-top-width: 1px;
+    border-bottom-width: 1px;
+}
+
+/* ============================ THEME VARIANTS ============================ */
+
+/* Minimal: flat, but with soft modern elevation on cards/buttons. */
+.theme-minimal .box-brutal {
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.1), 0 1px 2px rgba(15, 23, 42, 0.06);
+}
+.theme-minimal .btn-brutal {
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.12);
+}
+
+/* Rounded: pill buttons + generous radii on containers and images. */
+.theme-rounded .btn-brutal {
+    border-radius: 9999px;
+}
+.theme-rounded .box-brutal {
+    border-radius: 1.5rem;
+}
+.theme-rounded .shadow-brutal-forest {
+    box-shadow: none;
+}
+.theme-rounded img.box-brutal,
+.theme-rounded figure.box-brutal {
+    border-radius: 1.5rem;
+}
+.theme-rounded header a.border-2,
+.theme-rounded .cta-banner a {
+    border-radius: 9999px;
+}
+
+/* Retro: 70s earthy throwback — warm paper, burnt orange + mustard,
+   chunky rounded borders, subtle double-shadow.
+   Remaps the actual utility color vars (the layout sets these inline from
+   CMS settings, so we need higher specificity here via html.theme-retro). */
+html.theme-retro {
+    --color-emerald-900: #2f5d3a;
+    --color-emerald-800: #3f7a4d;
+    --color-yellow-400: #e8a33d;
+    --color-slate-800: #5b4636;
+    --color-slate-950: #3a2c1e;
+    --color-brand-forest: #2f5d3a;
+    --color-brand-yellow: #e8a33d;
+    --color-brand-orange: #c2562b;
+    --color-brand-paper: #f4ead5;
+    --color-brand-slate: #5b4636;
+}
+.theme-retro body {
+    background-color: #f4ead5;
+    color: #3a2c1e;
+}
+.theme-retro .box-brutal {
+    background-color: #fbf3e2;
+    border: 3px solid #3a2c1e;
+    border-radius: 0.75rem;
+    box-shadow: 5px 5px 0px 0px #c2562b;
+}
+.theme-retro .btn-brutal {
+    border: 3px solid #3a2c1e;
+    border-radius: 0.75rem;
+    background-color: #e8a33d;
+    color: #3a2c1e;
+    box-shadow: 3px 3px 0px 0px #3a2c1e;
+}
+.theme-retro .btn-brutal:hover {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0px 0px #3a2c1e;
+}
+.theme-retro .cta-banner {
+    background-color: #e8a33d;
+    color: #3a2c1e;
+}
+.theme-retro header {
+    background-color: #fbf3e2;
+    border-color: #3a2c1e;
+}
+.theme-retro footer {
+    background-color: #2f5d3a;
+    color: #f4ead5;
+    border-color: #3a2c1e;
 }

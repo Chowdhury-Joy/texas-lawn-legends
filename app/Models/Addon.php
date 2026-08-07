@@ -2,14 +2,18 @@
 
 namespace App\Models;
 
+use App\Models\Traits\BelongsToTrialWorkspace;
+
+use Database\Factories\AddonFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+
 class Addon extends Model
 {
-    /** @use HasFactory<\Database\Factories\AddonFactory> */
-    use HasFactory;
+    /** @use HasFactory<AddonFactory> */
+    use BelongsToTrialWorkspace, HasFactory;
 
     protected $fillable = [
         'title',

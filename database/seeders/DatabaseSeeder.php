@@ -2,7 +2,9 @@
 
 namespace Database\Seeders;
 
+use App\Enums\UserRole;
 use App\Models\User;
+use App\Support\Niche\NicheResolver;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -14,20 +16,25 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         User::query()->updateOrCreate(
-            ['email' => 'admin@texaslawnlegends.com'],
+            ['email' => 'admin@admin.com'],
             [
                 'name' => 'TLL Administrator',
-                'password' => Hash::make('password'),
+                'password' => Hash::make('pass'),
+                'role' => UserRole::Admin,
             ],
         );
 
         $this->call([
             SettingsSeeder::class,
-            ServicesSeeder::class,
-            TestimonialsSeeder::class,
-            AddonsSeeder::class,
+        ]);
+
+        // Industry starter kit for the active APP_NICHE pack.
+        foreach (NicheResolver::active()->contentSeeders() as $seeder) {
+            $this->call([$seeder]);
+        }
+
+        $this->call([
             AccessCodesSeeder::class,
-            SampleProjectSeeder::class,
         ]);
     }
 }

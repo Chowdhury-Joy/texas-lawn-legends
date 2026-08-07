@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Gutter cleaning &amp; installation">
+  <rect width="64" height="64" rx="14" fill="#15803d"/>
+  <path d="M11 12v10c0 8 5.5 13 13 13h16c7.5 0 13-5 13-13V12" fill="none" stroke="#86efac" stroke-width="7" stroke-linecap="round"/>
+  <path d="M32 38c4.5 6 7 9.5 7 12.2a7 7 0 1 1-14 0c0-2.7 2.5-6.2 7-12.2z" fill="#86efac"/>
+</svg>

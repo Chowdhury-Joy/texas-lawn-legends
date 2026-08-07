@@ -3,6 +3,7 @@
 namespace App\Filament\Widgets;
 
 use App\Enums\LeadStatus;
+use App\Filament\Concerns\RestrictedWidget;
 use App\Models\Lead;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -10,7 +11,7 @@ use Filament\Widgets\TableWidget;
 
 class UpcomingSiteVisits extends TableWidget
 {
-    protected static bool $isLazy = false;
+    use RestrictedWidget;
 
     protected static ?int $sort = -1;
 

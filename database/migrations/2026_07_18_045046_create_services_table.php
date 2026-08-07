@@ -16,6 +16,7 @@ return new class extends Migration
             $table->text('short_description');
             $table->longText('long_description');
             $table->string('icon');
+            $table->string('image')->nullable();
             $table->decimal('base_price_multiplier', 8, 2)->default(1.00);
             $table->boolean('is_active')->default(true);
             $table->integer('sort_order')->default(0);

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Testimonials;
 
+use App\Filament\Concerns\RoleRestricted;
 use App\Filament\Resources\Testimonials\Pages\CreateTestimonial;
 use App\Filament\Resources\Testimonials\Pages\EditTestimonial;
 use App\Filament\Resources\Testimonials\Pages\ListTestimonials;
@@ -16,13 +17,15 @@ use Filament\Tables\Table;
 
 class TestimonialResource extends Resource
 {
+    use RoleRestricted;
+
     protected static ?string $model = Testimonial::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedChatBubbleLeftRight;
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Catalog';
+    protected static string|\UnitEnum|null $navigationGroup = 'Site Content';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 4;
 
     protected static ?string $recordTitleAttribute = 'author';
 

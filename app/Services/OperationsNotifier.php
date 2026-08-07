@@ -19,6 +19,12 @@ class OperationsNotifier
     {
         Log::info('[OPERATIONS ALERT] '.$subject, $payload);
 
+        if (\App\Support\Niche\NicheResolver::demoMode()) {
+            Log::info('[OPERATIONS ALERT] Skipped webhook — demo_mode is on');
+
+            return;
+        }
+
         $webhook = trim((string) setting('operations_webhook_url'));
 
         if ($webhook === '') {

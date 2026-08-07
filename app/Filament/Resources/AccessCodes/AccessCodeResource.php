@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\AccessCodes;
 
+use App\Filament\Concerns\RoleRestricted;
 use App\Filament\Resources\AccessCodes\Pages\CreateAccessCode;
 use App\Filament\Resources\AccessCodes\Pages\EditAccessCode;
 use App\Filament\Resources\AccessCodes\Pages\ListAccessCodes;
@@ -16,13 +17,15 @@ use Filament\Tables\Table;
 
 class AccessCodeResource extends Resource
 {
+    use RoleRestricted;
+
     protected static ?string $model = AccessCode::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedKey;
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Configuration';
+    protected static string|\UnitEnum|null $navigationGroup = 'Operations';
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 5;
 
     protected static ?string $recordTitleAttribute = 'code';
 

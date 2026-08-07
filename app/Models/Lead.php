@@ -2,16 +2,35 @@
 
 namespace App\Models;
 
+use App\Models\Traits\BelongsToTrialWorkspace;
+
 use App\Enums\LeadStatus;
+use Database\Factories\LeadFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
+
 
 class Lead extends Model
 {
-    /** @use HasFactory<\Database\Factories\LeadFactory> */
-    use HasFactory;
+    /** @use HasFactory<LeadFactory> */
+    use BelongsToTrialWorkspace, HasFactory;
+
+    use LogsActivity;
+    use SoftDeletes;
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['name', 'email', 'phone', 'neighborhood', 'service_type', 'status', 'scheduled_at', 'escalated_at'])
+            ->logOnlyDirty()
+            ->useLogName('lead');
+    }
 
     protected $fillable = [
         'uuid',
@@ -29,6 +48,8 @@ class Lead extends Model
         'scheduled_at',
         'escalated_at',
         'external_booking_id',
+        'is_demo',
+        'referred_by_code',
     ];
 
     protected function casts(): array
@@ -40,6 +61,7 @@ class Lead extends Model
             'status' => LeadStatus::class,
             'scheduled_at' => 'datetime',
             'escalated_at' => 'datetime',
+            'is_demo' => 'boolean',
         ];
     }
 
@@ -69,5 +91,10 @@ class Lead extends Model
     public function project(): HasOne
     {
         return $this->hasOne(Project::class);
+    }
+
+    public function invoices(): HasMany
+    {
+        return $this->hasMany(Invoice::class);
     }
 }

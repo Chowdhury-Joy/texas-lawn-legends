@@ -2,18 +2,21 @@
 
 namespace App\Filament\Resources\Services\Pages;
 
+use App\Filament\Concerns\ExportsResourceData;
 use App\Filament\Resources\Services\ServiceResource;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 
 class ListServices extends ListRecords
 {
+    use ExportsResourceData;
+
     protected static string $resource = ServiceResource::class;
 
     protected function getHeaderActions(): array
     {
-        return [
+        return $this->mergeExportHeaderActions([
             CreateAction::make(),
-        ];
+        ]);
     }
 }

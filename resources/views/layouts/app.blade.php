@@ -1,18 +1,20 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html class="overflow-x-hidden theme-{{ \App\Support\PageBlocks::resolveTheme(request('preview_theme', setting('theme', 'clean'))) }}" lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     @php
-        $logoText = setting('logo_text', setting('site_name', 'Texas Lawn Legends'));
-        $logoBadge = setting('logo_badge', 'EST. 2019 | Dallas, TX');
+        $logoText = setting('logo_text') ?: setting('site_name') ?: config('app.name');
+        $logoBadge = setting('logo_badge');
         $logoImage = setting_image('logo_image');
-        $phone = setting('primary_phone', '(214) 617-7725');
+        $phone = setting('primary_phone');
         $email = setting('primary_email');
-        $telHref = 'tel:+1' . preg_replace('/\D/', '', (string) $phone);
-        $brandFont = setting('brand_font', 'Montserrat');
+        $telHref = $phone ? 'tel:+1' . preg_replace('/\D/', '', (string) $phone) : '#';
         $areas = (array) setting('service_areas', []);
+        $current = request()->path();
+        $headerLocation = setting('header_location') ?: setting('business_city');
+        $headerTagline = setting('header_tagline') ?: niche_label('tagline_fallback');
     @endphp
 
     @include('partials.seo')
@@ -20,118 +22,382 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-    {{-- Brand font (non-default fonts load from Bunny Fonts CDN) --}}
-    @if ($brandFont && $brandFont !== 'Montserrat')
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link rel="stylesheet" href="https://fonts.bunny.net/css?family={{ strtolower(str_replace(' ', '-', $brandFont)) }}:400,500,600,700,800,900&display=swap">
-    @endif
-
-    {{-- Brand tokens: remap the palette shades the design uses to CMS colors --}}
+    {{-- Brand tokens: remap palette shades + auto B/W ink for each surface --}}
+    @php
+        $colorPrimary = setting('color_primary', '#1b4332');
+        $colorPrimaryLight = setting('color_primary_light', '#2d6a4f');
+        $colorAccent = setting('color_accent', '#facc15');
+        $colorSlate = body_ink((string) setting('color_slate', \App\Support\ColorContrast::DEFAULT_SLATE));
+        $onPrimary = contrast_ink($colorPrimary);
+        $onPrimaryLight = contrast_ink($colorPrimaryLight);
+        $onAccent = contrast_ink($colorAccent);
+        $onAccentInverse = contrast_ink($onAccent); // ink sitting on an on-accent fill (CTA inverse buttons)
+        $accentInk = accent_ink($colorAccent, $colorPrimaryLight);
+    @endphp
     <style>
         :root {
-            @if ($brandFont && $brandFont !== 'Montserrat')
-            --font-sans: '{{ $brandFont }}', ui-sans-serif, system-ui, sans-serif;
-            @endif
-            --color-emerald-900: {{ setting('color_primary', '#1b4332') }};
-            --color-emerald-800: {{ setting('color_primary_light', '#2d6a4f') }};
-            --color-yellow-400: {{ setting('color_accent', '#facc15') }};
-            --color-slate-800: {{ setting('color_slate', '#334155') }};
+            --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+            --font-display: 'Inter', ui-sans-serif, system-ui, sans-serif;
+            --font-mono: 'Inter', ui-monospace, monospace;
+            --color-emerald-900: {{ $colorPrimary }};
+            --color-emerald-800: {{ $colorPrimaryLight }};
+            --color-yellow-400: {{ $colorAccent }};
+            --color-slate-800: {{ $colorSlate }};
+            --color-on-primary: {{ $onPrimary }};
+            --color-on-primary-light: {{ $onPrimaryLight }};
+            --color-on-accent: {{ $onAccent }};
+            --color-on-accent-inverse: {{ $onAccentInverse }};
+            --color-accent-ink: {{ $accentInk }};
+            --color-brand-accent: {{ $colorAccent }};
+            --color-brand-on-accent: {{ $onAccent }};
+            --color-brand-on-primary: {{ $onPrimary }};
+            --color-brand-on-primary-light: {{ $onPrimaryLight }};
         }
     </style>
 
     @livewireStyles
 
     @stack('head')
+    <link rel="preconnect" href="https://fonts.bunny.net" crossorigin />
+    <link href="https://fonts.bunny.net/css?family=inter:400,500,600" rel="stylesheet" />
 </head>
-<body class="min-h-screen bg-white font-sans text-slate-900 antialiased">
+    <body class="min-h-screen bg-white font-body type-body-md text-slate-900 antialiased overflow-x-hidden">
+        <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[60] focus:border-2 focus:border-slate-950 focus:bg-yellow-400 focus:px-4 focus:py-2 focus:text-sm focus:font-bold focus:uppercase focus:tracking-wide focus:text-on-accent">Skip to content</a>
 
-    {{-- ============================= HEADER ============================= --}}
-    <header class="sticky top-0 z-50 w-full border-b-4 border-slate-950 bg-white">
-        <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 py-3">
-            <a href="{{ url('/') }}" class="flex flex-col leading-none">
-                @if ($logoImage)
-                    <img src="{{ $logoImage }}" alt="{{ $logoText }}" class="h-10 w-auto max-w-[220px] object-contain">
+        @if (\App\Support\Niche\NicheResolver::demoMode() || \App\Support\Trial\TrialHost::inWorkspace())
+            <div class="relative z-[60] border-b-2 border-slate-950 bg-yellow-400 px-4 py-2 text-center type-tagline text-on-accent">
+                @if (\App\Support\Trial\TrialHost::inWorkspace())
+                    Demo purpose only
+                    @if (\App\Support\Trial\TrialHost::isExpired())
+                        · Trial ended — admin login locked
+                    @elseif (\App\Support\Trial\TrialHost::daysRemaining() !== null)
+                        · {{ \App\Support\Trial\TrialHost::daysRemaining() }} day(s) left
+                    @endif
+                    · {{ niche()->label() }} example
                 @else
-                    <span class="text-lg font-black uppercase tracking-tight text-slate-900 sm:text-xl">{{ $logoText }}</span>
-                    @if ($logoBadge)
-                        <span class="mt-1 inline-block w-fit bg-emerald-900 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-yellow-400">{{ $logoBadge }}</span>
+                    Demo — {{ niche()->label() }} example
+                    @if (\App\Support\Niche\NicheResolver::demoHubEnabled())
+                        · <a href="{{ route('demo.hub') }}" class="underline">Back to demo hub</a>
                     @endif
                 @endif
-            </a>
-
-            <nav class="hidden items-center gap-1 lg:flex">
-                @foreach ([
-                    'Our Services' => url('/#services'),
-                    'Portfolio' => url('/#portfolio'),
-                    'Client Portal' => url('/portal'),
-                    'About Us' => url('/#about'),
-                ] as $label => $href)
-                    <a href="{{ $href }}" class="px-2 py-1 text-sm font-bold uppercase tracking-wide text-slate-900 transition-colors hover:bg-yellow-400">{{ $label }}</a>
-                @endforeach
-            </nav>
-
-            <div class="flex items-center gap-3">
-                <a href="{{ $telHref }}" class="hidden items-center gap-1.5 text-sm font-bold text-slate-900 hover:text-emerald-800 md:flex">
-                    <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z"/></svg>
-                    {{ $phone }}
-                </a>
-                <a href="{{ url('/#book') }}" class="hidden border-2 border-slate-950 px-3 py-2 text-xs font-black uppercase tracking-wide text-slate-900 transition-colors hover:bg-slate-100 sm:inline-block">Request A Quote</a>
-                <a href="{{ url('/estimate') }}" class="btn-brutal bg-yellow-400 px-3 py-2 text-xs text-slate-950 sm:px-4">Get Instant Estimate</a>
             </div>
-        </div>
-    </header>
+        @endif
 
-    <main>
-        @yield('content')
-    </main>
+        @if (product_part_at_least(2))
+        <div x-data="{ estimateModalOpen: false, modalLocation: '' }"
+             @open-estimate-modal.window="estimateModalOpen = true; if ($event.detail && $event.detail.location) modalLocation = $event.detail.location;"
+             @keydown.escape.window="estimateModalOpen = false">
+        @endif
 
-    {{-- ============================= FOOTER ============================= --}}
-    <footer class="border-t-4 border-slate-950 bg-slate-950 px-6 py-12 text-slate-200">
-        <div class="mx-auto grid max-w-7xl grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-4">
-            <div>
-                <span class="text-lg font-black uppercase tracking-tight text-white">{{ $logoText }}</span>
-                @if ($logoBadge)
-                    <span class="mt-2 inline-block w-fit bg-emerald-900 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-yellow-400">{{ $logoBadge }}</span>
-                @endif
-                <div class="mt-5 space-y-1.5 text-sm">
-                    <p><a href="{{ $telHref }}" class="font-bold text-white hover:text-yellow-400">{{ $phone }}</a></p>
-                    @if ($email)<p><a href="mailto:{{ $email }}" class="hover:text-yellow-400">{{ $email }}</a></p>@endif
-                    @if ($note = setting('footer_note'))<p class="text-slate-400">{{ $note }}</p>@endif
+        {{-- Combined Sticky Header Region --}}
+        <header class="sticky top-0 z-50 w-full"
+                x-data="{ mobileOpen: false }"
+                x-init="$watch('mobileOpen', v => document.body.classList.toggle('overflow-hidden', v));
+                       const setH = () => document.documentElement.style.setProperty('--header-h', $el.offsetHeight + 'px');
+                       setH();
+                       window.addEventListener('resize', setH);"
+                @keydown.escape.window="mobileOpen = false">
+
+            {{-- Top Info & Phone Banner --}}
+            <div class="border-b-2 border-slate-950 bg-slate-950 py-2 type-tagline text-white">
+                <div class="layout-container space-inline flex items-center justify-between gap-4">
+                    <div class="flex items-center gap-2 text-yellow-400">
+                        @if (filled($headerLocation))
+                            <span>📍 {{ $headerLocation }}</span>
+                        @endif
+                        @if (filled($headerLocation) && filled($headerTagline))
+                            <span class="hidden text-slate-600 sm:inline">·</span>
+                        @endif
+                        @if (filled($headerTagline))
+                            <span class="hidden text-slate-300 sm:inline">{{ $headerTagline }}</span>
+                        @endif
+                    </div>
+                    <div class="flex items-center gap-4">
+                        @if (filled($phone))
+                            <a href="{{ $telHref }}" class="flex items-center gap-1.5 text-white transition-colors hover:text-yellow-400">
+                                <svg class="h-3.5 w-3.5 text-yellow-400" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z"/></svg>
+                                <span>Call or Text: {{ $phone }}</span>
+                            </a>
+                        @endif
+                    </div>
                 </div>
-                @if ($copyright = setting('footer_copyright'))
-                    <p class="mt-6 text-xs leading-relaxed text-slate-500">{{ $copyright }}</p>
-                @endif
             </div>
 
-            <div>
-                <h3 class="mb-4 text-xs font-black uppercase tracking-widest text-yellow-400">Design &amp; Create</h3>
-                <ul class="space-y-2 text-sm">
-                    @foreach (\App\Models\Service::query()->active()->createSuite()->ordered()->pluck('title') as $item)
-                        <li><a href="{{ url('/#create-suite') }}" class="text-slate-300 transition-colors hover:text-white">{{ $item }}</a></li>
+            {{-- Main Navigation Bar --}}
+            <div class="w-full border-b-4 border-slate-950 bg-white">
+                <div class="layout-container flex items-center justify-between gap-4 space-inline py-3">
+                <a href="{{ trial_path() }}" class="flex flex-col leading-none">
+                    @if ($logoImage)
+                        <img src="{{ $logoImage }}" alt="{{ $logoText }}" class="h-10 w-auto max-w-[220px] object-contain">
+                    @else
+                        <span class="type-h4 text-slate-900">{{ $logoText }}</span>
+                        @if ($logoBadge)
+                            <span class="type-tagline mt-1 inline-block w-fit bg-emerald-900 px-2 py-0.5 text-on-primary">{{ $logoBadge }}</span>
+                        @endif
+                    @endif
+                </a>
+
+                @php
+                    $navItems = [
+                        'Our Services' => trial_path('services'),
+                        'Portfolio' => trial_path('portfolio'),
+                        'About Us' => trial_path('about'),
+                    ];
+                    if (product_part_at_least(3)) {
+                        // Keep portal next to primary marketing links when Ops is on.
+                        $navItems = [
+                            'Our Services' => trial_path('services'),
+                            'Portfolio' => trial_path('portfolio'),
+                            'Client Portal' => trial_path('portal'),
+                            'About Us' => trial_path('about'),
+                        ];
+                    }
+                    $isActiveNavItem = fn (string $href): bool => $current === trim((string) parse_url($href, PHP_URL_PATH), '/');
+                    $showEstimateCta = product_part_at_least(2);
+                @endphp
+
+                <nav class="hidden items-center gap-1 lg:flex">
+                    @foreach ($navItems as $label => $href)
+                        <a href="{{ $href }}"
+                           @class([
+                               'type-tagline px-2 py-1 transition-colors',
+                               'bg-yellow-400 text-on-accent' => $isActiveNavItem($href),
+                               'text-slate-900 hover:bg-yellow-400 hover:text-on-accent' => ! $isActiveNavItem($href),
+                           ])>{{ $label }}</a>
                     @endforeach
-                </ul>
+                </nav>
+
+                <div class="flex items-center gap-3">
+                    @if ($showEstimateCta)
+                        <a href="{{ trial_path('estimate') }}" @click.prevent="$dispatch('open-estimate-modal')" class="btn-brutal btn-primary type-btn bg-yellow-400 hidden items-center justify-center px-5 py-2 lg:inline-flex">
+                            Get Free Estimate
+                        </a>
+                    @endif
+
+                    {{-- Mobile hamburger --}}
+                    <button type="button"
+                            class="inline-flex h-11 w-11 items-center justify-center border-2 border-slate-950 bg-yellow-400 text-on-accent transition-colors lg:hidden"
+                            @click="mobileOpen = !mobileOpen"
+                            :class="mobileOpen ? 'bg-slate-950 text-yellow-400' : ''"
+                            :aria-expanded="mobileOpen"
+                            aria-label="Toggle navigation menu">
+                        <svg x-show="!mobileOpen" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5M3.75 17.25h16.5"/></svg>
+                        <svg x-show="mobileOpen" x-cloak class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/></svg>
+                    </button>
+                </div>
             </div>
 
-            <div>
-                <h3 class="mb-4 text-xs font-black uppercase tracking-widest text-yellow-400">Property Maintenance</h3>
-                <ul class="space-y-2 text-sm">
-                    @foreach (\App\Models\Service::query()->active()->careSuite()->ordered()->pluck('title') as $item)
-                        <li><a href="{{ url('/#care-suite') }}" class="text-slate-300 transition-colors hover:text-white">{{ $item }}</a></li>
+            {{-- Mobile backdrop --}}
+            <div x-show="mobileOpen" x-cloak
+                 x-transition.opacity
+                 @click="mobileOpen = false"
+                 class="fixed inset-x-0 bottom-0 z-40 bg-slate-950/40 lg:hidden"
+                 style="top: var(--header-h, 57px);"></div>
+
+            {{-- Mobile nav panel --}}
+            <nav x-show="mobileOpen" x-cloak
+                 x-transition
+                 class="fixed inset-x-0 z-50 flex flex-col overflow-y-auto border-t-2 border-slate-950 bg-white shadow-xl lg:hidden"
+                 style="top: var(--header-h, 57px); height: calc(100dvh - var(--header-h, 57px));">
+                <div class="mx-auto flex w-full flex-col space-inline py-2">
+                    @foreach ($navItems as $label => $href)
+                        <a href="{{ $href }}" @click="mobileOpen = false"
+                           @class([
+                               'type-tagline-lg border-b border-slate-200 py-3 transition-colors',
+                               'bg-yellow-400 text-on-accent' => $isActiveNavItem($href),
+                               'text-slate-900 hover:bg-yellow-400 hover:text-on-accent' => ! $isActiveNavItem($href),
+                           ])>{{ $label }}</a>
                     @endforeach
-                </ul>
-            </div>
+                    <a href="{{ $telHref }}" @click="mobileOpen = false" class="type-tagline-lg flex items-center gap-2 py-3 text-slate-900 transition-colors hover:bg-yellow-400 hover:text-on-accent">
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z"/></svg>
+                        {{ $phone }}
+                    </a>
+                </div>
+            </nav>
+        </header>
 
-            <div>
-                <h3 class="mb-4 text-xs font-black uppercase tracking-widest text-yellow-400">Core Hub</h3>
-                <ul class="space-y-2 text-sm">
-                    <li><a href="{{ url('/portal') }}" class="text-slate-300 transition-colors hover:text-white">Client Portal Login</a></li>
-                    <li><a href="{{ url('/privacy') }}" class="text-slate-300 transition-colors hover:text-white">Privacy Compliance Terms</a></li>
-                    <li><a href="{{ url('/admin') }}" class="text-slate-300 transition-colors hover:text-white">Administrative CMS Control Panel</a></li>
-                </ul>
+        <main id="main-content">
+            @yield('content')
+        </main>
+
+        {{-- ============================= FOOTER ============================= --}}
+        <footer class="border-t-4 border-slate-950 bg-slate-950 text-slate-200">
+            <div class="layout-container space-section grid grid-cols-1 gap-container-xxl md:grid-cols-2 lg:grid-cols-4">
+                <div>
+                    <span class="type-h4 text-white">{{ $logoText }}</span>
+                    @if ($logoBadge)
+                        <span class="type-tagline mt-2 inline-block w-fit bg-emerald-900 px-2 py-0.5 text-on-primary">{{ $logoBadge }}</span>
+                    @endif
+                    <div class="type-body-sm mt-5 space-y-1.5">
+                        <p><a href="{{ $telHref }}" class="text-white hover:text-yellow-400">{{ $phone }}</a></p>
+                        @if ($email)<p><a href="mailto:{{ $email }}" class="hover:text-yellow-400">{{ $email }}</a></p>@endif
+                        @if ($note = setting('footer_note'))<p class="text-slate-400">{{ $note }}</p>@endif
+                    </div>
+                    @if ($copyright = setting('footer_copyright'))
+                        <p class="type-tagline mt-6 text-slate-500">{{ $copyright }}</p>
+                    @endif
+                </div>
+
+                <div>
+                    <h3 class="type-tagline mb-4 text-yellow-400">Design &amp; Create</h3>
+                    <ul class="type-tagline-lg space-y-2">
+                        @foreach (\App\Support\PageBlockData::createServices()->pluck('title') as $item)
+                            <li><a href="{{ url('/#create-suite') }}" class="text-slate-300 transition-colors hover:text-white">{{ $item }}</a></li>
+                        @endforeach
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="type-tagline mb-4 text-yellow-400">Property Maintenance</h3>
+                    <ul class="type-tagline-lg space-y-2">
+                        @foreach (\App\Support\PageBlockData::careServices()->pluck('title') as $item)
+                            <li><a href="{{ url('/#care-suite') }}" class="text-slate-300 transition-colors hover:text-white">{{ $item }}</a></li>
+                        @endforeach
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="type-tagline mb-4 text-yellow-400">Core Hub</h3>
+                    <ul class="type-tagline-lg space-y-2">
+                        @if (product_part_at_least(3))
+                            <li><a href="{{ trial_path('portal') }}" class="text-slate-300 transition-colors hover:text-white">Client Portal Login</a></li>
+                        @endif
+                        <li><a href="{{ trial_path('privacy') }}" class="text-slate-300 transition-colors hover:text-white">Privacy Compliance Terms</a></li>
+                        <li><a href="{{ trial_path('admin') }}" class="text-slate-300 transition-colors hover:text-white">Administrative CMS Control Panel</a></li>
+                    </ul>
+                </div>
+            </div>
+        </footer>
+
+        @if (product_part_at_least(2))
+            @unless (request()->routeIs('estimate'))
+                {{-- Themeable Mobile Sticky Action Rail --}}
+                <div class="fixed bottom-0 inset-x-0 z-40 border-t-4 border-slate-950 bg-brand-paper p-3 shadow-2xl lg:hidden">
+                    <div class="mx-auto flex max-w-md items-center justify-between gap-3">
+                        <a href="{{ trial_path('estimate') }}" @click.prevent="$dispatch('open-estimate-modal')" class="btn-brutal btn-primary type-btn bg-yellow-400 flex-1 py-3 text-center">
+                            ⚡ 2-Min Price Quote
+                        </a>
+                        <a href="{{ $telHref }}" class="type-btn flex items-center justify-center border-2 border-slate-950 bg-white px-4 py-3 text-slate-900 transition-colors hover:bg-slate-100">
+                            📞 Call
+                        </a>
+                    </div>
+                </div>
+
+                {{-- Sticky Get-Estimate call to action (Desktop) — appears once the visitor has
+                     scrolled past the hero's own CTA, so it never stacks on top of it or the
+                     header button, and doesn't cover fold-level content on shorter pages. --}}
+                <a href="{{ trial_path('estimate') }}"
+                   @click.prevent="$dispatch('open-estimate-modal')"
+                   x-data="{ show: false }"
+                   x-init="window.addEventListener('scroll', () => { show = window.scrollY > 500 }, { passive: true })"
+                   x-show="show"
+                   x-cloak
+                   class="btn-brutal btn-primary type-btn bg-yellow-400 fixed bottom-6 right-6 z-30 hidden border-2 border-slate-950 px-5 py-3 shadow-lg lg:block">
+                    Get Estimate
+                </a>
+            @endunless
+
+            {{-- Instant Property Valuation Popup Modal --}}
+            <div x-show="estimateModalOpen" x-cloak
+                 class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 p-4 backdrop-blur-sm sm:p-6"
+                 x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0"
+                 x-transition:enter-end="opacity-100"
+                 x-transition:leave="transition ease-in duration-200"
+                 x-transition:leave-start="opacity-100"
+                 x-transition:leave-end="opacity-0"
+                 @click.self="estimateModalOpen = false">
+
+                @php
+                    $teaserLow = (float) setting('estimate_teaser_low_per_unit', 0.85);
+                    $teaserHigh = (float) setting('estimate_teaser_high_per_unit', 1.45);
+                    $teaserMaintain = (float) setting('estimate_teaser_maintain_multiplier', 0.62);
+                @endphp
+                <div class="box-brutal w-full max-w-xl overflow-hidden bg-white p-6 sm:p-8" @click.stop
+                     x-data="{
+                         sqft: 1200,
+                         serviceScope: 'design_build',
+                         // Rates from Admin → Estimator & Pricing (homepage popup teaser).
+                         scopeRate() { return this.serviceScope === 'maintenance' ? {{ $teaserMaintain }} : 1; },
+                         low() { return Math.round(this.sqft * {{ $teaserLow }} * this.scopeRate()); },
+                         high() { return Math.round(this.sqft * {{ $teaserHigh }} * this.scopeRate()); }
+                     }">
+                    <div class="flex items-start justify-between gap-4 border-b-2 border-slate-950 pb-4">
+                        <div>
+                            <span class="chip-accent bg-yellow-400 inline-block px-2.5 py-1 text-[10px] font-black uppercase tracking-widest">⚡ Instant Valuation</span>
+                            <h3 class="mt-2 text-2xl font-black uppercase tracking-tight text-slate-900 sm:text-3xl">Property Estimate Preview</h3>
+                        </div>
+                        <button type="button" @click="estimateModalOpen = false" class="border-2 border-slate-950 bg-white px-2.5 py-1 text-xs font-black uppercase tracking-widest text-slate-900 hover:bg-yellow-400 hover:text-on-accent">✕ Close (Esc)</button>
+                    </div>
+
+                    <div class="mt-6 space-y-5">
+                        <div>
+                            <label class="block text-xs font-black uppercase tracking-widest text-slate-700">1. {{ niche_label('area_field') }} / Location</label>
+                            <input type="text" x-model="modalLocation" placeholder="Enter ZIP code or {{ strtolower(niche_label('area_field')) }}..." class="mt-1.5 w-full border-2 border-slate-950 px-3.5 py-2.5 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-yellow-400">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-black uppercase tracking-widest text-slate-700">2. Primary Service Scope</label>
+                            <div class="mt-2 grid grid-cols-2 gap-2 text-xs font-bold">
+                                <button type="button" @click="serviceScope = 'design_build'"
+                                        :class="serviceScope === 'design_build' ? 'bg-slate-950 text-yellow-400 border-slate-950' : 'bg-white text-slate-900 border-slate-950 hover:bg-slate-50'"
+                                        class="border-2 p-2.5 text-left uppercase tracking-tight transition-colors">
+                                    {{ niche_label('suite_create') }}
+                                </button>
+                                <button type="button" @click="serviceScope = 'maintenance'"
+                                        :class="serviceScope === 'maintenance' ? 'bg-slate-950 text-yellow-400 border-slate-950' : 'bg-white text-slate-900 border-slate-950 hover:bg-slate-50'"
+                                        class="border-2 p-2.5 text-left uppercase tracking-tight transition-colors">
+                                    {{ niche_label('suite_care') }}
+                                </button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-xs font-black uppercase tracking-widest text-slate-700">
+                                <span>3. {{ niche_label('size_field') }}</span>
+                                <span class="font-mono text-slate-900"><span x-text="Number(sqft).toLocaleString()"></span> {{ niche_label('size_unit') }}</span>
+                            </div>
+                            <input type="range" min="300" max="5000" step="100" x-model.number="sqft" class="mt-2 h-3 w-full cursor-pointer appearance-none border-2 border-slate-950 bg-slate-100 accent-yellow-400">
+                        </div>
+
+                        <div class="box-brutal bg-slate-950 p-4 text-center text-white">
+                            <span class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Real-Time Valuation Preview</span>
+                            <p class="mt-1 text-3xl font-black text-[#f2f2f2]">
+                                $<span x-text="low().toLocaleString()"></span> <span class="text-white/50">–</span> $<span x-text="high().toLocaleString()"></span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 flex flex-col gap-3 sm:flex-row">
+                        <a :href="'{{ trial_path('estimate') }}?neighborhood=' + encodeURIComponent(modalLocation) + '&sqft=' + sqft + '&scope=' + encodeURIComponent(serviceScope)"
+                           class="btn-brutal btn-primary bg-yellow-400 flex-1 px-6 py-3.5 text-center text-xs font-black uppercase tracking-wider">
+                            Lock In Free Site Visit →
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
-    </footer>
+        @endif
+
+
 
     @livewireScripts
+
+    @auth
+        <div x-data="{
+            version: '{{ \App\Support\SiteVersion::current() }}',
+            init() {
+                setInterval(() => {
+                    fetch('/api/site-version')
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.version != this.version) {
+                                window.location.reload();
+                            }
+                        });
+                }, 10000);
+            }
+        }"></div>
+    @endauth
 </body>
 </html>

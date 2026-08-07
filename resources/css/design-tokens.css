@@ -1,0 +1,721 @@
+/* ---------------------------------------------------------------------------
+   Figma design tokens — plain CSS (not Tailwind).
+   Source: Squidx Token_Typography + Token_device tables.
+   Breakpoints: mobile (base) → tablet 640px → desktop 1200px.
+   Letter-spacing: Figma ratio (ls_px ÷ size_px) applied as em
+   (same proportion as %, better browser support than letter-spacing %).
+   Example: -4.8/80 = -6% = -0.06em
+   --------------------------------------------------------------------------- */
+
+:root {
+            --font-heading: 'Inter', ui-sans-serif, system-ui, sans-serif;
+            --font-body: 'Inter', ui-sans-serif, system-ui, sans-serif;
+        --font-tagline: 'Inter', ui-sans-serif, system-ui, sans-serif;
+    --font-weight-heading: 500;
+    --font-weight-body: 400;
+    --font-weight-tagline: 400;
+
+    /* Content / Base — text on #FFFFFF (Figma Content/Base) */
+    --content-main: #1f2937;
+    --content-base: #4b5563;
+    --content-subtle: #9ca3af;
+    --content-disabled: #d1d5db;
+
+    /* Content / Inverted — text on #000000 (Figma Content/Inverted) */
+    --content-inverted-main: #f9fafb;
+    --content-inverted-base: #f3f4f6;
+    --content-inverted-subtle: #d1d5db;
+    --content-inverted-disabled: #6b7280;
+
+    /* Spacing/Container — mobile defaults */
+    --space-0: 0px;
+    --space-xxs: 4px;
+    --space-xs: 6px;
+    --space-sm: 8px;
+    --space-md: 12px;
+    --space-lg: 16px;
+    --space-xl: 24px;
+    --space-xxl: 32px;
+
+    /* Section padding — mobile */
+    --space-section-y: 48px;
+    --space-section-x: 16px;
+
+    /* Page shell — content caps here; horizontal padding sits inside via .space-inline / .space-section */
+    --layout-max-width: 1400px;
+}
+
+@media (min-width: 640px) {
+    :root {
+        --space-xxs: 6px;
+        --space-xs: 6px;
+        --space-sm: 8px;
+        --space-md: 12px;
+        --space-lg: 20px;
+        --space-xl: 24px;
+        --space-xxl: 40px;
+        --space-section-y: 48px;
+        --space-section-x: 32px;
+    }
+}
+
+@media (min-width: 1200px) {
+    :root {
+        --space-xxs: 6px;
+        --space-xs: 8px;
+        --space-sm: 12px;
+        --space-md: 16px;
+        --space-lg: 24px;
+        --space-xl: 32px;
+        --space-xxl: 48px;
+        --space-section-y: 96px;
+        --space-section-x: 40px;
+    }
+}
+
+/* ---- Font role helpers ---- */
+.font-heading {
+    font-family: var(--font-heading);
+    font-weight: var(--font-weight-heading);
+}
+
+.font-body {
+    font-family: var(--font-body);
+    font-weight: var(--font-weight-body);
+}
+
+.font-tagline {
+    font-family: var(--font-tagline);
+    font-weight: var(--font-weight-tagline);
+    text-transform: uppercase;
+}
+
+/* ---- Content color utilities (never use brand hues for text) ---- */
+.text-content-main { color: var(--content-main); }
+.text-content-base { color: var(--content-base); }
+.text-content-subtle { color: var(--content-subtle); }
+.text-content-disabled { color: var(--content-disabled); }
+
+.text-content-inverted-main { color: var(--content-inverted-main); }
+.text-content-inverted-base { color: var(--content-inverted-base); }
+.text-content-inverted-subtle { color: var(--content-inverted-subtle); }
+.text-content-inverted-disabled { color: var(--content-inverted-disabled); }
+
+/* Auto content colors from section background */
+[data-section-bg="#000000"],
+[data-section-bg="#000"],
+.bg-section-dark {
+    color: var(--content-inverted-base);
+}
+
+[data-section-bg="#000000"] .text-content-main,
+[data-section-bg="#000"] .text-content-main,
+.bg-section-dark .text-content-main { color: var(--content-inverted-main); }
+
+[data-section-bg="#000000"] .text-content-base,
+[data-section-bg="#000"] .text-content-base,
+.bg-section-dark .text-content-base { color: var(--content-inverted-base); }
+
+[data-section-bg="#000000"] .text-content-subtle,
+[data-section-bg="#000"] .text-content-subtle,
+.bg-section-dark .text-content-subtle { color: var(--content-inverted-subtle); }
+
+/* ---- Type scale: Large (default) — Figma node 28305-260 ---- */
+
+/* Heading / H1 — mobile 48/-2.88 → -6% */
+.type-h1 {
+    font-family: var(--font-heading);
+    font-weight: var(--font-weight-heading);
+    font-size: 48px;
+    line-height: 80%;
+    letter-spacing: -0.08em; /* -2.88/48 = -6% */
+}
+
+/* Heading / H2 — mobile 36/-2.16 → -6% */
+.type-h2 {
+    font-family: var(--font-heading);
+    font-weight: var(--font-weight-heading);
+    font-size: 36px;
+    line-height: 80%;
+    letter-spacing: -0.08em; /* -2.16/36 = -6% */
+}
+
+/* Heading / H3 — mobile 22/-1.32 → -6% */
+.type-h3 {
+    font-family: var(--font-heading);
+    font-weight: var(--font-weight-heading);
+    font-size: 22px;
+    line-height: 92%;
+    letter-spacing: -0.07em; /* -1.32/22 = -6% */
+}
+
+/* Heading / H4 — mobile 20/-0.6 → -3% */
+.type-h4 {
+    font-family: var(--font-heading);
+    font-weight: var(--font-weight-heading);
+    font-size: 24px;
+    line-height: 85%;
+    letter-spacing: -0.06em;
+}
+
+/* Paragraph / Large — mobile 16/-0.8 → -5% */
+.type-body-lg {
+    font-family: var(--font-body);
+    font-weight: var(--font-weight-body);
+    font-size: 16px;
+    line-height: 150%;
+    letter-spacing: -0.05em; /* -0.8/16 = -5% */
+}
+
+/* Paragraph / Medium — mobile 14/-0.42 → -3% */
+.type-body-md {
+    font-family: var(--font-body);
+    font-weight: var(--font-weight-body);
+    font-size: 14px;
+    line-height: 135%;
+    letter-spacing: -0.03em; /* -0.42/14 = -3% */
+}
+
+/* Paragraph / Small — mobile 12/-0.48 → -4% */
+.type-body-sm {
+    font-family: var(--font-body);
+    font-weight: var(--font-weight-body);
+    font-size: 12px;
+    line-height: 150%;
+    letter-spacing: -0.04em; /* -0.48/12 = -4% */
+}
+
+/* Button / Regular — mobile 14 */
+.type-btn {
+    font-family: var(--font-body);
+    font-weight: var(--font-weight-heading); /* Medium on Body family */
+    font-size: 14px;
+    line-height: 100%;
+    letter-spacing: 0;
+    text-transform: uppercase;
+}
+
+/* Button / Small — mobile 11 */
+.type-btn-sm {
+    font-family: var(--font-body);
+    font-weight: var(--font-weight-heading);
+    font-size: 11px;
+    line-height: 100%;
+    letter-spacing: 0;
+    text-transform: uppercase;
+}
+
+/* Tagline / Large — mobile 14/0.84 → 6% */
+.type-tagline-lg {
+    font-family: var(--font-tagline);
+    font-weight: var(--font-weight-tagline);
+    font-size: 14px;
+    line-height: 142.86%;
+    letter-spacing: 0.06em; /* 0.84/14 = 6% */
+    text-transform: uppercase;
+}
+
+/* Tagline / Regular — mobile 12/0.48 → 4% */
+.type-tagline {
+    font-family: var(--font-tagline);
+    font-weight: var(--font-weight-tagline);
+    font-size: 12px;
+    line-height: 133.33%;
+    letter-spacing: 0.04em; /* 0.48/12 = 4% */
+    text-transform: uppercase;
+}
+
+@media (min-width: 640px) {
+    .type-h1 {
+        font-size: 64px;
+        letter-spacing: -0.08em; /* -3.84/64 = -6% */
+    }
+    .type-h2 {
+        font-size: 52px;
+        letter-spacing: -0.08em; /* -3.12/52 = -6% */
+    }
+    .type-h3 {
+        font-size: 28px;
+        letter-spacing: -0.07em; /* -1.68/28 = -6% */
+    }
+    .type-h4 {
+        font-size: 24px;
+        letter-spacing: -0.06em; /* -0.72/24 = -3% */
+    }
+    .type-body-lg {
+        font-size: 18px;
+        line-height: 156%;
+        letter-spacing: -0.05em; /* -0.9/18 = -5% */
+    }
+    .type-body-md {
+        font-size: 16px;
+        letter-spacing: -0.03em; /* -0.48/16 = -3% */
+    }
+    .type-body-sm {
+        font-size: 14px;
+        letter-spacing: -0.04em; /* -0.56/14 = -4% */
+    }
+    .type-btn {
+        font-size: 15px;
+    }
+    .type-btn-sm {
+        font-size: 13px;
+    }
+    .type-tagline-lg {
+        font-size: 16px;
+        line-height: 150%;
+        letter-spacing: 0.06em; /* 0.96/16 = 6% */
+    }
+    .type-tagline {
+        font-size: 13px;
+        line-height: 123.08%;
+        letter-spacing: 0.04em; /* 0.52/13 = 4% */
+    }
+}
+
+@media (min-width: 1200px) {
+    .type-h1 {
+        font-size: 80px;
+        letter-spacing: -0.08em; /* -4.8/80 = -6% */
+    }
+    .type-h2 {
+        font-size: 64px;
+        letter-spacing: -0.08em; /* -3.84/64 = -6% */
+    }
+    .type-h3 {
+        font-size: 36px;
+        letter-spacing: -0.07em; /* -2.16/36 = -6% */
+    }
+    .type-h4 {
+        font-size: 24px;
+        letter-spacing: -0.06em; /* -0.84/28 = -3% */
+    }
+    .type-body-lg {
+        font-size: 20px;
+        line-height: 156%;
+        letter-spacing: -0.05em; /* -1/20 = -5% */
+    }
+    .type-body-md {
+        font-size: 18px;
+        letter-spacing: -0.03em; /* -0.54/18 = -3% */
+    }
+    .type-body-sm {
+        font-size: 16px;
+        letter-spacing: -0.04em; /* -0.64/16 = -4% */
+    }
+    .type-tagline-lg {
+        font-size: 18px;
+        line-height: 133.33%;
+        letter-spacing: 0.06em; /* 1.08/18 = 6% */
+    }
+    .type-tagline {
+        font-size: 14px;
+        line-height: 142.86%;
+        letter-spacing: 0.04em; /* 0.56/14 = 4% */
+    }
+}
+
+/* ---- Type scale: Regular — Figma node 28334-265 ----
+   Set <html data-type-scale="regular"> after user picks Regular in the typography question. */
+
+/* Mobile base */
+[data-type-scale="regular"] .type-h1 {
+    font-size: 32px;
+    line-height: 100%;
+    letter-spacing: -0.06em; /* -1.92/32 */
+}
+[data-type-scale="regular"] .type-h2 {
+    font-size: 28px;
+    line-height: 100%;
+    letter-spacing: -0.06em; /* -1.68/28 */
+}
+[data-type-scale="regular"] .type-h3 {
+    font-size: 22px;
+    line-height: 100%;
+    letter-spacing: -0.06em; /* -1.32/22 */
+}
+[data-type-scale="regular"] .type-h4 {
+    font-size: 18px;
+    line-height: 100%;
+    letter-spacing: -0.03em; /* -0.54/18 */
+}
+[data-type-scale="regular"] .type-body-lg {
+    font-size: 15px;
+    line-height: 150%;
+    letter-spacing: -0.05em; /* -0.75/15 */
+}
+[data-type-scale="regular"] .type-body-md {
+    font-size: 13px;
+    line-height: 135%;
+    letter-spacing: -0.03em; /* -0.39/13 */
+}
+[data-type-scale="regular"] .type-body-sm {
+    font-size: 11px;
+    line-height: 150%;
+    letter-spacing: -0.04em; /* -0.44/11 */
+}
+[data-type-scale="regular"] .type-btn {
+    font-size: 14px;
+    line-height: 100%;
+    letter-spacing: 0;
+}
+[data-type-scale="regular"] .type-btn-sm {
+    font-size: 11px;
+    line-height: 100%;
+    letter-spacing: 0;
+}
+[data-type-scale="regular"] .type-tagline-lg {
+    font-size: 14px;
+    line-height: 142.86%;
+    letter-spacing: 0.06em; /* 0.84/14 */
+}
+[data-type-scale="regular"] .type-tagline {
+    font-size: 8px;
+    line-height: 133.33%;
+    letter-spacing: 0.04em; /* 0.32/8 */
+}
+
+@media (min-width: 640px) {
+    [data-type-scale="regular"] .type-h1 {
+        font-size: 40px;
+        letter-spacing: -0.06em; /* -2.4/40 */
+    }
+    [data-type-scale="regular"] .type-h2 {
+        font-size: 32px;
+        letter-spacing: -0.06em; /* -1.92/32 */
+    }
+    [data-type-scale="regular"] .type-h3 {
+        font-size: 24px;
+        letter-spacing: -0.06em; /* -1.44/24 */
+    }
+    [data-type-scale="regular"] .type-h4 {
+        font-size: 20px;
+        letter-spacing: -0.03em; /* -0.6/20 */
+    }
+    [data-type-scale="regular"] .type-body-lg {
+        font-size: 16px;
+        letter-spacing: -0.05em; /* -0.8/16 */
+    }
+    [data-type-scale="regular"] .type-body-md {
+        font-size: 14px;
+        letter-spacing: -0.03em; /* -0.42/14 */
+    }
+    [data-type-scale="regular"] .type-body-sm {
+        font-size: 12px;
+        letter-spacing: -0.04em; /* -0.48/12 */
+    }
+    [data-type-scale="regular"] .type-btn {
+        font-size: 15px;
+    }
+    [data-type-scale="regular"] .type-btn-sm {
+        font-size: 13px;
+    }
+    [data-type-scale="regular"] .type-tagline-lg {
+        font-size: 16px;
+        line-height: 150%;
+        letter-spacing: 0.06em; /* 0.96/16 */
+    }
+    [data-type-scale="regular"] .type-tagline {
+        font-size: 13px;
+        line-height: 123.08%;
+        letter-spacing: 0.04em; /* 0.52/13 */
+    }
+}
+
+@media (min-width: 1200px) {
+    [data-type-scale="regular"] .type-h1 {
+        font-size: 44px;
+        letter-spacing: -0.06em; /* -2.64/44 */
+    }
+    [data-type-scale="regular"] .type-h2 {
+        font-size: 36px;
+        letter-spacing: -0.06em; /* -2.16/36 */
+    }
+    [data-type-scale="regular"] .type-h3 {
+        font-size: 28px;
+        letter-spacing: -0.06em; /* -1.68/28 */
+    }
+    [data-type-scale="regular"] .type-h4 {
+        font-size: 22px;
+        letter-spacing: -0.03em; /* -0.66/22 */
+    }
+    [data-type-scale="regular"] .type-body-lg {
+        font-size: 16px;
+        letter-spacing: -0.05em; /* -0.8/16 */
+    }
+    [data-type-scale="regular"] .type-body-md {
+        font-size: 14px;
+        letter-spacing: -0.03em; /* -0.42/14 */
+    }
+    [data-type-scale="regular"] .type-body-sm {
+        font-size: 12px;
+        letter-spacing: -0.04em; /* -0.48/12 */
+    }
+    [data-type-scale="regular"] .type-btn {
+        font-size: 15px;
+    }
+    [data-type-scale="regular"] .type-btn-sm {
+        font-size: 13px;
+    }
+    [data-type-scale="regular"] .type-tagline-lg {
+        font-size: 18px;
+        line-height: 133.33%;
+        letter-spacing: 0.06em; /* 1.08/18 */
+    }
+    [data-type-scale="regular"] .type-tagline {
+        font-size: 14px;
+        line-height: 142.86%;
+        letter-spacing: 0.04em; /* 0.56/14 */
+    }
+}
+
+/* ---- Spacing utility classes ---- */
+.space-section {
+    padding-top: var(--space-section-y);
+    padding-bottom: var(--space-section-y);
+    padding-left: var(--space-section-x);
+    padding-right: var(--space-section-x);
+}
+
+.space-section-y {
+    padding-top: var(--space-section-y);
+    padding-bottom: var(--space-section-y);
+}
+
+.space-inline {
+    padding-left: var(--space-section-x);
+    padding-right: var(--space-section-x);
+}
+
+/* Desktop shell: max 1400px, centered; pair with .space-inline or .space-section for inner horizontal padding */
+.layout-container {
+    width: 100%;
+    max-width: var(--layout-max-width);
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.space-container {
+    padding: var(--space-md);
+}
+
+.gap-container-sm {
+    gap: var(--space-sm);
+}
+
+.gap-container-md {
+    gap: var(--space-md);
+}
+
+.gap-container-lg {
+    gap: var(--space-lg);
+}
+
+.gap-container-xl {
+    gap: var(--space-xl);
+}
+
+.gap-container-xxl {
+    gap: var(--space-xxl);
+}
+
+/* Card / panel padding from container scale */
+.space-card {
+    padding: var(--space-lg);
+}
+
+@media (min-width: 640px) {
+    .space-card {
+        padding: var(--space-xl);
+    }
+}
+
+@media (min-width: 1200px) {
+    .space-card {
+        padding: var(--space-xxl);
+    }
+}
+
+/* Section header stack (eyebrow → heading) */
+.stack-header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-md);
+}
+
+.stack-after-header {
+    margin-top: var(--space-xxl);
+}
+
+/* Horizontal card grids — mobile 1×1, tablet 2×2, desktop 2×2 (1/2/4 cards) or 3×3 (others)
+   Gap: horizontal = lg always; vertical = lg on mobile, xl on tablet+. */
+.grid-cards,
+.grid-services {
+    display: grid;
+    grid-template-columns: 1fr;
+    column-gap: var(--space-lg);
+    row-gap: var(--space-lg);
+}
+
+@media (min-width: 640px) {
+    .grid-cards,
+    .grid-services {
+        grid-template-columns: repeat(2, 1fr);
+        row-gap: var(--space-xl);
+    }
+}
+
+@media (min-width: 1200px) {
+    .grid-cards,
+    .grid-services {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .grid-cards[data-card-count="1"],
+    .grid-cards[data-card-count="2"],
+    .grid-cards[data-card-count="4"],
+    .grid-services[data-card-count="1"],
+    .grid-services[data-card-count="2"],
+    .grid-services[data-card-count="4"] {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Alias — process/step cards use the same horizontal card grid rules */
+.grid-steps {
+    display: grid;
+    grid-template-columns: 1fr;
+    column-gap: var(--space-lg);
+    row-gap: var(--space-lg);
+}
+
+@media (min-width: 640px) {
+    .grid-steps {
+        grid-template-columns: repeat(2, 1fr);
+        row-gap: var(--space-xl);
+    }
+}
+
+@media (min-width: 1200px) {
+    .grid-steps {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .grid-steps[data-card-count="1"],
+    .grid-steps[data-card-count="2"],
+    .grid-steps[data-card-count="4"] {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Hero: copy + media split at the desktop tier (1200), stacked below it. */
+.grid-hero {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-xl);
+}
+
+@media (min-width: 1200px) {
+    .grid-hero {
+        grid-template-columns: repeat(12, 1fr);
+        align-items: center;
+    }
+    .grid-hero > .hero-copy {
+        grid-column: span 7 / span 7;
+    }
+    .grid-hero > .hero-media {
+        grid-column: span 5 / span 5;
+        margin-right: 0;
+    }
+}
+
+/* Vertical rhythm inside a service card */
+.stack-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: var(--space-lg);
+}
+
+.stack-card-body {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-sm);
+}
+
+.stack-card-body > .type-h4 {
+    margin-top: var(--space-md);
+}
+
+/* Two-column split (about / image+text) — stacks until desktop 1200. */
+.grid-split {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-xl);
+    align-items: center;
+}
+
+@media (min-width: 1200px) {
+    .grid-split {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .grid-split.is-reversed > :first-child {
+        order: 2;
+    }
+
+    .grid-split.is-reversed > :last-child {
+        order: 1;
+    }
+}
+
+/* Stat tiles — 2 cols mobile, 3 tablet, 4 desktop. */
+.grid-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-md);
+}
+
+@media (min-width: 640px) {
+    .grid-stats {
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--space-lg);
+    }
+}
+
+@media (min-width: 1200px) {
+    .grid-stats {
+        grid-template-columns: repeat(4, 1fr);
+        gap: var(--space-xl);
+    }
+}
+
+/* Compact 2→3 stats (about block). */
+.grid-stats-sm {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-md);
+}
+
+@media (min-width: 640px) {
+    .grid-stats-sm {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* FAQ / stacked list rhythm. */
+.stack-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+.stack-copy {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-md);
+}
+

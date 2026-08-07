@@ -2,15 +2,20 @@
 
 namespace App\Models;
 
+use App\Models\Traits\BelongsToTrialWorkspace;
+
 use App\Enums\ServiceCategory;
+use App\Models\Traits\TriggersSiteReload;
+use Database\Factories\ServiceFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+
 class Service extends Model
 {
-    /** @use HasFactory<\Database\Factories\ServiceFactory> */
-    use HasFactory;
+    /** @use HasFactory<ServiceFactory> */
+    use BelongsToTrialWorkspace, HasFactory, TriggersSiteReload;
 
     protected $fillable = [
         'title',
@@ -19,6 +24,7 @@ class Service extends Model
         'short_description',
         'long_description',
         'icon',
+        'image',
         'base_price_multiplier',
         'is_active',
         'sort_order',

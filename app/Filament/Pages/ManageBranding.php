@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Support\PageBlocks;
 use BackedEnum;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\FileUpload;
@@ -34,17 +35,27 @@ class ManageBranding extends BaseSettingsPage
             'logo_text' => 'string',
             'logo_badge' => 'string',
             'favicon' => 'string',
-            'brand_font' => 'string',
             'color_primary' => 'string',
             'color_primary_light' => 'string',
             'color_accent' => 'string',
             'color_slate' => 'string',
+            'theme' => 'string',
+
         ];
     }
 
     protected function formComponents(): array
     {
         return [
+            Section::make('Theme')
+                ->schema([
+                    Select::make('theme')
+                        ->label('Site theme')
+                        ->native(false)
+                        ->default('clean')
+                        ->options(PageBlocks::themes())
+                        ->helperText('Clean is the default. Bold reproduces the original hard-edged brutalist look; the others are softer stylistic variants.'),
+                ]),
             Section::make('Logo & Identity')
                 ->columns(2)
                 ->schema([
@@ -71,37 +82,25 @@ class ManageBranding extends BaseSettingsPage
                         ->directory('branding')
                         ->disk('public')
                         ->visibility('public')
-                        ->helperText('Square PNG/ICO shown in the browser tab.')
+                        ->helperText('Square PNG/ICO shown in the browser tab. Leave empty to use the icon that ships with the active industry pack.')
                         ->columnSpanFull(),
                 ]),
-            Section::make('Typography')
-                ->schema([
-                    Select::make('brand_font')
-                        ->label('Brand font')
-                        ->native(false)
-                        ->options([
-                            'Montserrat' => 'Montserrat (default)',
-                            'Inter' => 'Inter',
-                            'Poppins' => 'Poppins',
-                            'Oswald' => 'Oswald',
-                            'Roboto' => 'Roboto',
-                            'Work Sans' => 'Work Sans',
-                            'Archivo' => 'Archivo',
-                            'Barlow' => 'Barlow',
-                        ])
-                        ->helperText('Non-default fonts load from the Bunny Fonts CDN at runtime.'),
-                ]),
             Section::make('Color Tokens')
+                ->description('Primary and accent fills are backgrounds — label ink flips automatically to near-black or near-white. Structural slate is body text on white and must stay dark.')
                 ->columns(2)
                 ->schema([
                     ColorPicker::make('color_primary')
-                        ->label('Primary (forest green)'),
+                        ->label('Primary (forest green)')
+                        ->helperText('Dark section bands (e.g. Projects).'),
                     ColorPicker::make('color_primary_light')
-                        ->label('Primary light'),
+                        ->label('Primary light')
+                        ->helperText('Cards and raised panels on primary sections.'),
                     ColorPicker::make('color_accent')
-                        ->label('Accent (safety yellow)'),
+                        ->label('Accent (safety yellow)')
+                        ->helperText('Primary button / highlight fill. Label text flips automatically to near-black or near-white.'),
                     ColorPicker::make('color_slate')
-                        ->label('Structural slate'),
+                        ->label('Structural slate')
+                        ->helperText('Used for secondary body text (e.g. captions). Must contrast on white — light picks fall back to default slate (#334155).'),
                 ]),
         ];
     }

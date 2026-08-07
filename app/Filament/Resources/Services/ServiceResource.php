@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Services;
 
+use App\Filament\Concerns\RoleRestricted;
 use App\Filament\Resources\Services\Pages\CreateService;
 use App\Filament\Resources\Services\Pages\EditService;
 use App\Filament\Resources\Services\Pages\ListServices;
@@ -16,13 +17,15 @@ use Filament\Tables\Table;
 
 class ServiceResource extends Resource
 {
+    use RoleRestricted;
+
     protected static ?string $model = Service::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Catalog';
+    protected static string|\UnitEnum|null $navigationGroup = 'Site Content';
 
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 2;
 
     protected static ?string $recordTitleAttribute = 'title';
 

@@ -3,12 +3,13 @@
 namespace App\Filament\Widgets;
 
 use App\Enums\LeadStatus;
+use App\Filament\Concerns\RestrictedWidget;
 use App\Models\Lead;
 use Filament\Widgets\ChartWidget;
 
 class LeadFunnel extends ChartWidget
 {
-    protected static bool $isLazy = false;
+    use RestrictedWidget;
 
     protected ?string $heading = 'Lead Funnel — Last 30 Days';
 
@@ -30,19 +31,31 @@ class LeadFunnel extends ChartWidget
 
         $statuses = LeadStatus::cases();
 
+        // One grouped query instead of a count per status.
+        $countsByStatus = Lead::query()
+            ->where('created_at', '>=', $since)
+            ->selectRaw('status, count(*) as aggregate')
+            ->groupBy('status')
+            ->pluck('aggregate', 'status');
+
         $counts = collect($statuses)->map(
-            fn (LeadStatus $status) => Lead::query()
-                ->where('status', $status)
-                ->where('created_at', '>=', $since)
-                ->count()
+            fn (LeadStatus $status) => (int) ($countsByStatus[$status->value] ?? 0)
         );
+
+        $colors = [
+            'partial' => '#94a3b8',
+            'qualified' => '#facc15',
+            'contacted' => '#38bdf8',
+            'booked' => '#1b4332',
+            'lost' => '#dc2626',
+        ];
 
         return [
             'datasets' => [
                 [
                     'label' => 'Leads',
                     'data' => $counts->values()->all(),
-                    'backgroundColor' => ['#94a3b8', '#facc15', '#1b4332', '#dc2626'],
+                    'backgroundColor' => collect($statuses)->map(fn (LeadStatus $status) => $colors[$status->value] ?? '#94a3b8')->all(),
                 ],
             ],
             'labels' => collect($statuses)->map(fn (LeadStatus $status) => $status->getLabel())->all(),

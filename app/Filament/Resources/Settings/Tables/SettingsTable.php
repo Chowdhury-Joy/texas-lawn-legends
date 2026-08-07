@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Settings\Tables;
 
+use App\Models\Setting;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -33,7 +34,7 @@ class SettingsTable
             ])
             ->filters([
                 SelectFilter::make('group')
-                    ->options(fn () => \App\Models\Setting::query()->distinct()->pluck('group', 'group')->toArray()),
+                    ->options(fn () => Setting::query()->whereNotNull('group')->where('group', '!=', '')->distinct()->pluck('group', 'group')->toArray()),
                 SelectFilter::make('type')
                     ->options([
                         'string' => 'String',

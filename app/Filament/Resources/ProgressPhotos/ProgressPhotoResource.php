@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\ProgressPhotos;
 
+use App\Filament\Concerns\RoleRestricted;
 use App\Filament\Resources\ProgressPhotos\Pages\CreateProgressPhoto;
 use App\Filament\Resources\ProgressPhotos\Pages\EditProgressPhoto;
 use App\Filament\Resources\ProgressPhotos\Pages\ListProgressPhotos;
@@ -16,11 +17,13 @@ use Filament\Tables\Table;
 
 class ProgressPhotoResource extends Resource
 {
+    use RoleRestricted;
+
     protected static ?string $model = ProgressPhoto::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPhoto;
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Sales & Delivery';
+    protected static string|\UnitEnum|null $navigationGroup = 'Operations';
 
     protected static ?int $navigationSort = 4;
 
