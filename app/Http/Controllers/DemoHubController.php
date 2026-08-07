@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Support\Niche\NicheLoader;
 use App\Support\Niche\NicheResolver;
+use App\Support\Trial\TrialHost;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -47,7 +48,7 @@ class DemoHubController extends Controller
 
     private function ensureHubEnabled(): void
     {
-        if (! NicheResolver::demoHubEnabled()) {
+        if (TrialHost::enabled() || ! NicheResolver::demoHubEnabled()) {
             throw new NotFoundHttpException;
         }
     }

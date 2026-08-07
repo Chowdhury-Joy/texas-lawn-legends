@@ -2,16 +2,19 @@
 
 namespace App\Models;
 
+use App\Models\Traits\BelongsToTrialWorkspace;
+
 use App\Models\Traits\TriggersSiteReload;
 use Database\Factories\TestimonialFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+
 class Testimonial extends Model
 {
     /** @use HasFactory<TestimonialFactory> */
-    use HasFactory, TriggersSiteReload;
+    use BelongsToTrialWorkspace, HasFactory, TriggersSiteReload;
 
     protected $fillable = [
         'author',

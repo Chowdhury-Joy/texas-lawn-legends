@@ -2,15 +2,18 @@
 
 namespace App\Models;
 
+use App\Models\Traits\BelongsToTrialWorkspace;
+
 use Database\Factories\AccessCodeFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+
 class AccessCode extends Model
 {
     /** @use HasFactory<AccessCodeFactory> */
-    use HasFactory;
+    use BelongsToTrialWorkspace, HasFactory;
 
     protected $fillable = [
         'code',

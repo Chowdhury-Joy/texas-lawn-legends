@@ -194,6 +194,18 @@ html.dark {
     @apply shrink-0;
 }
 
+/* Solid primary CTAs — white label on brand blue (safety net for hover shades). */
+.fi-btn.fi-color-primary:not(.fi-outlined):not(label) {
+    --text: #ffffff;
+    --hover-text: #ffffff;
+    --dark-text: #ffffff;
+    --dark-hover-text: #ffffff;
+}
+
+.fi-btn.fi-color-primary:not(.fi-outlined):not(label) > .fi-icon {
+    color: #ffffff;
+}
+
 /* Main CTA — Text/sm, uppercase (Figma Main Button of the Page) */
 .fi-content-shell-header .fi-btn {
     font-family: var(--fi-font-sans);

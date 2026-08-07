@@ -2,16 +2,19 @@
 
 namespace App\Models;
 
+use App\Models\Traits\BelongsToTrialWorkspace;
+
 use App\Enums\MilestoneStatus;
 use Database\Factories\MilestoneFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+
 class Milestone extends Model
 {
     /** @use HasFactory<MilestoneFactory> */
-    use HasFactory;
+    use BelongsToTrialWorkspace, HasFactory;
 
     protected $fillable = [
         'project_id',

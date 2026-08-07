@@ -1,5 +1,5 @@
 # Site Map
-Last Updated: 2026-08-01T20:27:54+0600
+Last Updated: 2026-08-08T00:52:42+0600
 
 ## Full Site Map
 
@@ -9,12 +9,33 @@ Routes below reflect `routes/web.php` and the Filament admin panel. CMS pages (`
 
 | Route | Purpose | Access |
 |---|---|---|
-| `/` | Homepage (page builder blocks from `pages` where `is_home = true`) | Public |
-| `/{slug}` | CMS pages (e.g. `/services`, `/about`, `/portfolio`, `/privacy`) | Public (published only) |
+| `/` | Getwebfield agency homepage when `APP_TRIAL_HOST=true`; otherwise niche CMS homepage | Public |
+| `/agency` | Getwebfield agency marketing page (same as `/` on trial host) | Public · requires `APP_TRIAL_HOST=true` |
+| `/{slug}` | CMS pages on **non-trial** installs only (e.g. `/services`, `/about`) | Public (published only) |
 | `/estimate` | 4-step estimator + booking wizard (`EstimatorWizard`) | Public · **Product Part 2+** |
-| `/demo` | Sales demo hub — switch industry pack | Public · requires `APP_DEMO_HUB=true` or local env |
+| `/demo` | Sales demo hub — switch industry pack | Public · requires `APP_DEMO_HUB=true`; blocked on trial hosts |
 | `POST /demo/load` | Load a niche pack from demo hub | Public · demo hub only |
 | `POST /demo/reset` | Reset current pack to clean demo state | Public · demo hub only |
+
+### V3 Trial (requires `APP_TRIAL_HOST=true`)
+
+| Route | Purpose | Access |
+|---|---|---|
+| `/trial/signup` | Email/password trial account form | Public · trial host |
+| `POST /trial/signup` | Store signup in session → niche picker | Public · trial host |
+| `/trial/niche` | Pick one industry skin | Public · needs signup session |
+| `POST /trial/niche` | Provision isolated workspace → `/trial/{slug}/admin` | Public · trial host |
+| `/auth/google` | Start Google OAuth (Socialite) | Public · needs `GOOGLE_CLIENT_*` |
+| `/auth/google/callback` | Finish Google OAuth → niche picker | Public · Google callback |
+| `/trial/{slug}` | Trial workspace public homepage | Public |
+| `/trial/{slug}/estimate` | Estimator + booking | Public · Part 2+ |
+| `/trial/{slug}/portal` | Member portal | Public · Part 3+ |
+| `/trial/{slug}/dashboard/{hash}` | Client project dashboard | Public token · Part 3+ |
+| `/trial/{slug}/proposals/{token}` | View proposal | Public token · Part 3+ |
+| `/trial/{slug}/invoices/{token}` | View invoice | Public token · Part 3+ |
+| `/trial/{slug}/{page}` | CMS pages for that workspace | Public (published only) |
+| `/trial/{slug}/admin` | Filament admin for that workspace | Trial owner login |
+| `/trial/{slug}/admin/login` | Filament login | Public (login form) |
 
 ### Client / Token-gated (no login)
 
@@ -51,6 +72,22 @@ Routes below reflect `routes/web.php` and the Filament admin panel. CMS pages (`
 ---
 
 ## Customer Journeys
+
+### Journey: Prospect → 15-day trial (V3)
+
+**Goal:** Let a home-service owner try Part 3 alone on Getwebfield hosting — multiple strangers can sign up in parallel.
+
+| Step | Page / action | Goal | CTA / next step |
+|---|---|---|---|
+| 1 | Agency homepage (`/` or `/agency`) | Understand the product | **Start 15-day trial** → `/trial/signup` (or Google) |
+| 2 | `/trial/signup` | Create account (email + visible password, or Google) | Continue → `/trial/niche` |
+| 3 | `/trial/niche` | Pick one industry skin | Submit → provision + login → `/trial/{slug}/admin` |
+| 4 | `/trial/{slug}` + `/trial/{slug}/admin` | Explore full product with demo banner | Use for up to 15 days |
+| 5 | After day 15 (per workspace) | That workspace's admin login blocked; public demo banner remains | Convert = fresh Track A/B install later (no trial data migration) |
+
+**Data touched:** `trial_workspaces`, session `trial_signup`, workspace-scoped `settings` + niche model-home tables via `NicheLoader::provisionWorkspace()`, `users` (trial owner Admin tagged with `trial_workspace_id`).
+
+---
 
 ### Journey: Visitor → Booked lead (primary conversion)
 

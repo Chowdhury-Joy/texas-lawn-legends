@@ -36,9 +36,9 @@
     @endphp
     <style>
         :root {
-            --font-sans: 'Hanken Grotesk', ui-sans-serif, system-ui, sans-serif;
-            --font-display: 'Hanken Grotesk', ui-sans-serif, system-ui, sans-serif;
-            --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+            --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+            --font-display: 'Inter', ui-sans-serif, system-ui, sans-serif;
+            --font-mono: 'Inter', ui-monospace, monospace;
             --color-emerald-900: {{ $colorPrimary }};
             --color-emerald-800: {{ $colorPrimaryLight }};
             --color-yellow-400: {{ $colorAccent }};
@@ -58,15 +58,27 @@
     @livewireStyles
 
     @stack('head')
+    <link rel="preconnect" href="https://fonts.bunny.net" crossorigin />
+    <link href="https://fonts.bunny.net/css?family=inter:400,500,600" rel="stylesheet" />
 </head>
     <body class="min-h-screen bg-white font-body type-body-md text-slate-900 antialiased overflow-x-hidden">
         <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[60] focus:border-2 focus:border-slate-950 focus:bg-yellow-400 focus:px-4 focus:py-2 focus:text-sm focus:font-bold focus:uppercase focus:tracking-wide focus:text-on-accent">Skip to content</a>
 
-        @if (\App\Support\Niche\NicheResolver::demoMode())
+        @if (\App\Support\Niche\NicheResolver::demoMode() || \App\Support\Trial\TrialHost::inWorkspace())
             <div class="relative z-[60] border-b-2 border-slate-950 bg-yellow-400 px-4 py-2 text-center type-tagline text-on-accent">
-                Demo — {{ niche()->label() }} example
-                @if (\App\Support\Niche\NicheResolver::demoHubEnabled())
-                    · <a href="{{ route('demo.hub') }}" class="underline">Back to demo hub</a>
+                @if (\App\Support\Trial\TrialHost::inWorkspace())
+                    Demo purpose only
+                    @if (\App\Support\Trial\TrialHost::isExpired())
+                        · Trial ended — admin login locked
+                    @elseif (\App\Support\Trial\TrialHost::daysRemaining() !== null)
+                        · {{ \App\Support\Trial\TrialHost::daysRemaining() }} day(s) left
+                    @endif
+                    · {{ niche()->label() }} example
+                @else
+                    Demo — {{ niche()->label() }} example
+                    @if (\App\Support\Niche\NicheResolver::demoHubEnabled())
+                        · <a href="{{ route('demo.hub') }}" class="underline">Back to demo hub</a>
+                    @endif
                 @endif
             </div>
         @endif
@@ -114,7 +126,7 @@
             {{-- Main Navigation Bar --}}
             <div class="w-full border-b-4 border-slate-950 bg-white">
                 <div class="layout-container flex items-center justify-between gap-4 space-inline py-3">
-                <a href="{{ url('/') }}" class="flex flex-col leading-none">
+                <a href="{{ trial_path() }}" class="flex flex-col leading-none">
                     @if ($logoImage)
                         <img src="{{ $logoImage }}" alt="{{ $logoText }}" class="h-10 w-auto max-w-[220px] object-contain">
                     @else
@@ -127,17 +139,17 @@
 
                 @php
                     $navItems = [
-                        'Our Services' => url('/services'),
-                        'Portfolio' => url('/portfolio'),
-                        'About Us' => url('/about'),
+                        'Our Services' => trial_path('services'),
+                        'Portfolio' => trial_path('portfolio'),
+                        'About Us' => trial_path('about'),
                     ];
                     if (product_part_at_least(3)) {
                         // Keep portal next to primary marketing links when Ops is on.
                         $navItems = [
-                            'Our Services' => url('/services'),
-                            'Portfolio' => url('/portfolio'),
-                            'Client Portal' => url('/portal'),
-                            'About Us' => url('/about'),
+                            'Our Services' => trial_path('services'),
+                            'Portfolio' => trial_path('portfolio'),
+                            'Client Portal' => trial_path('portal'),
+                            'About Us' => trial_path('about'),
                         ];
                     }
                     $isActiveNavItem = fn (string $href): bool => $current === trim((string) parse_url($href, PHP_URL_PATH), '/');
@@ -157,7 +169,7 @@
 
                 <div class="flex items-center gap-3">
                     @if ($showEstimateCta)
-                        <a href="{{ url('/estimate') }}" @click.prevent="$dispatch('open-estimate-modal')" class="btn-brutal btn-primary type-btn bg-yellow-400 hidden items-center justify-center px-5 py-2 lg:inline-flex">
+                        <a href="{{ trial_path('estimate') }}" @click.prevent="$dispatch('open-estimate-modal')" class="btn-brutal btn-primary type-btn bg-yellow-400 hidden items-center justify-center px-5 py-2 lg:inline-flex">
                             Get Free Estimate
                         </a>
                     @endif
@@ -248,10 +260,10 @@
                     <h3 class="type-tagline mb-4 text-yellow-400">Core Hub</h3>
                     <ul class="type-tagline-lg space-y-2">
                         @if (product_part_at_least(3))
-                            <li><a href="{{ url('/portal') }}" class="text-slate-300 transition-colors hover:text-white">Client Portal Login</a></li>
+                            <li><a href="{{ trial_path('portal') }}" class="text-slate-300 transition-colors hover:text-white">Client Portal Login</a></li>
                         @endif
-                        <li><a href="{{ url('/privacy') }}" class="text-slate-300 transition-colors hover:text-white">Privacy Compliance Terms</a></li>
-                        <li><a href="{{ url('/admin') }}" class="text-slate-300 transition-colors hover:text-white">Administrative CMS Control Panel</a></li>
+                        <li><a href="{{ trial_path('privacy') }}" class="text-slate-300 transition-colors hover:text-white">Privacy Compliance Terms</a></li>
+                        <li><a href="{{ trial_path('admin') }}" class="text-slate-300 transition-colors hover:text-white">Administrative CMS Control Panel</a></li>
                     </ul>
                 </div>
             </div>
@@ -262,7 +274,7 @@
                 {{-- Themeable Mobile Sticky Action Rail --}}
                 <div class="fixed bottom-0 inset-x-0 z-40 border-t-4 border-slate-950 bg-brand-paper p-3 shadow-2xl lg:hidden">
                     <div class="mx-auto flex max-w-md items-center justify-between gap-3">
-                        <a href="{{ url('/estimate') }}" @click.prevent="$dispatch('open-estimate-modal')" class="btn-brutal btn-primary type-btn bg-yellow-400 flex-1 py-3 text-center">
+                        <a href="{{ trial_path('estimate') }}" @click.prevent="$dispatch('open-estimate-modal')" class="btn-brutal btn-primary type-btn bg-yellow-400 flex-1 py-3 text-center">
                             ⚡ 2-Min Price Quote
                         </a>
                         <a href="{{ $telHref }}" class="type-btn flex items-center justify-center border-2 border-slate-950 bg-white px-4 py-3 text-slate-900 transition-colors hover:bg-slate-100">
@@ -274,7 +286,7 @@
                 {{-- Sticky Get-Estimate call to action (Desktop) — appears once the visitor has
                      scrolled past the hero's own CTA, so it never stacks on top of it or the
                      header button, and doesn't cover fold-level content on shorter pages. --}}
-                <a href="{{ url('/estimate') }}"
+                <a href="{{ trial_path('estimate') }}"
                    @click.prevent="$dispatch('open-estimate-modal')"
                    x-data="{ show: false }"
                    x-init="window.addEventListener('scroll', () => { show = window.scrollY > 500 }, { passive: true })"
@@ -357,7 +369,7 @@
                     </div>
 
                     <div class="mt-6 flex flex-col gap-3 sm:flex-row">
-                        <a :href="'{{ url('/estimate') }}?neighborhood=' + encodeURIComponent(modalLocation) + '&sqft=' + sqft + '&scope=' + encodeURIComponent(serviceScope)"
+                        <a :href="'{{ trial_path('estimate') }}?neighborhood=' + encodeURIComponent(modalLocation) + '&sqft=' + sqft + '&scope=' + encodeURIComponent(serviceScope)"
                            class="btn-brutal btn-primary bg-yellow-400 flex-1 px-6 py-3.5 text-center text-xs font-black uppercase tracking-wider">
                             Lock In Free Site Visit →
                         </a>

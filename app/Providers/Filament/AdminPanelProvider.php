@@ -11,6 +11,8 @@ use App\Filament\Widgets\RecentActivity;
 use App\Filament\Widgets\RevenueChart;
 use App\Filament\Widgets\UpcomingSiteVisits;
 use App\Filament\Widgets\WeeklyLeadTrend;
+use App\Http\Middleware\ResolveTrialWorkspace;
+use App\Support\Trial\TrialHost;
 use Filament\Actions\Action;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -33,10 +35,9 @@ class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
-        return $panel
+        $panel = $panel
             ->default()
             ->id('admin')
-            ->path('admin')
             ->brandName(fn () => setting('site_name') ?: config('app.name'))
             ->favicon(fn () => niche_favicon())
             ->login(Login::class)
@@ -45,7 +46,12 @@ class AdminPanelProvider extends PanelProvider
             ->maxContentWidth(Width::Full)
             ->databaseNotifications()
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => array_replace(Color::hex('#2173BD'), [
+                    400 => '#3d8fd4',
+                    500 => '#2e82c9',
+                    600 => '#2173BD',
+                    700 => '#1a5f9e',
+                ]),
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->navigationGroups([
@@ -84,13 +90,21 @@ class AdminPanelProvider extends PanelProvider
                 Authenticate::class,
             ])
             ->bootUsing(function (): void {
-                // Row actions (View / Edit / etc.) default to naked links — give them
-                // padding + stroke so they read as real buttons, matching Invoices.
                 Table::configureUsing(function (Table $table): void {
                     $table->modifyUngroupedRecordActionsUsing(
                         fn (Action $action): Action => $action->button()->outlined(),
                     );
                 });
             });
+
+        if (TrialHost::enabled()) {
+            return $panel
+                ->path('trial/{trialWorkspace}/admin')
+                ->middleware([
+                    ResolveTrialWorkspace::class,
+                ], isPersistent: true);
+        }
+
+        return $panel->path('admin');
     }
 }

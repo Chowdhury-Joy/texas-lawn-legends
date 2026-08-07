@@ -1,5 +1,5 @@
 # Suggestions Backlog
-Last Updated: 2026-08-01T18:04:11+0600
+Last Updated: 2026-08-08T00:52:42+0600
 
 > **Purpose:** Track known bugs, security hardening, and product improvements that are **not** decided or scheduled yet.  
 > **Not the same as `decisions.md`** — nothing here is locked in. When an item is approved and implemented, move the outcome to `decisions.md` / `bug_history.md` and remove or mark it done here.
@@ -17,9 +17,9 @@ Last Updated: 2026-08-01T18:04:11+0600
 
 ## Current stage
 
-- **Stage scoreboard:** See [`product-stages.md`](product-stages.md) (V1 demo → V2 client install → V3 trial → V4 SaaS). Keep that file current when stage work ships.
-- **Environment:** Local prototype / V1 demo — not a paying client production install yet (V2).
-- **Implication:** Most security items are **documented for V2 launch**, not urgent for local V1 demos. Functional bugs still matter when testing flows locally.
+- **Stage scoreboard:** See [`product-stages.md`](product-stages.md) (V1 demo → V2 parked → V3 trial → V4 SaaS). Keep that file current when stage work ships.
+- **Environment:** Local prototype / V1 demo + V3 trial host (Step 2 isolation shipped). V2 client handoff **parked** until a paying client exists.
+- **Implication:** Open public multi-signup on trial host is allowed; security items for V2 remain documented for later handoff.
 
 ---
 
@@ -80,44 +80,43 @@ Also seeded for camera-ready demos: funnel filler leads (3 Partial / 3 Qualified
 
 ---
 
-## Product direction — 7-day self-serve trial (decided 2026-07-30)
+## Product direction — 15-day self-serve trial (updated 2026-08-03)
 
 **Goal:** Prospects sign up and try the product alone — no video meeting required for every curious visitor.
 
-**What it is:** A temporary **practice sandbox** on Getwebfield hosting with Getwebfield branding — not a live shopfront for their customers.
+**What it is:** A temporary **practice sandbox** on Getwebfield hosting — not a live shopfront for their customers. (`getwebfield.com/...` URLs are fine because owners will not send real customers there.)
 
 | Rule | Detail |
 |------|--------|
 | Hosting / brand | Lives on Getwebfield host; site does not pretend to be the prospect’s public business |
-| URL | `getwebfield.com/trial/{slug}` (e.g. `/trial/acme`) |
+| URL (Step 1) | Single trial host (`APP_TRIAL_HOST=true`): agency homepage at `/` until provisioned, then niche site at `/` |
+| URL (Step 2) | Isolated workspaces at `getwebfield.com/trial/{slug}` — **required before open public multi-signup** |
 | Product Part | **Part 3** (Website + Booking + Ops) |
-| Niche | Prospect **picks at signup** from registered packs (lawn, cleaning, roofing, pressure, windows, gutters, fence, pest) |
-| Public banner | Always-on **“Demo purpose only”** (or equivalent) |
-| Logo / branding | Locked — cannot rebrand as theirs |
-| **Site Settings** | **View only** (Product Parts, Branding, Industry Packs, SEO, Contact, Homepage Content, Estimator & Pricing, Operations Alerts) |
-| **Site Content** | **View only** (Pages, Services, Testimonials, Add-ons — including homepage) |
-| **Configuration** | **View only** (Users, raw Settings escape hatch — no create/edit/delete) |
-| **Operations** | **Fully open** (Leads, Projects, Invoices, crews, portal tools, etc.) |
+| Niche | Prospect **picks at signup** from registered packs (one industry per account) |
+| Public banner | Always-on **demo purpose only** banner |
+| Admin access | **Full open** — settings, CMS, branding, ops (nothing view-only) |
 | Demo hub / Restore | **Not available** to trialists (Getwebfield sales install only) |
-| Signup | Email + password (**password visible at start**, **no confirm-password** on trial) **and** Google OAuth |
-| Public estimate / booking | **Max 3 submissions** per trial; **banner every time** they submit (demo reminder) |
-| Duration / expiry | **7 days** → **no admin login** + public demo banner remains |
+| Signup | Email + password (**password visible at start**, **no confirm-password**) **and** Google OAuth |
+| Public estimate / booking | **No submit cap** (3-lead cap dropped 2026-08-03) |
+| Duration / expiry | **15 days** → **no admin login** + public demo banner remains |
 | Convert to paid | **Start fresh** on a new client install — do **not** migrate trial ops data |
-| Billing / card | **None** on trial — no Stripe, no card at signup; pay only when becoming a Track A/B client |
-| vs Track B | Trial ≠ free Track B month; “no free month” still applies once they are a paying renter |
-| When to build | **Still deciding** (sell with meetings first vs build trial now) |
+| Billing / card | **None** on trial — no Stripe, no card at signup |
+| vs Track B | Trial ≠ free Track B month |
+| V2 | **Parked** until a real paying client exists |
+| Hosting DB | **MySQL** on trial host (P-11) — not SQLite |
 
-**Relation to SaaS:** Trial needs signup + isolated workspace + timer + permission locks. That is the first SaaS-shaped slice; full multi-tenant billing/custom domains can wait.
+**Relation to SaaS:** Step 1 proves signup → niche → timer on one install. Step 2 adds isolated workspaces. V4 (custom domains + billing) stays later.
 
 | ID | Item | Direction |
 |----|------|-----------|
-| T-01 | Trial signup + workspace provision | Email/password (visible, no confirm) + Google; niche picker; seed Part 3 template; slug under `getwebfield.com/trial/{slug}`; start 7-day clock |
-| T-02 | Trial role / permissions | View-only Site Settings + Site Content + Configuration; full Operations; hide Industry Packs Load/Restore |
-| T-03 | Public demo banner + locked logo | Always visible on public pages; block branding edits in admin |
-| T-04 | Expiry gate | After day 7: **block admin login**; keep public demo banner |
-| T-05 | Public funnel cap | Max **3** estimate/booking submits per trial; show demo banner on each submit |
-| T-06 | Convert trial → paying client | **Start fresh** install for Track A/B — no trial data migration; billing starts only then (manual for now) |
-| T-07 | Build timing | Undecided — product rules locked; engineering start date TBD |
+| T-01 | Trial signup + workspace provision | **Done** — email/password + Google; niche picker; seed Part 3; 15-day clock per workspace |
+| T-08 | Isolated workspaces | **Done** — `/trial/{slug}` public + `/trial/{slug}/admin`; `trial_workspaces` + scoped rows |
+| T-02 | Trial role / permissions | **Full open** (view-only locks dropped 2026-08-03); hide Industry Packs Load/Restore for trialists |
+| T-03 | Public demo banner | **Done** — always visible when trial provisioned / demo_mode |
+| T-04 | Expiry gate | **Done** — after day **15**: block admin login; keep public demo banner |
+| T-05 | Public funnel cap | **Dropped** — no 3-submit cap |
+| T-06 | Convert trial → paying client | **Start fresh** install for Track A/B — no trial data migration |
+| T-07 | Build timing | **Step 2 shipped** — V2 parked |
 
 ---
 
@@ -177,9 +176,9 @@ Measured with a query-log harness before and after. Counts are steady-state (war
 | Stalled-lead job `everyMinute()` + sync notify | 1 query/min idle; sync notify is deliberate (no queue worker on cPanel) |
 | Estimator slider `.live` binding | Costs ~1 query per tick after P-02; add `.debounce` only if it still feels chatty |
 
-### P-11 — SQLite carrying cache + session + queue + app data (open, pre-trial)
+### P-11 — SQLite carrying cache + session + queue + app data (open, pre-trial / required for trial host)
 
-Cache now uses the file driver, but session, queue, and app data still share one SQLite file, and SQLite serialises writes. Fine for local prototype and likely fine for a single low-traffic client site. **Revisit before the 7-day trial sandbox ships** (T-01+): concurrent estimator submissions plus admin polling will contend on the write lock. Likely direction is MySQL for app data on any multi-tenant/trial host.
+Cache now uses the file driver, but session, queue, and app data still share one SQLite file, and SQLite serialises writes. Fine for local prototype and likely fine for a single low-traffic client site. **Trial host (`APP_TRIAL_HOST=true`) must use MySQL** for app data before in-house upload / public trial traffic (T-01+). Documented in `.env.example`.
 
 ---
 
@@ -253,4 +252,7 @@ Safe to ignore on solo local dev; **launch checklist** for public client sites.
 | 2026-08-01 | S-03/S-04 rate limits deferred — not required for V2 (owner) |
 | 2026-08-01 | Linked Current stage to `product-stages.md` (V1–V4 scoreboard) |
 | 2026-08-01 | Model-home restore also clears pitch-era `color_slate` (washes out `text-slate-800`); see bug_history.md |
+| 2026-08-08 | V3 Step 2 isolation shipped (T-08): `trial_workspaces`, scoped rows, `/trial/{slug}` + `/trial/{slug}/admin` |
+| 2026-08-03 | V3 Step 1 shipped (agency homepage, signup, niche provision, expiry). T-01/T-03/T-04 Step 1 done; T-08 isolation still open |
+| 2026-08-03 | V3 trial rules updated: 15 days, full open, demo banner, expiry lock; V2 parked; T-05 dropped; T-08 Step 2 isolation; building Step 1 |
 | 2026-08-01 | X-01 built: ZIP of CSVs + uploads, Admin-only permission, `APP_LICENSE_TRACK` gate (Track A) |

@@ -6,6 +6,7 @@ use App\Models\Setting;
 use App\Support\ColorContrast;
 use App\Support\Niche\NichePack;
 use App\Support\Niche\NicheResolver;
+use App\Support\Trial\TrialWorkspaceContext;
 use Illuminate\Support\Facades\Storage;
 
 if (! function_exists('setting')) {
@@ -54,6 +55,12 @@ if (! function_exists('product_part')) {
      */
     function product_part(): ProductPart
     {
+        $workspace = TrialWorkspaceContext::current();
+
+        if ($workspace !== null) {
+            return ProductPart::tryFrom((int) $workspace->product_part) ?? ProductPart::Ops;
+        }
+
         $value = (int) setting('product_part', ProductPart::Ops->value);
 
         return ProductPart::tryFrom($value) ?? ProductPart::Ops;
@@ -170,5 +177,21 @@ if (! function_exists('public_url')) {
         }
 
         return '/storage/'.ltrim($path, '/');
+    }
+}
+
+if (! function_exists('trial_path')) {
+    /**
+     * Build a path under the active trial workspace, or a root path when none is bound.
+     */
+    function trial_path(string $path = ''): string
+    {
+        $workspace = TrialWorkspaceContext::current();
+
+        if ($workspace === null) {
+            return $path === '' ? '/' : '/'.ltrim($path, '/');
+        }
+
+        return $workspace->publicPath($path);
     }
 }

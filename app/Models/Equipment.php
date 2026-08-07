@@ -2,14 +2,19 @@
 
 namespace App\Models;
 
+use App\Models\Traits\BelongsToTrialWorkspace;
+
 use App\Enums\EquipmentStatus;
 use App\Enums\EquipmentType;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+
 class Equipment extends Model
 {
+    use BelongsToTrialWorkspace;
+
     protected $fillable = [
         'name',
         'type',

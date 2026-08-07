@@ -1,5 +1,5 @@
 # Product Stages
-Last Updated: 2026-08-01T18:04:11+0600
+Last Updated: 2026-08-08T00:52:42+0600
 
 > **Purpose:** Living map of where this product is in the V1 → V4 journey.  
 > **Audience:** Humans + agents. Update this file whenever stage status, exit criteria, or scope changes.  
@@ -29,18 +29,18 @@ Last Updated: 2026-08-01T18:04:11+0600
 
 | Stage | Status | Rough readiness |
 |-------|--------|-----------------|
-| **V1** | **Active / nearly done** | ~90% |
-| **V2** | **Next target** | Product features ~60–70%; safe repeatable handoff ~30% |
-| **V3** | Not started (rules decided) | ~0% code · product rules locked in `suggestions.md` / `decisions.md` |
-| **V4** | Future | ~0% — after V2 proof and V3 trial |
+| **V1** | Nearly done | ~90% |
+| **V2** | **Parked** (no client yet) | Product features ~60–70%; handoff checklist deferred |
+| **V3** | **Step 2 shipped** — open multi-signup ready | ~90% |
+| **V4** | Future | ~0% — after V3 trial proof (+ V2 when a client appears) |
 
-**One-line status:** Finishing **V1** (video-ready demo). Next milestone is **V2** (first real client on their hosting with a boring, low-work install). Do not jump to V3/V4 before V2 works once.
+**One-line status:** V1 demo is nearly done. **V2 parked** until a paying client exists. **V3 Step 2** (isolated `/trial/{slug}` workspaces + per-workspace admin/expiry) is shipped — open public multi-signup is unblocked.
 
 ```
 V1 ██████████░░  almost done (video-ready)
-V2 ██████░░░░░░  next — lock doors + handoff checklist
-V3 ░░░░░░░░░░░░  rules yes, engineering no
-V4 ░░░░░░░░░░░░  after V2 sales proof + V3 trial
+V2 ░░░░░░░░░░░░  parked — no client yet
+V3 █████████░░░  Step 2 isolation shipped
+V4 ░░░░░░░░░░░░  after V3 trial (+ V2 when needed)
 ```
 
 ---
@@ -75,16 +75,19 @@ V4 ░░░░░░░░░░░░  after V2 sales proof + V3 trial
 | **Business can export all their data** (admin self-serve download) | **Done · Track A only** (**X-01**) — Admin → Data Export streams a ZIP of CSVs + uploads; enabled by `APP_LICENSE_TRACK=a`. Track B: no self-serve export (super-admin consent only; unlocks after buy-out to Track A) |
 | Stripe / full Email-SMS / negotiation engine | **Not required for V2 exit** — stay manual/offline-friendly |
 
+> **2026-08-03:** V2 handoff work is **parked** until a real client exists. Resume this checklist at handoff time.
+
 ### V3 — SaaS demo / trial (our site)
 
 **Done when:** A prospect can sign up alone, use a time-boxed sandbox, and convert without a Zoom for every curious visitor.
 
 | Criterion | Status |
 |-----------|--------|
-| Product rules (Part 3, niche picker, 7-day expiry, 3-lead cap, view-only settings) | Decided (T-01–T-07) |
-| Signup + workspace provision + expiry gate | Not built |
-| URL shape `getwebfield.com/trial/{slug}` | Decided, not built |
+| Product rules (Part 3, niche picker, **15-day** expiry, **full-open** admin, demo banner) | Decided 2026-08-03 (T-01–T-08) |
+| Signup + single-host provision + expiry gate (Step 1) | **Built** (superseded by Step 2) |
+| Isolated workspaces `/trial/{slug}` (Step 2) | **Done** — `trial_workspaces` + scoped rows; admin at `/trial/{slug}/admin` |
 | Convert = start fresh Track A/B install (no trial data migration) | Decided |
+| MySQL on trial host (P-11) | Documented in `.env.example` — set at upload |
 
 ### V4 — SaaS client installment (their site)
 
@@ -126,8 +129,11 @@ V4 ░░░░░░░░░░░░  after V2 sales proof + V3 trial
 
 | When | Change |
 |------|--------|
+| 2026-08-08 | V3 Step 2 isolation shipped: `trial_workspaces`, scoped business rows, `/trial/{slug}` public + admin routes, per-workspace expiry. Open multi-signup unblocked. |
+| 2026-08-03 | V3 Step 1 trial shell built (agency homepage, signup, niche provision, 15-day expiry). V2 remains parked. Step 2 isolation still required before open multi-signup. |
+| 2026-08-03 | V2 parked; V3 becomes next target. Trial rules: 15 days, full open, demo banner, expiry lock. Step 1 (single host) vs Step 2 (isolation) documented. |
 | 2026-08-01 | X-01 locked **Track A only**; Track B stays consent-only until buy-out. |
-| 2026-08-01 | V2 exit: client self-serve **full data export** required (X-01). Conflicts with Track B “no export” pricing line — pending confirm. |
+| 2026-08-01 | V2 exit: client self-serve **full data export** required (X-01). Conflicts with Track B pricing “no export” line — pending confirm. |
 | 2026-08-01 | V2: rate limits (S-03/S-04) marked not required for exit — owner deferred. |
 | 2026-08-01 | Created file. Locked V1–V4 intent. Current position: V1 nearly done, V2 next, V3 rules-only, V4 future. |
 | 2026-08-01 | X-01 built — self-serve export shipped for Track A; `APP_LICENSE_TRACK` added to the handoff checklist. |

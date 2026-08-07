@@ -2,14 +2,18 @@
 
 namespace App\Models;
 
+use App\Models\Traits\BelongsToTrialWorkspace;
+
 use App\Enums\ProposalStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
+
 class Proposal extends Model
 {
+    use BelongsToTrialWorkspace;
     use SoftDeletes;
 
     protected $fillable = [

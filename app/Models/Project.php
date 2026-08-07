@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Models\Traits\BelongsToTrialWorkspace;
+
 use App\Enums\ProjectStatus;
 use App\Models\Traits\TriggersSiteReload;
 use Database\Factories\ProjectFactory;
@@ -14,10 +16,11 @@ use Illuminate\Support\Str;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
 
+
 class Project extends Model
 {
     /** @use HasFactory<ProjectFactory> */
-    use HasFactory, LogsActivity, SoftDeletes, TriggersSiteReload;
+    use BelongsToTrialWorkspace, HasFactory, LogsActivity, SoftDeletes, TriggersSiteReload;
 
     public function getActivitylogOptions(): LogOptions
     {

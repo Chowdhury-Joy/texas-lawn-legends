@@ -29,10 +29,10 @@
 @source inline("desk:{grid-cols-12,col-span-{5,7},items-center,mr-0}");
 
 @theme {
-    --font-sans: 'Hanken Grotesk', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
-    --font-display: 'Hanken Grotesk', ui-sans-serif, system-ui, sans-serif;
-    --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+    --font-display: 'Inter', ui-sans-serif, system-ui, sans-serif;
+    --font-mono: 'Inter', ui-monospace, monospace;
 
     /* Brand tokens — mapped from the Rugged Professional palette */
     --color-brand-forest: #1b4332;

@@ -4,6 +4,7 @@ namespace App\Support\Niche;
 
 use App\Models\Setting;
 use App\Support\Niche\Packs\LawnPack;
+use App\Support\Trial\TrialWorkspaceContext;
 use InvalidArgumentException;
 
 final class NicheResolver
@@ -38,6 +39,12 @@ final class NicheResolver
      */
     public static function activeId(): string
     {
+        $workspace = TrialWorkspaceContext::current();
+
+        if ($workspace !== null) {
+            return $workspace->niche_id;
+        }
+
         $fromSetting = setting('active_niche');
 
         if (filled($fromSetting)) {
@@ -49,6 +56,12 @@ final class NicheResolver
 
     public static function demoMode(): bool
     {
+        $workspace = TrialWorkspaceContext::current();
+
+        if ($workspace !== null) {
+            return (bool) $workspace->demo_mode;
+        }
+
         return filter_var(setting('demo_mode', false), FILTER_VALIDATE_BOOLEAN);
     }
 

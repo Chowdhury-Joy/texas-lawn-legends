@@ -2,12 +2,16 @@
 
 namespace App\Models;
 
+use App\Models\Traits\BelongsToTrialWorkspace;
+
 use App\Models\Traits\TriggersSiteReload;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
+
 class Page extends Model
 {
+    use BelongsToTrialWorkspace;
     use TriggersSiteReload;
 
     protected $fillable = [

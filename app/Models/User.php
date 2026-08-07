@@ -4,7 +4,9 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Enums\UserRole;
+use App\Models\Traits\BelongsToTrialWorkspace;
 use App\Support\AccessPermissions;
+use App\Support\Trial\TrialWorkspaceContext;
 use Database\Factories\UserFactory;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
@@ -15,12 +17,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'role', 'password'])]
+#[Fillable(['name', 'email', 'google_id', 'role', 'password', 'trial_workspace_id'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable implements FilamentUser
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    use BelongsToTrialWorkspace, HasFactory, Notifiable;
 
     /**
      * Get the attributes that should be cast.
@@ -96,6 +98,22 @@ class User extends Authenticatable implements FilamentUser
 
     public function canAccessPanel(Panel $panel): bool
     {
-        return $this->role !== null;
+        if ($this->role === null) {
+            return false;
+        }
+
+        $workspace = TrialWorkspaceContext::current();
+
+        if ($workspace !== null) {
+            if ($workspace->isExpired()) {
+                return false;
+            }
+
+            if ($this->trial_workspace_id !== $workspace->id) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

@@ -461,3 +461,30 @@
  <action>Split shell CSS variables: default `:root` uses light surfaces (white sidebar/header, gray-50 content, dark ink for logo/title/back); `html.dark` keeps the Lux charcoal shell. Logo, page title, subheading, back arrow, and danger-zone border all read from mode-aware `--fi-shell-*` tokens.</action>
  <reason>Respects Filament's built-in light/dark toggle without rewriting every component — dark mode keeps the Figma look; light mode matches Filament's native surfaces so nav, tables, and forms stay legible.</reason>
 </decision>
+
+## 2026-08-02 (admin primary button color)
+
+<decision>
+ <category>UI/UX</category>
+ <context>Filament primary was Amber, so filled CTAs (New Invoice, Export, Save) shipped yellow with dark brown labels — low contrast and off-brand for the admin shell.</context>
+ <action>Set panel `primary` to `#2173BD` via `Color::hex()` with pinned 400–700 shades so Filament's button contrast resolver keeps white labels on the brand blue fill. Add theme CSS `--text` overrides on solid `.fi-color-primary` buttons as a safety net for hover states.</action>
+ <reason>Matches the requested admin CTA color and readable white type without touching public-site branding tokens.</reason>
+</decision>
+
+## 2026-08-03 (V3 trial: skip V2, 15-day full-open sandbox)
+
+<decision>
+ <category>Business_Logic</category>
+ <context>No paying client yet, so V2 handoff is parked. Need a self-serve trial front door on Getwebfield hosting so prospects can try Part 3 alone. Older trial rules (7 days, view-only CMS/settings, 3-lead cap, locked branding) felt too locked for a practice sandbox that will never be their public brand URL.</context>
+ <action>Skip V2 until a real client exists. Build V3 Step 1 on a single trial host: Getwebfield agency homepage → email or Google signup → pick one niche → seed Part 3 model home with demo banner on → full-open admin for 15 days → after expiry block Filament login while public demo banner remains. Drop view-only CMS/settings locks, branding lock, and 3-submit funnel cap for this version. Hide demo hub / Restore from trialists. Convert to paid still starts fresh (no trial data migration). Step 2 (isolated /trial/{slug} workspaces) required before open public multi-signup. Use MySQL on the trial host (P-11).</action>
+ <reason>Matches owner choice (15 days, full open, banner, expiry) and the reality that getwebfield.com/trial URLs are practice sandboxes, not client shopfronts. Single-install Step 1 proves the journey in-house; multi-tenant isolation waits until strangers can all sign up at once.</reason>
+</decision>
+
+## 2026-08-08 (V3 Step 2 — isolated trial workspaces)
+
+<decision>
+ <category>Code</category>
+ <context>Step 1 proved signup → niche → timer on one install, but only one prospect could provision at a time. Strangers signing up concurrently would overwrite each other's sandbox data.</context>
+ <action>Ship V3 Step 2: `trial_workspaces` table; nullable `trial_workspace_id` on business tables with `BelongsToTrialWorkspace` global scope; workspace-scoped settings unique on `(trial_workspace_id, key)`; `TrialWorkspaceContext` + `ResolveTrialWorkspace` middleware; agency `/` always on trial hosts; public routes under `/trial/{slug}`; Filament at `/trial/{slug}/admin`; per-workspace `expires_at` gate in `User::canAccessPanel()`; `TrialProvisioner` allows many signups; composite unique indexes on slug/email/code fields per workspace.</action>
+ <reason>Matches locked product choice (shared MySQL + tagged rows, admin under trial URL). Unblocks open public multi-signup without separate DB-per-tenant V4 complexity.</reason>
+</decision>

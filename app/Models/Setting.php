@@ -2,7 +2,8 @@
 
 namespace App\Models;
 
-use App\Models\Traits\TriggersSiteReload;
+use App\Models\Traits\BelongsToTrialWorkspace;
+use App\Support\Trial\TrialWorkspaceContext;
 use Database\Factories\SettingFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -13,77 +14,70 @@ class Setting extends Model
     /** @use HasFactory<SettingFactory> */
     use HasFactory;
 
-    use TriggersSiteReload;
+    use BelongsToTrialWorkspace;
 
     protected $fillable = [
         'key',
         'value',
         'type',
         'group',
+        'trial_workspace_id',
     ];
 
     /**
-     * Per-request memo of resolved payloads, keyed by setting key.
-     *
-     * A single page render reads dozens of keys, often repeatedly. Without this
-     * every read is a cache-store round trip (the default store is the database).
+     * Per-request memo of resolved payloads, keyed by cache key.
      *
      * @var array<string, array{hit: bool, value: mixed}>
      */
     private static array $requestCache = [];
 
-    /**
-     * Resolve a setting value by key, casting it according to its declared type.
-     */
     public static function get(string $key, mixed $default = null): mixed
     {
-        $payload = static::$requestCache[$key] ??= static::resolvePayload($key);
+        $payload = static::$requestCache[static::cacheKey($key)] ??= static::resolvePayload($key);
 
         return $payload['hit'] ? $payload['value'] : $default;
     }
 
     /**
-     * Load a key's payload from the persistent cache, falling back to the DB.
-     *
-     * The payload records whether the row exists so a legitimately null value is
-     * distinguishable from a missing key — otherwise misses are never cached and
-     * re-query on every call.
-     *
      * @return array{hit: bool, value: mixed}
      */
     private static function resolvePayload(string $key): array
     {
-        // Cache the resolved (casted) value rather than the Eloquent model —
-        // caching a full model instance breaks on unserialize across requests.
-        $payload = Cache::rememberForever("setting.{$key}", function () use ($key) {
-            $setting = static::query()->where('key', $key)->first();
+        $cacheKey = static::cacheKey($key);
+
+        $payload = Cache::rememberForever($cacheKey, function () use ($key) {
+            $query = static::query()->where('key', $key);
+            $setting = $query->first();
 
             return $setting
                 ? ['hit' => true, 'value' => $setting->castedValue()]
                 : ['hit' => false, 'value' => null];
         });
 
-        // Payloads written by an older release stored either null or ['value' => x].
         if (! is_array($payload) || ! array_key_exists('hit', $payload)) {
             $payload = is_array($payload) && array_key_exists('value', $payload)
                 ? ['hit' => true, 'value' => $payload['value']]
                 : ['hit' => false, 'value' => null];
 
-            Cache::forever("setting.{$key}", $payload);
+            Cache::forever($cacheKey, $payload);
         }
 
         return $payload;
     }
 
-    /**
-     * Persist a setting value, encoding arrays as JSON, and bust the cache.
-     */
     public static function set(string $key, mixed $value, string $type = 'string', string $group = 'general'): self
     {
         $encoded = in_array($type, ['json', 'array'], true) ? json_encode($value) : (string) $value;
 
+        $attributes = ['key' => $key];
+        $workspaceId = TrialWorkspaceContext::id();
+
+        if ($workspaceId !== null) {
+            $attributes['trial_workspace_id'] = $workspaceId;
+        }
+
         $setting = static::query()->updateOrCreate(
-            ['key' => $key],
+            $attributes,
             ['value' => $encoded, 'type' => $type, 'group' => $group],
         );
 
@@ -92,22 +86,25 @@ class Setting extends Model
         return $setting;
     }
 
-    /**
-     * Drop a key from both the persistent cache and the per-request memo.
-     */
     public static function forget(string $key): void
     {
-        unset(static::$requestCache[$key]);
+        unset(static::$requestCache[static::cacheKey($key)]);
 
-        Cache::forget("setting.{$key}");
+        Cache::forget(static::cacheKey($key));
     }
 
-    /**
-     * Clear the per-request memo (tests, queue workers, long-running processes).
-     */
     public static function flushRequestCache(): void
     {
         static::$requestCache = [];
+    }
+
+    private static function cacheKey(string $key): string
+    {
+        $workspaceId = TrialWorkspaceContext::id();
+
+        return $workspaceId !== null
+            ? "setting.ws{$workspaceId}.{$key}"
+            : "setting.global.{$key}";
     }
 
     public function castedValue(): mixed

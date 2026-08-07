@@ -8,9 +8,9 @@
    --------------------------------------------------------------------------- */
 
 :root {
-    --font-heading: 'Hanken Grotesk', ui-sans-serif, system-ui, sans-serif;
-    --font-body: 'Hanken Grotesk', ui-sans-serif, system-ui, sans-serif;
-    --font-tagline: 'IBM Plex Mono', ui-monospace, monospace;
+            --font-heading: 'Inter', ui-sans-serif, system-ui, sans-serif;
+            --font-body: 'Inter', ui-sans-serif, system-ui, sans-serif;
+        --font-tagline: 'Inter', ui-sans-serif, system-ui, sans-serif;
     --font-weight-heading: 500;
     --font-weight-body: 400;
     --font-weight-tagline: 400;
@@ -127,8 +127,8 @@
     font-family: var(--font-heading);
     font-weight: var(--font-weight-heading);
     font-size: 48px;
-    line-height: 85%;
-    letter-spacing: -0.06em; /* -2.88/48 = -6% */
+    line-height: 80%;
+    letter-spacing: -0.08em; /* -2.88/48 = -6% */
 }
 
 /* Heading / H2 — mobile 36/-2.16 → -6% */
@@ -136,8 +136,8 @@
     font-family: var(--font-heading);
     font-weight: var(--font-weight-heading);
     font-size: 36px;
-    line-height: 85%;
-    letter-spacing: -0.06em; /* -2.16/36 = -6% */
+    line-height: 80%;
+    letter-spacing: -0.08em; /* -2.16/36 = -6% */
 }
 
 /* Heading / H3 — mobile 22/-1.32 → -6% */
@@ -145,17 +145,17 @@
     font-family: var(--font-heading);
     font-weight: var(--font-weight-heading);
     font-size: 22px;
-    line-height: 100%;
-    letter-spacing: -0.06em; /* -1.32/22 = -6% */
+    line-height: 92%;
+    letter-spacing: -0.07em; /* -1.32/22 = -6% */
 }
 
 /* Heading / H4 — mobile 20/-0.6 → -3% */
 .type-h4 {
     font-family: var(--font-heading);
     font-weight: var(--font-weight-heading);
-    font-size: 20px;
-    line-height: 100%;
-    letter-spacing: -0.03em; /* -0.6/20 = -3% */
+    font-size: 24px;
+    line-height: 85%;
+    letter-spacing: -0.06em;
 }
 
 /* Paragraph / Large — mobile 16/-0.8 → -5% */
@@ -228,19 +228,19 @@
 @media (min-width: 640px) {
     .type-h1 {
         font-size: 64px;
-        letter-spacing: -0.06em; /* -3.84/64 = -6% */
+        letter-spacing: -0.08em; /* -3.84/64 = -6% */
     }
     .type-h2 {
         font-size: 52px;
-        letter-spacing: -0.06em; /* -3.12/52 = -6% */
+        letter-spacing: -0.08em; /* -3.12/52 = -6% */
     }
     .type-h3 {
         font-size: 28px;
-        letter-spacing: -0.06em; /* -1.68/28 = -6% */
+        letter-spacing: -0.07em; /* -1.68/28 = -6% */
     }
     .type-h4 {
         font-size: 24px;
-        letter-spacing: -0.03em; /* -0.72/24 = -3% */
+        letter-spacing: -0.06em; /* -0.72/24 = -3% */
     }
     .type-body-lg {
         font-size: 18px;
@@ -276,19 +276,19 @@
 @media (min-width: 1200px) {
     .type-h1 {
         font-size: 80px;
-        letter-spacing: -0.06em; /* -4.8/80 = -6% */
+        letter-spacing: -0.08em; /* -4.8/80 = -6% */
     }
     .type-h2 {
         font-size: 64px;
-        letter-spacing: -0.06em; /* -3.84/64 = -6% */
+        letter-spacing: -0.08em; /* -3.84/64 = -6% */
     }
     .type-h3 {
         font-size: 36px;
-        letter-spacing: -0.06em; /* -2.16/36 = -6% */
+        letter-spacing: -0.07em; /* -2.16/36 = -6% */
     }
     .type-h4 {
-        font-size: 28px;
-        letter-spacing: -0.03em; /* -0.84/28 = -3% */
+        font-size: 24px;
+        letter-spacing: -0.06em; /* -0.84/28 = -3% */
     }
     .type-body-lg {
         font-size: 20px;

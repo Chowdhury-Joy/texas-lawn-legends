@@ -31,3 +31,10 @@
 
 ## 2026-08-02
 - Admin Filament shell colors are now mode-aware: light mode uses white/gray-50 surfaces with dark ink; dark mode keeps the Lux Figma charcoal shell via `html.dark` CSS vars; see decisions.md 2026-08-02 (admin light mode shell).
+- Admin panel primary CTA color set to `#2173BD` with white labels on solid buttons; see decisions.md 2026-08-02 (admin primary button color).
+
+## 2026-08-08
+- V3 Step 2 trial isolation: `trial_workspaces` + scoped business rows, `/trial/{slug}` public routes, `/trial/{slug}/admin` Filament, per-workspace expiry; see decisions.md 2026-08-08.
+
+## 2026-08-03
+- Added V3 Step 1 trial shell: APP_TRIAL_HOST agency homepage, email/Google signup, niche provision via NicheLoader::loadForTrial + TrialProvisioner, 15-day expiry lock on Filament, demo banner; Socialite; see decisions.md 2026-08-03.

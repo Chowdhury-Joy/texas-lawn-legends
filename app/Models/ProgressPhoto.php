@@ -2,16 +2,19 @@
 
 namespace App\Models;
 
+use App\Models\Traits\BelongsToTrialWorkspace;
+
 use App\Models\Traits\TriggersSiteReload;
 use Database\Factories\ProgressPhotoFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+
 class ProgressPhoto extends Model
 {
     /** @use HasFactory<ProgressPhotoFactory> */
-    use HasFactory, TriggersSiteReload;
+    use BelongsToTrialWorkspace, HasFactory, TriggersSiteReload;
 
     public $timestamps = false;
 

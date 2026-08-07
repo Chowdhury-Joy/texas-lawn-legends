@@ -53,6 +53,34 @@ final class NicheLoader
     {
         $this->ensureDemoInstall();
 
+        return $this->loadPack($nicheId, $demoMode);
+    }
+
+    /**
+     * Seed a niche model home for a V3 trial workspace (APP_DEMO_HUB not required).
+     *
+     * @param  list<string>  $preserveEmails
+     */
+    public function loadForTrial(string $nicheId, array $preserveEmails = []): NichePack
+    {
+        return $this->loadPack($nicheId, demoMode: true, preserveEmails: $preserveEmails);
+    }
+
+    /**
+     * Seed a niche model home inside the active trial workspace context.
+     *
+     * @param  list<string>  $preserveEmails
+     */
+    public function provisionWorkspace(string $nicheId, array $preserveEmails = []): NichePack
+    {
+        return $this->loadPack($nicheId, demoMode: true, preserveEmails: $preserveEmails);
+    }
+
+    /**
+     * @param  list<string>|null  $preserveEmails
+     */
+    private function loadPack(string $nicheId, bool $demoMode = true, ?array $preserveEmails = null): NichePack
+    {
         $packs = config('niche.packs', []);
 
         if (! isset($packs[$nicheId]) || ! is_string($packs[$nicheId])) {
@@ -64,11 +92,13 @@ final class NicheLoader
         /** @var NichePack $pack */
         $pack = app($packs[$nicheId]);
 
+        $preserve = $preserveEmails ?? self::PRESERVED_USER_EMAILS;
+
         // A restore rewrites hundreds of rows; one version bump at the end keeps
         // open admin tabs from reloading once per seeded record.
-        SiteVersion::withoutBumping(function () use ($pack, $nicheId, $demoMode) {
-            DB::transaction(function () use ($pack, $nicheId, $demoMode) {
-                $this->wipeModelHomeContent();
+        SiteVersion::withoutBumping(function () use ($pack, $nicheId, $demoMode, $preserve) {
+            DB::transaction(function () use ($pack, $nicheId, $demoMode, $preserve) {
+                $this->wipeModelHomeContent($preserve);
                 $this->resetShowcaseUploadSettings();
                 $this->applySettings($pack);
                 Setting::set('active_niche', $nicheId, 'string', 'product');
@@ -138,8 +168,10 @@ final class NicheLoader
 
     /**
      * Clear all showcase data that can change during a sales pitch.
+     *
+     * @param  list<string>  $preserveEmails
      */
-    private function wipeModelHomeContent(): void
+    private function wipeModelHomeContent(array $preserveEmails = self::PRESERVED_USER_EMAILS): void
     {
         InvoiceItem::query()->delete();
         Invoice::query()->withTrashed()->forceDelete();
@@ -164,14 +196,21 @@ final class NicheLoader
         AccessCode::query()->delete();
 
         User::query()
-            ->whereNotIn('email', self::PRESERVED_USER_EMAILS)
+            ->whereNotIn('email', $preserveEmails)
             ->each(function (User $user): void {
                 $user->permissions()->delete();
                 $user->delete();
             });
 
-        DB::table('activity_log')->delete();
-        DB::table('notifications')->delete();
+        $userIds = User::query()->pluck('id');
+
+        if ($userIds->isNotEmpty()) {
+            DB::table('activity_log')->whereIn('causer_id', $userIds)->delete();
+            DB::table('notifications')->whereIn('notifiable_id', $userIds)->delete();
+        } else {
+            DB::table('activity_log')->delete();
+            DB::table('notifications')->delete();
+        }
     }
 
     private function resetShowcaseUploadSettings(): void
